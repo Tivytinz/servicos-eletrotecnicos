@@ -52,7 +52,7 @@ const diferenciais = [
   "Foco em segurança e organização",
 ];
 
-const whatsappNumero = "556293265087";
+const whatsappNumero = "5562993265087";
 const whatsappMensagem =
   "Olá, vi o site Eletrotécnico GO e gostaria de solicitar um orçamento.";
 const whatsappLink =
@@ -206,6 +206,71 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-y border-white/10 bg-[#071321]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="max-w-3xl">
+            <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
+              Resultado real
+            </span>
+            <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+              Antes e depois da limpeza de placas solares
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-300">
+              Fotos reais de um serviço de limpeza em sistema fotovoltaico. A
+              remoção periódica de poeira e sujeira faz parte dos cuidados de
+              manutenção dos módulos solares.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src="/solar/antes-1.webp"
+                  alt="Placas solares antes da limpeza com sujeira acumulada"
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute left-4 top-4 rounded-full bg-slate-950/90 px-4 py-2 text-sm font-black text-amber-300">
+                  ANTES
+                </span>
+              </div>
+              <figcaption className="p-5 leading-7 text-slate-300">
+                Módulos com sujeira acumulada antes do serviço de limpeza.
+              </figcaption>
+            </figure>
+
+            <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src="/solar/depois-1.webp"
+                  alt="Placas solares depois da limpeza"
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute left-4 top-4 rounded-full bg-emerald-500 px-4 py-2 text-sm font-black text-white">
+                  DEPOIS
+                </span>
+              </div>
+              <figcaption className="p-5 leading-7 text-slate-300">
+                Resultado após a limpeza, com a superfície dos módulos limpa e
+                novamente visível.
+              </figcaption>
+            </figure>
+          </div>
+
+          <div className="mt-8">
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-xl bg-emerald-500 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+            >
+              <span>💬</span>
+              Solicitar limpeza pelo WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section id="regioes" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
@@ -280,7 +345,7 @@ export default function Home() {
             </a>
 
             <p className="mt-4 text-sm text-slate-400">
-              WhatsApp: (62) 9326-5087
+              WhatsApp: (62) 99326-5087
             </p>
           </div>
         </div>
