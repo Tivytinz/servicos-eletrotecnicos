@@ -52,6 +52,12 @@ const diferenciais = [
   "Foco em segurança e organização",
 ];
 
+const whatsappNumero = "556293265087";
+const whatsappMensagem =
+  "Olá, vi o site Eletrotécnico GO e gostaria de solicitar um orçamento.";
+const whatsappLink =
+  `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
+
 export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#06101d] text-white">
@@ -102,10 +108,12 @@ export default function Home() {
 
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <a
-                href="#orcamento"
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-xl bg-amber-400 px-7 py-4 text-center font-extrabold text-slate-950 shadow-lg shadow-amber-400/10 transition hover:-translate-y-0.5 hover:bg-amber-300"
               >
-                Solicitar orçamento
+                Solicitar orçamento no WhatsApp
               </a>
               <a
                 href="#servicos"
@@ -257,21 +265,41 @@ export default function Home() {
               Tem um serviço elétrico para fazer?
             </h2>
             <p className="mt-5 text-lg leading-8 text-slate-300">
-              O atendimento via WhatsApp será conectado aqui assim que
-              definirmos o número oficial de contato.
+              Fale diretamente pelo WhatsApp, explique o serviço que precisa e
+              solicite seu orçamento.
             </p>
 
-            <div className="mt-8 inline-flex rounded-xl border border-white/10 bg-black/15 px-5 py-4 font-semibold text-slate-200">
-              📱 Próxima etapa: configurar WhatsApp de atendimento
-            </div>
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center gap-3 rounded-xl bg-emerald-500 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+            >
+              <span>💬</span>
+              Chamar no WhatsApp
+            </a>
+
+            <p className="mt-4 text-sm text-slate-400">
+              WhatsApp: (62) 9326-5087
+            </p>
           </div>
         </div>
       </section>
 
+      <a
+        href={whatsappLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Solicitar orçamento pelo WhatsApp"
+        className="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-2xl shadow-2xl shadow-black/40 transition hover:-translate-y-1 hover:bg-emerald-400"
+      >
+        💬
+      </a>
+
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
-          <p>Atendimento em Goiânia e região.</p>
+          <p className="text-left sm:text-right">Atendimento em Goiânia e região.</p>
         </div>
       </footer>
     </main>
