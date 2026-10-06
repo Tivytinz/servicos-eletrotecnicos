@@ -217,10 +217,10 @@ export default function Home() {
                 <p className="mt-3 leading-7 text-slate-300">{servico.texto}</p>
                 {servico.destaque && (
                   <a
-                    href="#resultados"
+                    href="/limpeza-de-placas-solares"
                     className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-emerald-300 transition hover:text-emerald-200"
                   >
-                    Ver resultados reais <span aria-hidden="true">→</span>
+                    Conhecer o serviço <span aria-hidden="true">→</span>
                   </a>
                 )}
               </article>
