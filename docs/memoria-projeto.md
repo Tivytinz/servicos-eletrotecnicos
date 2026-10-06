@@ -1,16 +1,17 @@
-# Memória do Projeto — Eletrotécnico GO
+# Memória do Projeto — Fase Plena Elétrica
 
-Última atualização: 05/10/2026
+Última atualização: 06/10/2026
 
 ## Visão geral
 
 Projeto de landing pages para geração de contatos via WhatsApp para serviços eletrotécnicos em Goiânia e região.
 
 ### Marca
-- Nome: **Eletrotécnico GO**
+- Nome: **Fase Plena Elétrica**
 - Telefone / WhatsApp: **(62) 99326-5087**
 - Link base do WhatsApp: `https://wa.me/5562993265087`
-- Domínio principal: `https://eletrotecnicogo.com.br`
+- Domínio atual em produção: `https://eletrotecnicogo.com.br`
+- Novo domínio em migração: `https://faseplena.com.br`
 
 ### Regiões atendidas
 - Goiânia
@@ -241,6 +242,10 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Migração de marca iniciada para **Fase Plena Elétrica**.
+- Novo domínio `faseplena.com.br` adicionado ao Railway e aguardando DNS/validação de certificado.
+- O domínio antigo `eletrotecnicogo.com.br` permanece ativo durante a transição para evitar indisponibilidade.
+- O antigo `www.eletrotecnicogo.com.br`, que ainda não estava ativo no DNS, foi removido do Railway para liberar o limite de domínios do plano durante a migração.
 - DNS do domínio principal propagado e certificado HTTPS confirmado como válido no Railway.
 - HSTS inicial habilitado com `max-age=86400`; ampliar depois que `www` também estiver com HTTPS válido.
 - Endpoint `/api/health` marcado com `X-Robots-Tag: noindex, nofollow` e `/api/` bloqueado no robots.txt.
