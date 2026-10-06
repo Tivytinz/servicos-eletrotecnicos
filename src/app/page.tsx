@@ -57,7 +57,7 @@ const diferenciais = [
 
 const whatsappNumero = "5562993265087";
 const whatsappMensagem =
-  "Olá, vi o site Eletrotécnico GO e gostaria de solicitar um orçamento.";
+  "Olá, vi o site da Fase Plena Elétrica e gostaria de solicitar um orçamento.";
 const whatsappLink =
   `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
 
@@ -65,7 +65,7 @@ export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Electrician",
-    name: "Eletrotécnico GO",
+    name: "Fase Plena Elétrica",
     url: "https://eletrotecnicogo.com.br",
     telephone: "+55 62 99326-5087",
     areaServed: cidades.map((cidade) => ({
@@ -88,7 +88,7 @@ export default function Home() {
               ⚡
             </span>
             <span className="text-lg">
-              Eletrotécnico <span className="text-amber-400">GO</span>
+              Fase Plena <span className="text-amber-400">Elétrica</span>
             </span>
           </a>
 
@@ -433,7 +433,7 @@ export default function Home() {
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 pb-20 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:pb-8 sm:pr-24 lg:pl-8 lg:pr-28">
-          <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
+          <p>© 2026 Fase Plena Elétrica. Todos os direitos reservados.</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:justify-end">
             <a
               href="/politica-de-privacidade"
