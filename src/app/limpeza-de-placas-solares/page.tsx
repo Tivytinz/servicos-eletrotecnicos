@@ -132,7 +132,7 @@ export default function LimpezaDePlacasSolares() {
         <div className="pointer-events-none absolute -right-28 top-20 h-96 w-96 rounded-full bg-amber-400/10 blur-3xl" />
         <div className="pointer-events-none absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-[1.02fr_.98fr] lg:px-8 lg:py-20">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 lg:grid-cols-[1.02fr_.98fr] lg:px-8 lg:py-14">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-bold text-amber-300">
               ☀️ Serviço especializado em energia solar
