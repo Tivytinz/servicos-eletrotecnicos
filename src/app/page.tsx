@@ -242,6 +242,14 @@ export default function Home() {
                 )}
               </article>
             ))}
+          <div className="mt-8">
+            <a
+              href="/servicos-eletricos"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-white/10"
+            >
+              Ver todos os serviços elétricos <span aria-hidden="true">→</span>
+            </a>
+          </div>
           </div>
         </div>
       </section>
