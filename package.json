@@ -24,6 +24,6 @@
     "typescript": "latest"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24 <25"
   }
 }
