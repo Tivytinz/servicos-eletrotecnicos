@@ -146,7 +146,7 @@ export default function ServicosEletricos() {
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xl bg-emerald-500 px-4 py-3 text-sm font-extrabold transition hover:bg-emerald-400"
+            className="rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold transition hover:bg-emerald-800"
             aria-label="Pedir orçamento pelo WhatsApp"
           >
             <span className="sm:hidden">Orçamento</span>
@@ -326,7 +326,7 @@ export default function ServicosEletricos() {
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-flex w-full justify-center rounded-xl bg-emerald-500 px-7 py-4 font-extrabold transition hover:bg-emerald-400 sm:w-auto"
+            className="mt-8 inline-flex w-full justify-center rounded-xl bg-emerald-700 px-7 py-4 font-extrabold transition hover:bg-emerald-800 sm:w-auto"
           >
             💬 Chamar no WhatsApp
           </a>
@@ -338,7 +338,7 @@ export default function ServicosEletricos() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Solicitar orçamento pelo WhatsApp"
-        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-500 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400"
+        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-700 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-800"
       >
         💬
       </a>
