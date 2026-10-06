@@ -1,4 +1,4 @@
-# Plano inicial de Google Ads — Eletrotécnico GO
+# Plano inicial de Google Ads — Fase Plena Elétrica
 
 ## Objetivo
 Gerar contatos qualificados pelo WhatsApp.
@@ -91,3 +91,6 @@ Modelo:
 5. Política de Privacidade acessível.
 6. Perfil da Empresa no Google criado/revisado.
 7. Orçamento diário e raio/cidades aprovados.
+
+## Migração para Fase Plena
+As URLs dos anúncios devem ser trocadas para `faseplena.com.br` somente depois da validação de DNS/HTTPS e dos redirecionamentos do domínio antigo.
