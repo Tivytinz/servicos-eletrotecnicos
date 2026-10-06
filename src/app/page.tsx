@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const cidades = [
   "Goiânia",
   "Aparecida de Goiânia",
@@ -283,12 +285,12 @@ export default function Home() {
           <div className="mx-auto mt-12 grid max-w-4xl gap-6 lg:grid-cols-2">
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                <img
+                <Image
                   src="/solar/antes-hq.webp"
                   alt="Placas solares antes da limpeza com sujeira acumulada"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover object-center"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-center"
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-slate-950/90 px-4 py-2 text-sm font-black text-amber-300">
                   ANTES
@@ -301,12 +303,12 @@ export default function Home() {
 
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                <img
+                <Image
                   src="/solar/depois-hq.webp"
                   alt="Placas solares depois da limpeza"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover object-center"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-center"
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-emerald-700 px-4 py-2 text-sm font-black text-white">
                   DEPOIS
