@@ -420,7 +420,15 @@ export default function Home() {
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 pb-20 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:pb-8 sm:pr-24 lg:pl-8 lg:pr-28">
           <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
-          <p className="text-left sm:text-right">Atendimento em Goiânia e região.</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:justify-end">
+            <a
+              href="/politica-de-privacidade"
+              className="transition hover:text-white"
+            >
+              Política de Privacidade
+            </a>
+            <span>Atendimento em Goiânia e região.</span>
+          </div>
         </div>
       </footer>
     </main>
