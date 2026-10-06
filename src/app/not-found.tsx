@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <main className="grid min-h-screen place-items-center bg-[#06101d] px-6 text-white">
@@ -10,12 +12,12 @@ export default function NotFound() {
           O endereço acessado não existe ou foi alterado.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <a
+          <Link
             href="/"
             className="rounded-xl bg-amber-400 px-6 py-4 font-extrabold text-slate-950 transition hover:bg-amber-300"
           >
             Voltar ao início
-          </a>
+          </Link>
           <a
             href="/limpeza-de-placas-solares"
             className="rounded-xl border border-white/15 bg-white/5 px-6 py-4 font-bold transition hover:bg-white/10"
