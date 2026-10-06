@@ -147,8 +147,10 @@ export default function ServicosEletricos() {
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-xl bg-emerald-500 px-4 py-3 text-sm font-extrabold transition hover:bg-emerald-400"
+            aria-label="Pedir orçamento pelo WhatsApp"
           >
-            Pedir orçamento
+            <span className="sm:hidden">Orçamento</span>
+            <span className="hidden sm:inline">Pedir orçamento</span>
           </a>
         </div>
       </header>
@@ -172,7 +174,7 @@ export default function ServicosEletricos() {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl bg-amber-400 px-7 py-4 text-center font-extrabold text-slate-950 transition hover:bg-amber-300"
+                className="w-full rounded-xl bg-amber-400 px-7 py-4 text-center font-extrabold text-slate-950 transition hover:bg-amber-300 sm:w-auto"
               >
                 Solicitar orçamento no WhatsApp
               </a>
@@ -182,6 +184,19 @@ export default function ServicosEletricos() {
               >
                 Ver serviços
               </a>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold text-slate-300">
+              {["Atendimento local", "Residencial e comercial", "Orçamento direto"].map(
+                (item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2"
+                  >
+                    ✓ {item}
+                  </span>
+                ),
+              )}
             </div>
           </div>
 
@@ -311,7 +326,7 @@ export default function ServicosEletricos() {
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-flex rounded-xl bg-emerald-500 px-7 py-4 font-extrabold transition hover:bg-emerald-400"
+            className="mt-8 inline-flex w-full justify-center rounded-xl bg-emerald-500 px-7 py-4 font-extrabold transition hover:bg-emerald-400 sm:w-auto"
           >
             💬 Chamar no WhatsApp
           </a>

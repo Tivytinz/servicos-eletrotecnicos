@@ -192,8 +192,10 @@ export default function LimpezaDePlacasSolares() {
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl bg-emerald-500 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-emerald-400"
+              aria-label="Pedir orçamento para limpeza de placas solares pelo WhatsApp"
             >
-              Pedir orçamento
+              <span className="sm:hidden">Orçamento</span>
+              <span className="hidden sm:inline">Pedir orçamento</span>
             </a>
           </div>
         </div>
@@ -224,7 +226,7 @@ export default function LimpezaDePlacasSolares() {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="whitespace-nowrap rounded-xl bg-emerald-500 px-7 py-4 text-center font-extrabold text-white shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:bg-emerald-400 sm:min-w-[350px]"
+                className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-center font-extrabold text-white shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:bg-emerald-400 sm:w-auto sm:min-w-[350px] sm:px-7 sm:whitespace-nowrap"
               >
                 💬 Solicitar orçamento pelo WhatsApp
               </a>
@@ -494,7 +496,7 @@ export default function LimpezaDePlacasSolares() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded-xl border border-white/15 bg-white/5 px-6 py-4 font-bold transition hover:bg-white/10"
+              className="inline-flex w-full justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold transition hover:bg-white/10 sm:w-auto"
             >
               Ainda tem dúvida? Falar no WhatsApp
             </a>
@@ -518,7 +520,7 @@ export default function LimpezaDePlacasSolares() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-3 rounded-xl bg-emerald-500 px-7 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+              className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 px-7 py-4 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400 sm:w-auto"
             >
               💬 Enviar fotos e pedir orçamento
             </a>

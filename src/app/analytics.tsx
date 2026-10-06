@@ -73,12 +73,19 @@ export default function Analytics() {
 
       if (!link) return;
 
+      const params = new URLSearchParams(window.location.search);
       const payload = {
         event: "whatsapp_click",
         page_path: window.location.pathname,
         page_title: document.title,
+        page_location: window.location.href,
         cta_text: link.textContent?.trim() || "WhatsApp",
         destination: link.href,
+        utm_source: params.get("utm_source"),
+        utm_medium: params.get("utm_medium"),
+        utm_campaign: params.get("utm_campaign"),
+        utm_term: params.get("utm_term"),
+        utm_content: params.get("utm_content"),
       };
 
       window.dispatchEvent(
@@ -95,6 +102,12 @@ export default function Analytics() {
         page_title: payload.page_title,
         cta_text: payload.cta_text,
         link_url: payload.destination,
+        page_location: payload.page_location,
+        utm_source: payload.utm_source,
+        utm_medium: payload.utm_medium,
+        utm_campaign: payload.utm_campaign,
+        utm_term: payload.utm_term,
+        utm_content: payload.utm_content,
       });
     };
 

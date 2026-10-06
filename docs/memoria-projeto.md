@@ -241,6 +241,12 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Revisão de conversão/mobile: CTAs principais agora ocupam a largura disponível em telas pequenas quando necessário.
+- Corrigido o posicionamento do botão "Ver todos os serviços elétricos" na grade da home.
+- Landing de serviços elétricos recebeu sinais de confiança: atendimento local, residencial/comercial e orçamento direto.
+- Landing solar teve ajuste para evitar estouro horizontal do CTA em celulares estreitos.
+- Acessibilidade melhorada com foco visível e suporte a `prefers-reduced-motion`.
+- Evento `whatsapp_click` preparado para registrar contexto UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`).
 - Favicon atualizado para emoji de raio ⚡ em fundo azul-marinho, alinhado à identidade visual do site.
 
 ## Estado visual atual

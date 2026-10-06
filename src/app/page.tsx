@@ -144,7 +144,11 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="mt-10 grid max-w-2xl gap-3 text-sm text-slate-300 sm:grid-cols-2">
+            <p className="mt-4 text-sm font-semibold text-slate-400">
+              Atendimento direto pelo WhatsApp — sem formulário.
+            </p>
+
+            <div className="mt-8 grid max-w-2xl gap-3 text-sm text-slate-300 sm:grid-cols-2">
               {diferenciais.map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-emerald-400/10 text-emerald-300">
@@ -242,14 +246,14 @@ export default function Home() {
                 )}
               </article>
             ))}
+          </div>
           <div className="mt-8">
             <a
               href="/servicos-eletricos"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-white/10"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-white/10 sm:w-auto"
             >
               Ver todos os serviços elétricos <span aria-hidden="true">→</span>
             </a>
-          </div>
           </div>
         </div>
       </section>
