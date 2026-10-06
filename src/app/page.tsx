@@ -232,7 +232,7 @@ export default function Home() {
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                 <img
-                  src="/solar/antes-1.webp"
+                  src="/solar/antes-hq.webp"
                   alt="Placas solares antes da limpeza com sujeira acumulada"
                   loading="lazy"
                   decoding="async"
@@ -250,7 +250,7 @@ export default function Home() {
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                 <img
-                  src="/solar/depois-1.webp"
+                  src="/solar/depois-hq.webp"
                   alt="Placas solares depois da limpeza"
                   loading="lazy"
                   decoding="async"
