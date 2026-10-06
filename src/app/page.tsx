@@ -94,7 +94,7 @@ export default function Home() {
         <div className="pointer-events-none absolute -right-36 top-16 h-96 w-96 rounded-full bg-amber-400/10 blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-10 h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />
 
-        <div className="relative mx-auto grid min-h-[78vh] max-w-7xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.15fr_.85fr] lg:px-8 lg:py-24">
+        <div className="relative mx-auto grid min-h-[70vh] max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-[1.15fr_.85fr] lg:px-8 lg:py-20">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-bold text-amber-300">
               <span>⚡</span> Atendimento em Goiânia e região
@@ -179,7 +179,7 @@ export default function Home() {
       </section>
 
       <section id="servicos" className="border-y border-white/10 bg-[#0a1625]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
           <div className="max-w-3xl">
             <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
               Serviços
@@ -230,7 +230,7 @@ export default function Home() {
       </section>
 
       <section id="resultados" className="border-y border-white/10 bg-[#071321]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
@@ -290,151 +290,27 @@ export default function Home() {
             </figure>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <a
+              href="/limpeza-de-placas-solares"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+            >
+              Ver todos os resultados de limpeza <span aria-hidden="true">→</span>
+            </a>
             <a
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 rounded-xl bg-emerald-500 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+              className="inline-flex items-center justify-center gap-3 rounded-xl border border-white/15 bg-white/5 px-6 py-4 font-bold text-white transition hover:bg-white/10"
             >
               <span>💬</span>
-              Solicitar limpeza pelo WhatsApp
+              Solicitar orçamento
             </a>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#06101d]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
-              Mais resultados reais
-            </span>
-            <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
-              Outros antes e depois
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-slate-300">
-              Cada bloco abaixo mostra o mesmo sistema antes e depois da limpeza.
-              Todas as fotos são registros reais dos atendimentos.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-7 xl:grid-cols-2">
-            {[
-              {
-                caso: "Limpeza realizada 02",
-                antes: "/solar/caso-2-antes.webp",
-                depois: "/solar/caso-2-depois.webp",
-                posAntes: "50% 54%",
-                posDepois: "50% 45%",
-              },
-              {
-                caso: "Limpeza realizada 03",
-                antes: "/solar/caso-3-antes.webp",
-                depois: "/solar/caso-3-depois.webp",
-                posAntes: "50% 48%",
-                posDepois: "50% 48%",
-              },
-              {
-                caso: "Limpeza realizada 04",
-                antes: "/solar/caso-4-antes.webp",
-                depois: "/solar/caso-4-depois.webp",
-                posAntes: "50% 52%",
-                posDepois: "50% 50%",
-              },
-              {
-                caso: "Limpeza realizada 05",
-                antes: "/solar/caso-5-antes.webp",
-                depois: "/solar/caso-5-depois.webp",
-                posAntes: "50% 50%",
-                posDepois: "50% 50%",
-              },
-              {
-                caso: "Limpeza realizada 06",
-                antes: "/solar/caso-6-antes.webp",
-                depois: "/solar/caso-6-depois.webp",
-                posAntes: "50% 55%",
-                posDepois: "50% 45%",
-              },
-              {
-                caso: "Limpeza realizada 07",
-                antes: "/solar/caso-7-antes.webp",
-                depois: "/solar/caso-7-depois.webp",
-                posAntes: "50% 52%",
-                posDepois: "50% 48%",
-              },
-            ].map((item) => (
-              <article
-                key={item.caso}
-                className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]"
-              >
-                <div className="border-b border-white/10 px-5 py-4">
-                  <h3 className="font-extrabold text-white">{item.caso}</h3>
-                </div>
-
-                <div className="grid sm:grid-cols-2">
-                  <figure className="border-b border-white/10 sm:border-b-0 sm:border-r">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                      <img
-                        src={item.antes}
-                        alt={`${item.caso}: placas solares antes da limpeza`}
-                        loading="lazy"
-                        decoding="async"
-                        style={{ objectPosition: item.posAntes }}
-                        className="h-full w-full object-cover"
-                      />
-                      <span className="absolute left-3 top-3 rounded-full bg-slate-950/90 px-3 py-1.5 text-xs font-black text-amber-300">
-                        ANTES
-                      </span>
-                    </div>
-                    <figcaption className="border-t border-white/10 px-4 py-3 text-sm font-semibold text-slate-300">
-                      Antes da limpeza
-                    </figcaption>
-                  </figure>
-
-                  <figure>
-                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                      <img
-                        src={item.depois}
-                        alt={`${item.caso}: placas solares depois da limpeza`}
-                        loading="lazy"
-                        decoding="async"
-                        style={{ objectPosition: item.posDepois }}
-                        className="h-full w-full object-cover"
-                      />
-                      <span className="absolute left-3 top-3 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
-                        DEPOIS
-                      </span>
-                    </div>
-                    <figcaption className="border-t border-white/10 px-4 py-3 text-sm font-semibold text-slate-300">
-                      Após a limpeza
-                    </figcaption>
-                  </figure>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-amber-400/20 bg-amber-400/[0.06] p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="text-xl font-extrabold">Quer solicitar a limpeza do seu sistema?</h3>
-              <p className="mt-2 text-slate-300">
-                Fale pelo WhatsApp e envie fotos das suas placas para solicitar um orçamento.
-              </p>
-            </div>
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 rounded-xl bg-emerald-500 px-6 py-4 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
-            >
-              Solicitar orçamento pelo WhatsApp
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section id="regioes" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+      <section id="regioes" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
@@ -466,7 +342,7 @@ export default function Home() {
       </section>
 
       <section className="border-y border-white/10 bg-[#0a1625]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-3">
             {[
               ["1", "Explique o serviço", "Conte o que precisa ser instalado, revisado ou reparado."],
@@ -483,7 +359,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="orcamento" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+      <section id="orcamento" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[2rem] border border-amber-400/20 bg-gradient-to-br from-amber-400/15 via-white/[0.04] to-transparent p-8 sm:p-12">
           <div className="max-w-3xl">
             <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-300">
@@ -519,13 +395,13 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Solicitar orçamento pelo WhatsApp"
-        className="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-2xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-8 lg:right-8"
+        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-500 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-5 lg:right-5"
       >
         💬
       </a>
 
       <footer className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 pb-20 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:pb-8 sm:pr-24 lg:pl-8 lg:pr-28">
           <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
           <p className="text-left sm:text-right">Atendimento em Goiânia e região.</p>
         </div>
