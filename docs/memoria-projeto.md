@@ -241,6 +241,9 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- DNS do domínio principal propagado e certificado HTTPS confirmado como válido no Railway.
+- HSTS inicial habilitado com `max-age=86400`; ampliar depois que `www` também estiver com HTTPS válido.
+- Endpoint `/api/health` marcado com `X-Robots-Tag: noindex, nofollow` e `/api/` bloqueado no robots.txt.
 - Dependências estabilizadas: versões principais fixadas, Node 24.21.0, npm 11.19.0, TypeScript 6.0.2 e `package-lock.json` v3 versionado.
 - Auditoria identificou as 5 vulnerabilidades altas na cadeia de desenvolvimento/lint (`eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces`); todos esses pacotes aparecem como `dev: true` no lockfile. Não foi aplicado `npm audit fix --force` porque a correção sugerida exigia downgrade incompatível.
 - Lint final passou sem erros e sem warnings; imagens da home e da landing solar foram migradas para `next/image`.
