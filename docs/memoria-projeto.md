@@ -239,6 +239,10 @@ Dar preferência a:
 11. Adicionar fotos reais de serviços elétricos quando disponíveis.
 12. Só então iniciar Google Ads com orçamento controlado.
 
+## Atualizações recentes
+
+- Favicon atualizado para emoji de raio ⚡ em fundo azul-marinho, alinhado à identidade visual do site.
+
 ## Estado visual atual
 
 A identidade visual está consistente entre:
