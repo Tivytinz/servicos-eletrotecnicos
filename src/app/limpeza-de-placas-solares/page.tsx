@@ -24,6 +24,7 @@ const resultados = [
     depois: "/solar/caso-2-depois.webp",
     posAntes: "50% 54%",
     posDepois: "50% 45%",
+    fitDepois: "contain",
   },
   {
     titulo: "Limpeza realizada 03",
@@ -31,6 +32,7 @@ const resultados = [
     depois: "/solar/caso-3-depois.webp",
     posAntes: "50% 48%",
     posDepois: "50% 48%",
+    fitDepois: "contain",
   },
   {
     titulo: "Limpeza realizada 04",
@@ -52,6 +54,7 @@ const resultados = [
     depois: "/solar/caso-6-depois.webp",
     posAntes: "50% 55%",
     posDepois: "50% 45%",
+    fitDepois: "contain",
   },
   {
     titulo: "Limpeza realizada 07",
@@ -304,8 +307,11 @@ export default function LimpezaDePlacasSolares() {
                         alt={`${item.titulo}: placas solares depois da limpeza`}
                         loading="lazy"
                         decoding="async"
-                        style={{ objectPosition: item.posDepois }}
-                        className="h-full w-full object-cover"
+                        style={{
+                          objectPosition: item.posDepois,
+                          objectFit: item.fitDepois === "contain" ? "contain" : "cover",
+                        }}
+                        className="h-full w-full"
                       />
                       <span className="absolute left-3 top-3 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
                         DEPOIS
