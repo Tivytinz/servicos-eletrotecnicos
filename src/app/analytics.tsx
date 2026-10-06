@@ -41,7 +41,9 @@ function ensureGoogleTagQueue() {
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
   analyticsWindow.gtag =
     analyticsWindow.gtag ||
-    function gtag(..._args: unknown[]) {
+    function gtag() {
+      // Google gtag.js expects the function's arguments object in dataLayer.
+      // eslint-disable-next-line prefer-rest-params
       analyticsWindow.dataLayer?.push(arguments);
     };
 
