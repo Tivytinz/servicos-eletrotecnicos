@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Limpeza de Placas Solares em Goiânia e Região",
@@ -257,12 +258,13 @@ export default function LimpezaDePlacasSolares() {
             <div className="grid sm:grid-cols-2">
               <figure className="border-b border-white/10 sm:border-b-0 sm:border-r">
                 <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                  <img
+                  <Image
                     src="/solar/antes-hq.webp"
                     alt="Placas solares antes da limpeza"
-                    fetchPriority="high"
-                    decoding="async"
-                    className="h-full w-full object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover"
                   />
                   <span className="absolute left-4 top-4 rounded-full bg-slate-950/90 px-3 py-1.5 text-xs font-black text-amber-300">
                     ANTES
@@ -272,12 +274,13 @@ export default function LimpezaDePlacasSolares() {
 
               <figure>
                 <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                  <img
+                  <Image
                     src="/solar/depois-hq.webp"
                     alt="Placas solares depois da limpeza"
-                    fetchPriority="high"
-                    decoding="async"
-                    className="h-full w-full object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover"
                   />
                   <span className="absolute left-4 top-4 rounded-full bg-emerald-700 px-3 py-1.5 text-xs font-black text-white">
                     DEPOIS
@@ -358,13 +361,13 @@ export default function LimpezaDePlacasSolares() {
                 <div className="grid sm:grid-cols-2">
                   <figure className="border-b border-white/10 sm:border-b-0 sm:border-r">
                     <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
-                      <img
+                      <Image
                         src={item.antes}
                         alt={`${item.titulo}: placas solares antes da limpeza`}
-                        loading="lazy"
-                        decoding="async"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                         style={{ objectPosition: item.posAntes }}
-                        className="h-full w-full object-cover"
+                        className="object-cover"
                       />
                       <span className="absolute left-3 top-3 rounded-full bg-slate-950/90 px-3 py-1.5 text-xs font-black text-amber-300">
                         ANTES
@@ -379,25 +382,27 @@ export default function LimpezaDePlacasSolares() {
                     <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                       {item.fitDepois === "contain" && (
                         <>
-                          <img
+                          <Image
                             src={item.depois}
                             alt=""
                             aria-hidden="true"
-                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-35 blur-2xl"
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                            className="scale-110 object-cover opacity-35 blur-2xl"
                           />
                           <div className="absolute inset-0 bg-slate-950/25" />
                         </>
                       )}
-                      <img
+                      <Image
                         src={item.depois}
                         alt={`${item.titulo}: placas solares depois da limpeza`}
-                        loading="lazy"
-                        decoding="async"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                         style={{
                           objectPosition: item.posDepois,
                           objectFit: item.fitDepois === "contain" ? "contain" : "cover",
                         }}
-                        className="relative z-10 h-full w-full"
+                        className="z-10"
                       />
                       <span className="absolute left-3 top-3 z-20 rounded-full bg-emerald-700 px-3 py-1.5 text-xs font-black text-white">
                         DEPOIS
