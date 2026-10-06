@@ -191,7 +191,7 @@ export default function LimpezaDePlacasSolares() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-xl bg-emerald-500 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-emerald-400"
+              className="rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-emerald-800"
               aria-label="Pedir orçamento para limpeza de placas solares pelo WhatsApp"
             >
               <span className="sm:hidden">Orçamento</span>
@@ -226,7 +226,7 @@ export default function LimpezaDePlacasSolares() {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-center font-extrabold text-white shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:bg-emerald-400 sm:w-auto sm:min-w-[350px] sm:px-7 sm:whitespace-nowrap"
+                className="w-full rounded-xl bg-emerald-700 px-6 py-4 text-center font-extrabold text-white shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:bg-emerald-800 sm:w-auto sm:min-w-[350px] sm:px-7 sm:whitespace-nowrap"
               >
                 💬 Solicitar orçamento pelo WhatsApp
               </a>
@@ -278,7 +278,7 @@ export default function LimpezaDePlacasSolares() {
                     decoding="async"
                     className="h-full w-full object-cover"
                   />
-                  <span className="absolute left-4 top-4 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
+                  <span className="absolute left-4 top-4 rounded-full bg-emerald-700 px-3 py-1.5 text-xs font-black text-white">
                     DEPOIS
                   </span>
                 </div>
@@ -398,7 +398,7 @@ export default function LimpezaDePlacasSolares() {
                         }}
                         className="relative z-10 h-full w-full"
                       />
-                      <span className="absolute left-3 top-3 z-20 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
+                      <span className="absolute left-3 top-3 z-20 rounded-full bg-emerald-700 px-3 py-1.5 text-xs font-black text-white">
                         DEPOIS
                       </span>
                     </div>
@@ -416,7 +416,7 @@ export default function LimpezaDePlacasSolares() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded-xl bg-emerald-500 px-7 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+              className="inline-flex rounded-xl bg-emerald-700 px-7 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800"
             >
               Enviar fotos e pedir orçamento
             </a>
@@ -520,7 +520,7 @@ export default function LimpezaDePlacasSolares() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 px-7 py-4 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400 sm:w-auto"
+              className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-emerald-700 px-7 py-4 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800 sm:w-auto"
             >
               💬 Enviar fotos e pedir orçamento
             </a>
@@ -536,7 +536,7 @@ export default function LimpezaDePlacasSolares() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Solicitar limpeza de placas solares pelo WhatsApp"
-        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-500 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-5 lg:right-5"
+        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-700 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-800 lg:bottom-5 lg:right-5"
       >
         💬
       </a>
