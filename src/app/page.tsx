@@ -209,50 +209,60 @@ export default function Home() {
       <section className="border-y border-white/10 bg-[#071321]">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="max-w-3xl">
-            <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
-              Resultado real
-            </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
+                Serviço realizado
+              </span>
+              <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
+                Fotos reais do atendimento
+              </span>
+            </div>
             <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
               Antes e depois da limpeza de placas solares
             </h2>
             <p className="mt-5 text-lg leading-8 text-slate-300">
-              Fotos reais de um serviço de limpeza em sistema fotovoltaico. A
-              remoção periódica de poeira e sujeira faz parte dos cuidados de
-              manutenção dos módulos solares.
+              Comparação real de um serviço de limpeza em sistema fotovoltaico.
+              Poeira, resíduos e sujeira acumulada podem reduzir a passagem de luz
+              até as células. A limpeza periódica ajuda a manter os módulos em boas
+              condições de operação.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-2">
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                 <img
                   src="/solar/antes-1.webp"
                   alt="Placas solares antes da limpeza com sujeira acumulada"
-                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover object-center"
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-slate-950/90 px-4 py-2 text-sm font-black text-amber-300">
                   ANTES
                 </span>
               </div>
               <figcaption className="p-5 leading-7 text-slate-300">
-                Módulos com sujeira acumulada antes do serviço de limpeza.
+                Antes: módulos com camada visível de poeira e sujeira acumulada.
               </figcaption>
             </figure>
 
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                 <img
                   src="/solar/depois-1.webp"
                   alt="Placas solares depois da limpeza"
-                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover object-center"
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-emerald-500 px-4 py-2 text-sm font-black text-white">
                   DEPOIS
                 </span>
               </div>
               <figcaption className="p-5 leading-7 text-slate-300">
-                Resultado após a limpeza, com a superfície dos módulos limpa e
-                novamente visível.
+                Depois: superfície dos módulos limpa, com o vidro novamente visível
+                e uniforme.
               </figcaption>
             </figure>
           </div>
