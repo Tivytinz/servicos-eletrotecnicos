@@ -241,6 +241,10 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Dependências estabilizadas: versões principais fixadas, Node 24.21.0, npm 11.19.0, TypeScript 6.0.2 e `package-lock.json` v3 versionado.
+- Auditoria identificou as 5 vulnerabilidades altas na cadeia de desenvolvimento/lint (`eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces`); todos esses pacotes aparecem como `dev: true` no lockfile. Não foi aplicado `npm audit fix --force` porque a correção sugerida exigia downgrade incompatível.
+- Lint final passou sem erros e sem warnings; imagens da home e da landing solar foram migradas para `next/image`.
+- Deploy final validado com build, healthcheck `/api/health` e inicialização do Next.js com sucesso.
 - Auditoria de dependências: o build atual reportou 5 vulnerabilidades de severidade alta no conjunto instalado. A origem exata ainda precisa ser identificada; não aplicar `npm audit fix --force` sem revisão.
 - Railway confirmado em Node 24.21.0, com healthcheck `/api/health` funcionando e watch patterns configurados para evitar deploys causados apenas por alterações em `docs/`.
 - O build também sinalizou `eslint@9.39.5` como versão não suportada; atualizar junto da estabilização das dependências.
