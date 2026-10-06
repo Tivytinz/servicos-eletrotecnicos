@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade",
@@ -14,20 +15,20 @@ export default function PoliticaDePrivacidade() {
     <main className="min-h-screen bg-[#06101d] text-white">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-          <a href="/" className="flex items-center gap-3 font-black tracking-tight">
+          <Link href="/" className="flex items-center gap-3 font-black tracking-tight">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-400 text-xl text-slate-950">
               ⚡
             </span>
             <span>
               Eletrotécnico <span className="text-amber-400">GO</span>
             </span>
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="text-sm font-semibold text-slate-300 transition hover:text-white"
           >
             Voltar ao site
-          </a>
+          </Link>
         </div>
       </header>
 
@@ -116,12 +117,12 @@ export default function PoliticaDePrivacidade() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8">
-          <a
+          <Link
             href="/"
             className="inline-flex rounded-xl border border-white/15 bg-white/5 px-5 py-3 font-bold transition hover:bg-white/10"
           >
             ← Voltar para a página inicial
-          </a>
+          </Link>
         </div>
       </article>
     </main>
