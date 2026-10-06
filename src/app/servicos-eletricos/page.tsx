@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Serviços Elétricos em Goiânia e Região",
@@ -134,14 +135,14 @@ export default function ServicosEletricos() {
 
       <header className="border-b border-white/10 bg-[#06101d]/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
-          <a href="/" className="flex items-center gap-3 font-black tracking-tight">
+          <Link href="/" className="flex items-center gap-3 font-black tracking-tight">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-400 text-xl text-slate-950">
               ⚡
             </span>
             <span className="text-lg">
               Eletrotécnico <span className="text-amber-400">GO</span>
             </span>
-          </a>
+          </Link>
           <a
             href={whatsappLink}
             target="_blank"
@@ -350,9 +351,9 @@ export default function ServicosEletricos() {
             <a className="transition hover:text-white" href="/politica-de-privacidade">
               Política de Privacidade
             </a>
-            <a className="transition hover:text-white" href="/">
+            <Link className="transition hover:text-white" href="/">
               Página inicial
-            </a>
+            </Link>
           </div>
         </div>
       </footer>
