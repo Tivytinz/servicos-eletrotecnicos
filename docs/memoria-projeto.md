@@ -241,6 +241,8 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Auditoria final de produção realizada em 06/10/2026: contraste de CTAs corrigido, healthcheck do Railway adicionado, restart policy configurada e runtime movido para Node 24 LTS.
+- Relatório completo: `docs/auditoria-producao.md`.
 - Revisão de conversão/mobile: CTAs principais agora ocupam a largura disponível em telas pequenas quando necessário.
 - Corrigido o posicionamento do botão "Ver todos os serviços elétricos" na grade da home.
 - Landing de serviços elétricos recebeu sinais de confiança: atendimento local, residencial/comercial e orçamento direto.
