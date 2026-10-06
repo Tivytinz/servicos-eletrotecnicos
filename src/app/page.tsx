@@ -232,11 +232,13 @@ export default function Home() {
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                 <img
-                  src="/solar/antes-1.webp"
+                  src="/solar/antes-limpeza-original.jpg"
                   alt="Placas solares antes da limpeza com sujeira acumulada"
+                  width={1600}
+                  height={1200}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-cover object-center [image-rendering:auto]"
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-slate-950/90 px-4 py-2 text-sm font-black text-amber-300">
                   ANTES
@@ -250,11 +252,13 @@ export default function Home() {
             <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                 <img
-                  src="/solar/depois-1.webp"
+                  src="/solar/depois-limpeza-original.jpg"
                   alt="Placas solares depois da limpeza"
+                  width={1600}
+                  height={1200}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-cover object-center [image-rendering:auto]"
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-emerald-500 px-4 py-2 text-sm font-black text-white">
                   DEPOIS
