@@ -220,7 +220,7 @@ export default function Home() {
                 key={servico.titulo}
                 className={
                   servico.destaque
-                    ? "group rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.06] p-6 ring-1 ring-emerald-400/10 transition hover:-translate-y-1 hover:border-emerald-300/50 hover:bg-emerald-400/[0.09]"
+                    ? "group rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.06] p-6 ring-1 ring-emerald-400/10 transition hover:-translate-y-1 hover:border-emerald-300/50 hover:bg-emerald-800/[0.09]"
                     : "group rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-400/30 hover:bg-white/[0.07]"
                 }
               >
@@ -308,7 +308,7 @@ export default function Home() {
                   decoding="async"
                   className="h-full w-full object-cover object-center"
                 />
-                <span className="absolute left-4 top-4 rounded-full bg-emerald-500 px-4 py-2 text-sm font-black text-white">
+                <span className="absolute left-4 top-4 rounded-full bg-emerald-700 px-4 py-2 text-sm font-black text-white">
                   DEPOIS
                 </span>
               </div>
@@ -322,7 +322,7 @@ export default function Home() {
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <a
               href="/limpeza-de-placas-solares"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800"
             >
               Ver todos os resultados de limpeza <span aria-hidden="true">→</span>
             </a>
@@ -406,7 +406,7 @@ export default function Home() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-3 rounded-xl bg-emerald-500 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+              className="mt-8 inline-flex items-center gap-3 rounded-xl bg-emerald-700 px-6 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800"
             >
               <span>💬</span>
               Chamar no WhatsApp
@@ -424,7 +424,7 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Solicitar orçamento pelo WhatsApp"
-        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-500 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-5 lg:right-5"
+        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-700 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-800 lg:bottom-5 lg:right-5"
       >
         💬
       </a>
