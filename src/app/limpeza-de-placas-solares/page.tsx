@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Limpeza de Placas Solares em Goiânia e Região | Eletrotécnico GO",
+  title: "Limpeza de Placas Solares em Goiânia e Região",
   description:
     "Limpeza de placas solares em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Veja resultados reais e solicite orçamento pelo WhatsApp.",
   alternates: {
