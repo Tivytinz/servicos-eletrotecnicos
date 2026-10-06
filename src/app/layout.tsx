@@ -5,8 +5,8 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://eletrotecnicogo.com.br"),
   title: {
-    default: "Eletrotécnico em Goiânia e Região | Eletrotécnico GO",
-    template: "%s | Eletrotécnico GO",
+    default: "Eletrotécnico em Goiânia e Região | Fase Plena Elétrica",
+    template: "%s | Fase Plena Elétrica",
   },
   description:
     "Serviços eletrotécnicos em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Instalação, manutenção elétrica, energia solar e limpeza de placas solares.",
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: "https://eletrotecnicogo.com.br",
-    siteName: "Eletrotécnico GO",
-    title: "Eletrotécnico em Goiânia e Região | Eletrotécnico GO",
+    siteName: "Fase Plena Elétrica",
+    title: "Eletrotécnico em Goiânia e Região | Fase Plena Elétrica",
     description:
       "Serviços elétricos, manutenção e energia solar em Goiânia e cidades da região.",
     images: [
@@ -34,13 +34,13 @@ export const metadata: Metadata = {
         url: "/solar/depois-hq.webp",
         width: 1200,
         height: 900,
-        alt: "Serviço de limpeza de placas solares realizado pelo Eletrotécnico GO",
+        alt: "Serviço de limpeza de placas solares realizado pelo Fase Plena Elétrica",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Eletrotécnico em Goiânia e Região | Eletrotécnico GO",
+    title: "Eletrotécnico em Goiânia e Região | Fase Plena Elétrica",
     description:
       "Serviços elétricos, manutenção e energia solar em Goiânia e cidades da região.",
     images: ["/solar/depois-hq.webp"],
