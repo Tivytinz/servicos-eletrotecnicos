@@ -18,14 +18,11 @@ export default function Icon() {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 14,
-          background: "#fbbf24",
-          color: "#06101d",
-          fontSize: 38,
-          fontWeight: 900,
-          letterSpacing: -2,
+          background: "#06101d",
+          fontSize: 40,
         }}
       >
-        E
+        ⚡
       </div>
     ),
     {
