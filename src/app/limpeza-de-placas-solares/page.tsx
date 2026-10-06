@@ -153,7 +153,7 @@ export default function LimpezaDePlacasSolares() {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl bg-emerald-500 px-7 py-4 text-center font-extrabold text-white shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+                className="whitespace-nowrap rounded-xl bg-emerald-500 px-7 py-4 text-center font-extrabold text-white shadow-lg shadow-emerald-500/10 transition hover:-translate-y-0.5 hover:bg-emerald-400 sm:min-w-[350px]"
               >
                 💬 Solicitar orçamento pelo WhatsApp
               </a>
@@ -165,7 +165,7 @@ export default function LimpezaDePlacasSolares() {
               </a>
             </div>
 
-            <div className="mt-9 flex flex-wrap gap-3 text-sm font-semibold text-slate-300">
+            <div className="mt-7 flex flex-wrap gap-3 text-sm font-semibold text-slate-300">
               {["Fotos reais", "Atendimento local", "Orçamento direto"].map(
                 (item) => (
                   <span
@@ -218,7 +218,7 @@ export default function LimpezaDePlacasSolares() {
       </section>
 
       <section className="bg-[#0a1625]">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="grid gap-5 md:grid-cols-3">
             {[
               [
