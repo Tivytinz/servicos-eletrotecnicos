@@ -28,7 +28,7 @@ O lançamento público ainda depende da conclusão do DNS/HTTPS do domínio prin
 | Imagens | Aprovado | 14 imagens solares referenciadas e presentes no repositório |
 | Mobile | Aprovado | CTAs responsivos e proteção contra overflow implementados |
 | Segurança HTTP | Parcial | Headers básicos presentes; HSTS/CSP ficam para depois do HTTPS |
-| Dependências | Atenção alta | O install reportou 5 vulnerabilidades de severidade alta; falta identificar os pacotes exatos. Também falta lockfile e ainda existem versões `latest` |
+| Dependências | Monitorar | Versões principais fixadas e `package-lock.json` criado. As 5 vulnerabilidades altas foram identificadas na cadeia de lint/dev (`eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces`) |
 | CI | Atenção | Não há pipeline separado executando lint + build em PRs |
 | Monitoramento externo | Atenção | Railway healthcheck cobre deploy; falta uptime monitor contínuo |
 
@@ -42,8 +42,12 @@ O lançamento público ainda depende da conclusão do DNS/HTTPS do domínio prin
 - Runtime atualizado de Node 20 para Node 24 LTS e confirmado em produção com Node 24.21.0.
 - Healthcheck `/api/health` confirmado com sucesso no Railway.
 - Watch patterns configurados no Railway para evitar deploy em alterações somente de documentação.
-- O `npm install` do build reportou 5 vulnerabilidades de severidade alta. A origem exata ainda precisa ser identificada antes de considerar a auditoria de dependências encerrada.
-- O build também reportou aviso de `eslint@9.39.5` como versão não suportada.
+- As 5 vulnerabilidades altas foram identificadas. Todos os pacotes afetados aparecem com `dev: true` no lockfile e pertencem à cadeia de lint: `eslint-config-next`, `@next/eslint-plugin-next`, `fast-glob`, `micromatch` e `braces`.
+- O alerta raiz é associado ao `braces@3.0.3` usado por essa cadeia de desenvolvimento. O npm sugere uma mudança incompatível para `eslint-config-next@14.2.35`; por isso não foi aplicado `npm audit fix --force`.
+- O build reporta aviso de suporte do `eslint@9.39.5`; ESLint 10 foi testado e mostrou incompatibilidade com o plugin React usado pelo conjunto atual do Next.js, então foi mantida a versão 9 compatível.
+- TypeScript foi fixado em 6.0.2 porque TypeScript 7 ainda não era suportado pelo `typescript-eslint` usado nessa configuração.
+- `package-lock.json` v3 foi criado e validado contra as dependências declaradas.
+- O lint final passou sem erros e sem warnings após migração das imagens para `next/image` e correção dos links internos/consentimento.
 
 ## Pontos fortes atuais
 
@@ -70,12 +74,9 @@ O lançamento público ainda depende da conclusão do DNS/HTTPS do domínio prin
 5. Finalizar o `www` e confirmar o redirect.
 
 ### Alta prioridade
-1. Identificar exatamente as 5 vulnerabilidades altas reportadas pelo npm e corrigir sem usar `npm audit fix --force` às cegas.
-2. Criar e versionar `package-lock.json`.
-3. Substituir versões `latest` por versões controladas.
-4. Atualizar a versão do ESLint para uma versão suportada e compatível com o projeto.
-5. Executar `npm run lint` em CI.
-6. Criar workflow que valide lint + build antes de mudanças chegarem à produção.
+1. Monitorar uma atualização compatível do toolchain do Next/ESLint que elimine a cadeia vulnerável sem downgrade do Next.js.
+2. Manter `package-lock.json` versionado e revisar mudanças de dependências antes de atualizar.
+3. Criar workflow no GitHub Actions para validar lint + build antes de mudanças chegarem à produção (a criação automática do workflow não foi permitida pela integração atual).
 
 ### Após HTTPS
 1. Adicionar HSTS.
@@ -93,4 +94,4 @@ O site está próximo de produção e não foram encontrados erros de aplicaçã
 
 O principal impedimento atual é externo ao código: propagação DNS e emissão do certificado HTTPS.
 
-Após resolver DNS/HTTPS e a reprodutibilidade das dependências, o projeto pode ser considerado pronto para receber tráfego pago com risco operacional baixo.
+A reprodutibilidade das dependências foi concluída e o lint/build final passou com healthcheck. O bloqueador restante para lançamento público continua sendo DNS/HTTPS. A cadeia vulnerável identificada está em dependências de desenvolvimento e deve permanecer monitorada até existir atualização compatível.
