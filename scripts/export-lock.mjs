@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 const content = readFileSync("package-lock.json", "utf8");
-const chunkSize = 7000;
+const chunkSize = 2500;
 const count = Math.ceil(content.length / chunkSize);
 
 for (let index = 0; index < count; index += 1) {
