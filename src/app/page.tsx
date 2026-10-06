@@ -36,6 +36,7 @@ const servicos = [
     texto:
       "Limpeza técnica de módulos fotovoltaicos para ajudar a manter o desempenho do sistema.",
     icone: "🧼",
+    destaque: true,
   },
   {
     titulo: "Inspeção elétrica",
@@ -196,13 +197,32 @@ export default function Home() {
             {servicos.map((servico) => (
               <article
                 key={servico.titulo}
-                className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-400/30 hover:bg-white/[0.07]"
+                className={
+                  servico.destaque
+                    ? "group rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.06] p-6 ring-1 ring-emerald-400/10 transition hover:-translate-y-1 hover:border-emerald-300/50 hover:bg-emerald-400/[0.09]"
+                    : "group rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-400/30 hover:bg-white/[0.07]"
+                }
               >
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-amber-400/10 text-2xl">
-                  {servico.icone}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-amber-400/10 text-2xl">
+                    {servico.icone}
+                  </div>
+                  {servico.destaque && (
+                    <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
+                      Serviço em destaque
+                    </span>
+                  )}
                 </div>
                 <h3 className="mt-5 text-xl font-extrabold">{servico.titulo}</h3>
                 <p className="mt-3 leading-7 text-slate-300">{servico.texto}</p>
+                {servico.destaque && (
+                  <a
+                    href="#resultados"
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-emerald-300 transition hover:text-emerald-200"
+                  >
+                    Ver resultados reais <span aria-hidden="true">→</span>
+                  </a>
+                )}
               </article>
             ))}
           </div>
@@ -302,45 +322,54 @@ export default function Home() {
           <div className="mt-12 grid gap-7 xl:grid-cols-2">
             {[
               {
-                caso: "Caso 2",
+                caso: "Limpeza realizada 02",
                 antes: "/solar/caso-2-antes.webp",
                 depois: "/solar/caso-2-depois.webp",
+                posAntes: "50% 54%",
+                posDepois: "50% 45%",
               },
               {
-                caso: "Caso 3",
+                caso: "Limpeza realizada 03",
                 antes: "/solar/caso-3-antes.webp",
                 depois: "/solar/caso-3-depois.webp",
+                posAntes: "50% 48%",
+                posDepois: "50% 48%",
               },
               {
-                caso: "Caso 4",
+                caso: "Limpeza realizada 04",
                 antes: "/solar/caso-4-antes.webp",
                 depois: "/solar/caso-4-depois.webp",
+                posAntes: "50% 52%",
+                posDepois: "50% 50%",
               },
               {
-                caso: "Caso 5",
+                caso: "Limpeza realizada 05",
                 antes: "/solar/caso-5-antes.webp",
                 depois: "/solar/caso-5-depois.webp",
+                posAntes: "50% 50%",
+                posDepois: "50% 50%",
               },
               {
-                caso: "Caso 6",
+                caso: "Limpeza realizada 06",
                 antes: "/solar/caso-6-antes.webp",
                 depois: "/solar/caso-6-depois.webp",
+                posAntes: "50% 55%",
+                posDepois: "50% 45%",
               },
               {
-                caso: "Caso 7",
+                caso: "Limpeza realizada 07",
                 antes: "/solar/caso-7-antes.webp",
                 depois: "/solar/caso-7-depois.webp",
+                posAntes: "50% 52%",
+                posDepois: "50% 48%",
               },
             ].map((item) => (
               <article
                 key={item.caso}
                 className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]"
               >
-                <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                <div className="border-b border-white/10 px-5 py-4">
                   <h3 className="font-extrabold text-white">{item.caso}</h3>
-                  <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
-                    Fotos reais
-                  </span>
                 </div>
 
                 <div className="grid sm:grid-cols-2">
@@ -351,12 +380,16 @@ export default function Home() {
                         alt={`${item.caso}: placas solares antes da limpeza`}
                         loading="lazy"
                         decoding="async"
+                        style={{ objectPosition: item.posAntes }}
                         className="h-full w-full object-cover"
                       />
                       <span className="absolute left-3 top-3 rounded-full bg-slate-950/90 px-3 py-1.5 text-xs font-black text-amber-300">
                         ANTES
                       </span>
                     </div>
+                    <figcaption className="border-t border-white/10 px-4 py-3 text-sm font-semibold text-slate-300">
+                      Antes da limpeza
+                    </figcaption>
                   </figure>
 
                   <figure>
@@ -366,12 +399,16 @@ export default function Home() {
                         alt={`${item.caso}: placas solares depois da limpeza`}
                         loading="lazy"
                         decoding="async"
+                        style={{ objectPosition: item.posDepois }}
                         className="h-full w-full object-cover"
                       />
                       <span className="absolute left-3 top-3 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
                         DEPOIS
                       </span>
                     </div>
+                    <figcaption className="border-t border-white/10 px-4 py-3 text-sm font-semibold text-slate-300">
+                      Após a limpeza
+                    </figcaption>
                   </figure>
                 </div>
               </article>
@@ -391,7 +428,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="shrink-0 rounded-xl bg-emerald-500 px-6 py-4 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
             >
-              Solicitar orçamento
+              Solicitar orçamento pelo WhatsApp
             </a>
           </div>
         </div>
@@ -482,7 +519,7 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Solicitar orçamento pelo WhatsApp"
-        className="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-2xl shadow-2xl shadow-black/40 transition hover:-translate-y-1 hover:bg-emerald-400"
+        className="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-2xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-8 lg:right-8"
       >
         💬
       </a>
