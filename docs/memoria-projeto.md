@@ -241,6 +241,10 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Auditoria de dependências: o build atual reportou 5 vulnerabilidades de severidade alta no conjunto instalado. A origem exata ainda precisa ser identificada; não aplicar `npm audit fix --force` sem revisão.
+- Railway confirmado em Node 24.21.0, com healthcheck `/api/health` funcionando e watch patterns configurados para evitar deploys causados apenas por alterações em `docs/`.
+- O build também sinalizou `eslint@9.39.5` como versão não suportada; atualizar junto da estabilização das dependências.
+
 - Auditoria final de produção realizada em 06/10/2026: contraste de CTAs corrigido, healthcheck do Railway adicionado, restart policy configurada e runtime movido para Node 24 LTS.
 - Relatório completo: `docs/auditoria-producao.md`.
 - Revisão de conversão/mobile: CTAs principais agora ocupam a largura disponível em telas pequenas quando necessário.
