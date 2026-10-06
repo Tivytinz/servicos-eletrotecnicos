@@ -7,6 +7,29 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/limpeza-de-placas-solares",
   },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/limpeza-de-placas-solares",
+    title: "Limpeza de Placas Solares em Goiânia e Região",
+    description:
+      "Veja resultados reais de limpeza de placas solares e solicite orçamento pelo WhatsApp.",
+    images: [
+      {
+        url: "/solar/depois-hq.webp",
+        width: 1200,
+        height: 900,
+        alt: "Placas solares após limpeza",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Limpeza de Placas Solares em Goiânia e Região",
+    description:
+      "Resultados reais de limpeza de placas solares em Goiânia e cidades da região.",
+    images: ["/solar/depois-hq.webp"],
+  },
 };
 
 const cidades = [
@@ -189,6 +212,8 @@ export default function LimpezaDePlacasSolares() {
                   <img
                     src="/solar/antes-hq.webp"
                     alt="Placas solares antes da limpeza"
+                    fetchPriority="high"
+                    decoding="async"
                     className="h-full w-full object-cover"
                   />
                   <span className="absolute left-4 top-4 rounded-full bg-slate-950/90 px-3 py-1.5 text-xs font-black text-amber-300">
@@ -202,6 +227,8 @@ export default function LimpezaDePlacasSolares() {
                   <img
                     src="/solar/depois-hq.webp"
                     alt="Placas solares depois da limpeza"
+                    fetchPriority="high"
+                    decoding="async"
                     className="h-full w-full object-cover"
                   />
                   <span className="absolute left-4 top-4 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
