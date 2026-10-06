@@ -333,7 +333,7 @@ export default function LimpezaDePlacasSolares() {
               rel="noopener noreferrer"
               className="inline-flex rounded-xl bg-emerald-500 px-7 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
             >
-              Solicitar limpeza pelo WhatsApp
+              Enviar fotos e pedir orçamento
             </a>
           </div>
         </div>
@@ -388,7 +388,7 @@ export default function LimpezaDePlacasSolares() {
               rel="noopener noreferrer"
               className="mt-8 inline-flex items-center gap-3 rounded-xl bg-emerald-500 px-7 py-4 font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
             >
-              💬 Falar agora pelo WhatsApp
+              💬 Enviar fotos e pedir orçamento
             </a>
             <p className="mt-4 text-sm text-slate-400">
               WhatsApp: (62) 99326-5087
@@ -402,7 +402,7 @@ export default function LimpezaDePlacasSolares() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Solicitar limpeza de placas solares pelo WhatsApp"
-        className="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-2xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-8 lg:right-8"
+        className="fixed bottom-4 right-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-emerald-500 text-xl shadow-2xl shadow-black/40 ring-4 ring-[#06101d] transition hover:-translate-y-1 hover:bg-emerald-400 lg:bottom-5 lg:right-5"
       >
         💬
       </a>
