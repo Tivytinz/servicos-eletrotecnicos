@@ -76,6 +76,9 @@ export default function Home() {
             <a className="transition hover:text-white" href="#servicos">
               Serviços
             </a>
+            <a className="transition hover:text-white" href="#resultados">
+              Resultados
+            </a>
             <a className="transition hover:text-white" href="#regioes">
               Regiões
             </a>
@@ -206,7 +209,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-[#071321]">
+      <section id="resultados" className="border-y border-white/10 bg-[#071321]">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
@@ -276,6 +279,75 @@ export default function Home() {
             >
               <span>💬</span>
               Solicitar limpeza pelo WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#06101d]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
+                Galeria real
+              </span>
+              <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+                Outros serviços realizados
+              </h2>
+              <p className="mt-5 text-lg leading-8 text-slate-300">
+                Mais registros reais de atendimentos em sistemas fotovoltaicos.
+                As imagens foram otimizadas para o site sem alterar o conteúdo
+                original das fotos.
+              </p>
+            </div>
+            <span className="w-fit rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-slate-300">
+              6 fotos reais
+            </span>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {[
+              ["/solar/galeria-1.webp", "Registro real de serviço em placas solares"],
+              ["/solar/galeria-2.webp", "Sistema fotovoltaico após atendimento"],
+              ["/solar/galeria-3.webp", "Registro de módulos fotovoltaicos em telhado"],
+              ["/solar/galeria-4.webp", "Placas solares em serviço realizado"],
+              ["/solar/galeria-5.webp", "Atendimento real em sistema de energia solar"],
+              ["/solar/galeria-6.webp", "Registro real de manutenção em placas solares"],
+            ].map(([src, alt], index) => (
+              <figure
+                key={src}
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
+                  <img
+                    src={src}
+                    alt={alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]"
+                  />
+                  <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-slate-950/80 px-3 py-1.5 text-xs font-black text-white backdrop-blur">
+                    FOTO REAL {index + 1}
+                  </span>
+                </div>
+              </figure>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-amber-400/20 bg-amber-400/[0.06] p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-xl font-extrabold">Quer cuidar do seu sistema solar?</h3>
+              <p className="mt-2 text-slate-300">
+                Envie uma mensagem e solicite uma avaliação ou orçamento.
+              </p>
+            </div>
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 rounded-xl bg-emerald-500 px-6 py-4 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-emerald-400"
+            >
+              Falar no WhatsApp
             </a>
           </div>
         </div>
