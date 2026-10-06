@@ -28,7 +28,7 @@ O lançamento público ainda depende da conclusão do DNS/HTTPS do domínio prin
 | Imagens | Aprovado | 14 imagens solares referenciadas e presentes no repositório |
 | Mobile | Aprovado | CTAs responsivos e proteção contra overflow implementados |
 | Segurança HTTP | Parcial | Headers básicos presentes; HSTS/CSP ficam para depois do HTTPS |
-| Dependências | Atenção | Falta lockfile e ainda existem versões `latest` |
+| Dependências | Atenção alta | O install reportou 5 vulnerabilidades de severidade alta; falta identificar os pacotes exatos. Também falta lockfile e ainda existem versões `latest` |
 | CI | Atenção | Não há pipeline separado executando lint + build em PRs |
 | Monitoramento externo | Atenção | Railway healthcheck cobre deploy; falta uptime monitor contínuo |
 
@@ -39,7 +39,11 @@ O lançamento público ainda depende da conclusão do DNS/HTTPS do domínio prin
 - Railway configurado com healthcheck em `/api/health`.
 - Timeout de healthcheck configurado em 30 segundos.
 - Restart policy configurada como `ON_FAILURE`, com até 3 tentativas.
-- Runtime atualizado de Node 20 para Node 24 LTS.
+- Runtime atualizado de Node 20 para Node 24 LTS e confirmado em produção com Node 24.21.0.
+- Healthcheck `/api/health` confirmado com sucesso no Railway.
+- Watch patterns configurados no Railway para evitar deploy em alterações somente de documentação.
+- O `npm install` do build reportou 5 vulnerabilidades de severidade alta. A origem exata ainda precisa ser identificada antes de considerar a auditoria de dependências encerrada.
+- O build também reportou aviso de `eslint@9.39.5` como versão não suportada.
 
 ## Pontos fortes atuais
 
@@ -66,10 +70,12 @@ O lançamento público ainda depende da conclusão do DNS/HTTPS do domínio prin
 5. Finalizar o `www` e confirmar o redirect.
 
 ### Alta prioridade
-1. Criar e versionar `package-lock.json`.
-2. Substituir versões `latest` por versões controladas.
-3. Executar `npm run lint` em CI.
-4. Criar workflow que valide lint + build antes de mudanças chegarem à produção.
+1. Identificar exatamente as 5 vulnerabilidades altas reportadas pelo npm e corrigir sem usar `npm audit fix --force` às cegas.
+2. Criar e versionar `package-lock.json`.
+3. Substituir versões `latest` por versões controladas.
+4. Atualizar a versão do ESLint para uma versão suportada e compatível com o projeto.
+5. Executar `npm run lint` em CI.
+6. Criar workflow que valide lint + build antes de mudanças chegarem à produção.
 
 ### Após HTTPS
 1. Adicionar HSTS.
