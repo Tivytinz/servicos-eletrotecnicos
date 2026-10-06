@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Eletrotécnico GO",
-    short_name: "Eletrotécnico GO",
+    name: "Fase Plena Elétrica",
+    short_name: "Fase Plena Elétrica",
     description:
       "Serviços eletrotécnicos e limpeza de placas solares em Goiânia e região.",
     start_url: "/",
