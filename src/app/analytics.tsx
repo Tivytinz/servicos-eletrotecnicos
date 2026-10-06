@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useSyncExternalStore } from "react";
 
 type ConsentState = "accepted" | "rejected" | null;
 
@@ -11,6 +12,27 @@ type AnalyticsWindow = Window & {
 
 const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const consentKey = "eletrotecnico_go_analytics_consent";
+const consentChangeEvent = "eletrotecnico_go_consent_change";
+
+function readConsent(): ConsentState {
+  if (typeof window === "undefined") return null;
+  const saved = window.localStorage.getItem(consentKey);
+  return saved === "accepted" || saved === "rejected" ? saved : null;
+}
+
+function subscribeConsent(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(consentChangeEvent, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(consentChangeEvent, callback);
+  };
+}
+
+function writeConsent(value: Exclude<ConsentState, null>) {
+  window.localStorage.setItem(consentKey, value);
+  window.dispatchEvent(new Event(consentChangeEvent));
+}
 
 function loadGoogleAnalytics() {
   if (!measurementId || typeof window === "undefined") return;
@@ -46,21 +68,17 @@ function loadGoogleAnalytics() {
 }
 
 export default function Analytics() {
-  const [consent, setConsent] = useState<ConsentState>(null);
-  const [ready, setReady] = useState(false);
+  const consent = useSyncExternalStore(
+    subscribeConsent,
+    readConsent,
+    () => null,
+  );
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(consentKey);
-    const initialConsent: ConsentState =
-      saved === "accepted" || saved === "rejected" ? saved : null;
-
-    setConsent(initialConsent);
-    setReady(true);
-
-    if (initialConsent === "accepted") {
+    if (consent === "accepted") {
       loadGoogleAnalytics();
     }
-  }, []);
+  }, [consent]);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -115,18 +133,10 @@ export default function Analytics() {
     return () => document.removeEventListener("click", onClick, true);
   }, []);
 
-  if (!measurementId || !ready || consent !== null) return null;
+  if (!measurementId || consent !== null) return null;
 
-  const accept = () => {
-    window.localStorage.setItem(consentKey, "accepted");
-    setConsent("accepted");
-    loadGoogleAnalytics();
-  };
-
-  const reject = () => {
-    window.localStorage.setItem(consentKey, "rejected");
-    setConsent("rejected");
-  };
+  const accept = () => writeConsent("accepted");
+  const reject = () => writeConsent("rejected");
 
   return (
     <aside
@@ -140,12 +150,12 @@ export default function Analytics() {
             Podemos usar o Google Analytics para entender visitas e cliques no
             WhatsApp. Você pode aceitar ou continuar sem essa medição. Consulte
             nossa{" "}
-            <a
+            <Link
               href="/politica-de-privacidade"
               className="font-semibold text-amber-300 underline underline-offset-2"
             >
               Política de Privacidade
-            </a>
+            </Link>
             .
           </p>
         </div>
