@@ -40,6 +40,34 @@ const cidades = [
   "Trindade",
 ];
 
+const faq = [
+  {
+    pergunta: "Como solicito um orçamento para limpeza?",
+    resposta:
+      "Envie uma mensagem pelo WhatsApp e, se possível, fotos do sistema. Com essas informações conseguimos entender melhor o atendimento antes do agendamento.",
+  },
+  {
+    pergunta: "Vocês atendem residências e empresas?",
+    resposta:
+      "Sim. A limpeza de módulos fotovoltaicos é oferecida para sistemas residenciais, comerciais e empresariais nas cidades atendidas.",
+  },
+  {
+    pergunta: "Quais cidades vocês atendem?",
+    resposta:
+      "Atendemos Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade.",
+  },
+  {
+    pergunta: "Com que frequência as placas solares precisam de limpeza?",
+    resposta:
+      "A necessidade varia conforme poeira, vegetação, chuvas, inclinação dos módulos e condições do local. Uma avaliação visual ajuda a identificar quando há acúmulo relevante de sujeira.",
+  },
+  {
+    pergunta: "As fotos de antes e depois são reais?",
+    resposta:
+      "Sim. Os comparativos exibidos nesta página são registros reais dos serviços apresentados, organizados em pares de antes e depois.",
+  },
+];
+
 const resultados = [
   {
     titulo: "Limpeza realizada 02",
@@ -95,6 +123,19 @@ const whatsappLink =
   `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
 
 export default function LimpezaDePlacasSolares() {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.pergunta,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.resposta,
+      },
+    })),
+  };
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -122,6 +163,10 @@ export default function LimpezaDePlacasSolares() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       <header className="border-b border-white/10 bg-[#06101d]/95 backdrop-blur">
@@ -408,6 +453,55 @@ export default function LimpezaDePlacasSolares() {
         </div>
       </section>
 
+      <section className="border-t border-white/10 bg-[#071321]">
+        <div className="mx-auto max-w-5xl px-6 py-16 lg:px-8 lg:py-20">
+          <div className="max-w-3xl">
+            <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
+              Dúvidas frequentes
+            </span>
+            <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+              Antes de pedir seu orçamento
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-300">
+              Respostas rápidas sobre atendimento, orçamento e limpeza dos módulos.
+            </p>
+          </div>
+
+          <div className="mt-10 space-y-3">
+            {faq.map((item) => (
+              <details
+                key={item.pergunta}
+                className="group rounded-2xl border border-white/10 bg-white/[0.04] p-5 open:bg-white/[0.06]"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-extrabold text-white">
+                  <span>{item.pergunta}</span>
+                  <span
+                    aria-hidden="true"
+                    className="text-xl text-amber-400 transition group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-4 max-w-3xl leading-7 text-slate-300">
+                  {item.resposta}
+                </p>
+              </details>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex rounded-xl border border-white/15 bg-white/5 px-6 py-4 font-bold transition hover:bg-white/10"
+            >
+              Ainda tem dúvida? Falar no WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-white/10 bg-[#0a1625]">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="overflow-hidden rounded-[2rem] border border-amber-400/20 bg-gradient-to-br from-amber-400/15 via-white/[0.04] to-transparent p-8 sm:p-12">
@@ -448,9 +542,17 @@ export default function LimpezaDePlacasSolares() {
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 pb-20 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:pb-8 sm:pr-24 lg:pl-8 lg:pr-28">
           <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
-          <a className="transition hover:text-white" href="/">
-            Ver todos os serviços
-          </a>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:justify-end">
+            <a
+              className="transition hover:text-white"
+              href="/politica-de-privacidade"
+            >
+              Política de Privacidade
+            </a>
+            <a className="transition hover:text-white" href="/">
+              Ver todos os serviços
+            </a>
+          </div>
         </div>
       </footer>
     </main>
