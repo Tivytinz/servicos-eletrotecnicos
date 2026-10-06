@@ -60,8 +60,25 @@ const whatsappLink =
   `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Electrician",
+    name: "Eletrotécnico GO",
+    url: "https://eletrotecnicogo.com.br",
+    telephone: "+55 62 99326-5087",
+    areaServed: cidades.map((cidade) => ({
+      "@type": "City",
+      name: cidade,
+    })),
+    serviceType: servicos.map((servico) => servico.titulo),
+  };
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#06101d] text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="border-b border-white/10 bg-[#06101d]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
           <a href="#" className="flex items-center gap-3 font-black tracking-tight">
