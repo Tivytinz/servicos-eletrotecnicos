@@ -302,6 +302,17 @@ export default function LimpezaDePlacasSolares() {
 
                   <figure>
                     <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
+                      {item.fitDepois === "contain" && (
+                        <>
+                          <img
+                            src={item.depois}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-35 blur-2xl"
+                          />
+                          <div className="absolute inset-0 bg-slate-950/25" />
+                        </>
+                      )}
                       <img
                         src={item.depois}
                         alt={`${item.titulo}: placas solares depois da limpeza`}
@@ -311,9 +322,9 @@ export default function LimpezaDePlacasSolares() {
                           objectPosition: item.posDepois,
                           objectFit: item.fitDepois === "contain" ? "contain" : "cover",
                         }}
-                        className="h-full w-full"
+                        className="relative z-10 h-full w-full"
                       />
-                      <span className="absolute left-3 top-3 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
+                      <span className="absolute left-3 top-3 z-20 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white">
                         DEPOIS
                       </span>
                     </div>
@@ -408,7 +419,7 @@ export default function LimpezaDePlacasSolares() {
       </a>
 
       <footer className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 pb-20 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:pb-8 sm:pr-24 lg:pl-8 lg:pr-28">
           <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
           <a className="transition hover:text-white" href="/">
             Ver todos os serviços
