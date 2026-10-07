@@ -1,6 +1,6 @@
 # Memória do Projeto — Eletrotécnico GO
 
-Última atualização: 06/10/2026
+Última atualização: 07/10/2026
 
 ## Visão geral
 
@@ -210,6 +210,57 @@ Estratégia inicial:
 - campanha separada para limpeza de placas solares
 - conversão principal: clique no WhatsApp
 - segmentação por cidades atendidas
+
+
+## Google Ads — estado operacional em 07/10/2026
+
+### Campanha ativa
+- **Pesquisa | Serviços Elétricos | Goiânia**
+- Tipo: Pesquisa
+- Orçamento: **R$ 20/dia**
+- Landing page: `/servicos-eletricos`
+- Segmentação: Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade
+- Opção de local: **presença nas regiões segmentadas**
+- Estratégia de lance inicial: **Maximizar cliques**
+- Sem limite máximo de CPC definido
+- Não migrar para Maximizar conversões até existir volume real de leads suficiente para orientar o algoritmo.
+
+### Conversão
+- Nome no Google Ads: **Lead - WhatsApp**
+- Meta: Contato
+- Ação: Principal
+- Origem: GA4
+- Evento: `whatsapp_click`
+- Propriedade: Eletrotécnico GO
+- Estado inicial: Conversões pendentes após criação; aguardar processamento do Google.
+- Implementação centralizada para todos os links de WhatsApp, com página, texto do CTA, destino e UTMs.
+- PR técnica de conversão mergeada na `main`: **#1**.
+
+### Palavras-chave
+- Priorizar correspondência **exata** e **de frase** no início.
+- Não usar correspondência ampla por enquanto.
+- Termos configurados incluem buscas por eletricista em Goiânia/Aparecida, eletricista residencial, eletricista perto de mim, manutenção elétrica e eletricista comercial.
+- Termos com baixo volume podem permanecer ativos para coleta inicial.
+
+### Negativas aplicadas
+Foram adicionadas negativas de intenção inadequada, incluindo:
+`curso`, `cursos`, `vaga`, `vagas`, `emprego`, `empregos`, `salário`, `salários`, `apostila`, `pdf`, `grátis`, `gratuito`, `tutorial`, `como fazer`, `faça você mesmo`, `aprender`, `atacado`, `loja`, `comprar`, `material elétrico`.
+
+### Anúncio
+- Anúncio responsivo de pesquisa.
+- URL final confirmada: `https://eletrotecnicogo.com.br/servicos-eletricos`.
+- Caminho visual `servicos/eletricos` é apenas de exibição.
+- Em 07/10/2026 estava **Pendente / Em análise**.
+- Evitar editar o anúncio durante a revisão, salvo correção necessária.
+
+### Próximas verificações
+1. Aguardar aprovação do anúncio.
+2. Confirmar mudança do status da conversão **Lead - WhatsApp** após processamento.
+3. Acompanhar termos de pesquisa reais e ampliar negativas conforme necessário.
+4. Medir CPC, CTR, volume de cliques e leads antes de mudar orçamento ou estratégia de lance.
+5. Reavaliar **Maximizar conversões** apenas com base em dados reais.
+
+Detalhamento completo: `docs/google-ads-plan.md`.
 
 ## Diretrizes de comunicação
 
