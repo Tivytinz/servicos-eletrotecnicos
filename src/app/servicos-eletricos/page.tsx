@@ -82,7 +82,7 @@ const faq = [
 
 const whatsappNumero = "5562993265087";
 const whatsappMensagem =
-  "Olá, vi a página de serviços elétricos do Fase Plena Elétrica e gostaria de solicitar um orçamento.";
+  "Olá, vi a página de serviços elétricos do Eletrotécnico GO e gostaria de solicitar um orçamento.";
 const whatsappLink =
   `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
 
@@ -94,7 +94,7 @@ export default function ServicosEletricos() {
     serviceType: "Instalação, manutenção e inspeção elétrica",
     provider: {
       "@type": "Electrician",
-      name: "Fase Plena Elétrica",
+      name: "Eletrotécnico GO",
       telephone: "+55 62 99326-5087",
       url: "https://eletrotecnicogo.com.br",
       areaServed: cidades.map((cidade) => ({
@@ -140,7 +140,7 @@ export default function ServicosEletricos() {
               ⚡
             </span>
             <span className="text-lg">
-              Fase Plena <span className="text-amber-400">Elétrica</span>
+              Eletrotécnico <span className="text-amber-400">GO</span>
             </span>
           </Link>
           <a
@@ -346,7 +346,7 @@ export default function ServicosEletricos() {
 
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 pb-20 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:pb-8 sm:pr-24 lg:pl-8 lg:pr-28">
-          <p>© 2026 Fase Plena Elétrica. Todos os direitos reservados.</p>
+          <p>© 2026 Eletrotécnico GO. Todos os direitos reservados.</p>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <a className="transition hover:text-white" href="/politica-de-privacidade">
               Política de Privacidade

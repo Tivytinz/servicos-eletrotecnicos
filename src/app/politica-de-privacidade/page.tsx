@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Política de Privacidade",
   description:
-    "Política de Privacidade do site Fase Plena Elétrica e informações sobre contato, dados técnicos e uso do WhatsApp.",
+    "Política de Privacidade do site Eletrotécnico GO e informações sobre contato, dados técnicos e uso do WhatsApp.",
   alternates: {
     canonical: "/politica-de-privacidade",
   },
@@ -20,7 +20,7 @@ export default function PoliticaDePrivacidade() {
               ⚡
             </span>
             <span>
-              Fase Plena <span className="text-amber-400">Elétrica</span>
+              Eletrotécnico <span className="text-amber-400">GO</span>
             </span>
           </Link>
           <Link

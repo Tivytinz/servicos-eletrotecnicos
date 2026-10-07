@@ -1,7 +1,7 @@
-# Google Business Profile — Fase Plena Elétrica
+# Google Business Profile — Eletrotécnico GO
 
 ## Nome
-Fase Plena Elétrica
+Eletrotécnico GO
 
 ## Categoria principal sugerida
 Eletricista
@@ -29,7 +29,7 @@ Eletricista
 https://eletrotecnicogo.com.br
 
 ## Descrição sugerida
-Fase Plena Elétrica oferece serviços elétricos para residências e comércios em Goiânia e região, incluindo instalações, manutenção elétrica, revisão de quadros e circuitos, inspeção elétrica, suporte em energia solar e limpeza de placas solares. Atendimento direto pelo WhatsApp em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Solicite uma avaliação e orçamento.
+Eletrotécnico GO oferece serviços elétricos para residências e comércios em Goiânia e região, incluindo instalações, manutenção elétrica, revisão de quadros e circuitos, inspeção elétrica, suporte em energia solar e limpeza de placas solares. Atendimento direto pelo WhatsApp em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Solicite uma avaliação e orçamento.
 
 ## Fotos recomendadas
 - Antes e depois de limpeza de placas solares
@@ -40,6 +40,3 @@ Fase Plena Elétrica oferece serviços elétricos para residências e comércios
 
 ## Observações
 Não cadastrar endereço residencial como local aberto ao público se o negócio funcionar apenas como área de serviço. Confirmar horários reais de atendimento antes de publicar no perfil.
-
-## Migração de domínio
-Atualizar o site do perfil para `https://faseplena.com.br` somente após o novo domínio estar com DNS e HTTPS válidos.
