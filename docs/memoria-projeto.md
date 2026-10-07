@@ -51,20 +51,8 @@ O Railway já reconhece o domínio principal como verificado. O HTTPS/certificad
 
 ### WWW
 
-O domínio `www.eletrotecnicogo.com.br` já foi preparado no Railway, mas ainda não foi concluído no DNS.
-
-Registros necessários:
-
-- CNAME
-  - Nome: `www`
-  - Destino: `ogstj4br.up.railway.app`
-
-- TXT
-  - Nome: `_railway-verify.www`
-  - Valor:
-    `railway-verify=19253297d98d535b6325420a18891251fadde2fe6d3f5d260a67df24697ef563`
-
-O projeto já possui redirect permanente de `www` para o domínio raiz.
+O projeto opera somente pelo domínio raiz `eletrotecnicogo.com.br`.
+O subdomínio `www.eletrotecnicogo.com.br` foi removido do Railway por decisão do projeto e não será utilizado no momento.
 
 ## Páginas existentes
 
@@ -241,6 +229,7 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Domínio `www.eletrotecnicogo.com.br` removido do Railway; o projeto seguirá apenas com `eletrotecnicogo.com.br`.
 - Marca confirmada: **Eletrotécnico GO**. A mudança considerada para Fase Plena Elétrica foi descartada; manter nome, domínio e identidade atuais.
 - DNS do domínio principal propagado e certificado HTTPS confirmado como válido no Railway.
 - HSTS inicial habilitado com `max-age=86400`; ampliar depois que `www` também estiver com HTTPS válido.
