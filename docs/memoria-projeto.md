@@ -229,6 +229,9 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Google Search Console verificado para `eletrotecnicogo.com.br`; sitemap `https://eletrotecnicogo.com.br/sitemap.xml` processado com 4 páginas encontradas.
+- Solicitação de indexação enviada para `/`, `/servicos-eletricos` e `/limpeza-de-placas-solares`.
+- Evento GA4 `whatsapp_click` validado em tempo real e marcado como evento principal.
 - Domínio `www.eletrotecnicogo.com.br` removido do Railway; o projeto seguirá apenas com `eletrotecnicogo.com.br`.
 - Marca confirmada: **Eletrotécnico GO**. A mudança considerada para Fase Plena Elétrica foi descartada; manter nome, domínio e identidade atuais.
 - DNS do domínio principal propagado e certificado HTTPS confirmado como válido no Railway.
