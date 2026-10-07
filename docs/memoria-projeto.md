@@ -12,6 +12,25 @@ Projeto de landing pages para geração de contatos via WhatsApp para serviços 
 - Link base do WhatsApp: `https://wa.me/5562993265087`
 - Domínio principal: `https://eletrotecnicogo.com.br`
 
+### Serviços confirmados
+- Instalação predial
+- Projetos elétricos
+- Manutenção elétrica
+- Manutenção corretiva
+- Instalação de iluminação externa
+- Instalação e reparo de luminárias
+- Instalação e reparo de tomadas e interruptores
+- Inspeções elétricas
+- Instalação de aterramento
+- Instalação e reparo de fiação elétrica
+- Reparo de painel elétrico
+- Restauração de instalação elétrica
+- Adequação de padrão
+- Higienização / limpeza de placas solares
+- Manutenção preventiva de sistema solar
+- Manutenção de sistema solar
+- Abertura de garantia de equipamentos solares
+
 ### Regiões atendidas
 - Goiânia
 - Aparecida de Goiânia
@@ -229,6 +248,7 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Catálogo de serviços confirmado e atualizado com serviços elétricos prediais, projetos, manutenção, iluminação, tomadas, fiação, aterramento, painéis/padrão e serviços de sistema solar.
 - Google Search Console verificado para `eletrotecnicogo.com.br`; sitemap `https://eletrotecnicogo.com.br/sitemap.xml` processado com 4 páginas encontradas.
 - Solicitação de indexação enviada para `/`, `/servicos-eletricos` e `/limpeza-de-placas-solares`.
 - Evento GA4 `whatsapp_click` validado em tempo real e marcado como evento principal.
