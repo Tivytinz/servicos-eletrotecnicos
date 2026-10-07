@@ -1,6 +1,6 @@
 # Memória do Projeto — Eletrotécnico GO
 
-Última atualização: 05/10/2026
+Última atualização: 06/10/2026
 
 ## Visão geral
 
@@ -241,6 +241,7 @@ Dar preferência a:
 
 ## Atualizações recentes
 
+- Marca confirmada: **Eletrotécnico GO**. A mudança considerada para Fase Plena Elétrica foi descartada; manter nome, domínio e identidade atuais.
 - DNS do domínio principal propagado e certificado HTTPS confirmado como válido no Railway.
 - HSTS inicial habilitado com `max-age=86400`; ampliar depois que `www` também estiver com HTTPS válido.
 - Endpoint `/api/health` marcado com `X-Robots-Tag: noindex, nofollow` e `/api/` bloqueado no robots.txt.
