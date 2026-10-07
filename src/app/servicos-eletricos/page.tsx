@@ -28,32 +28,74 @@ const cidades = [
 
 const servicos = [
   {
-    id: "instalacoes",
-    titulo: "Instalações elétricas",
+    id: "instalacao-predial",
+    titulo: "Instalação predial",
     texto:
-      "Instalação e adequação de pontos, tomadas, iluminação, circuitos e outros componentes conforme a necessidade do imóvel.",
-    icone: "⚡",
+      "Instalações elétricas em imóveis residenciais e comerciais, incluindo pontos, circuitos, tomadas, iluminação e distribuição.",
+    icone: "🏠",
+  },
+  {
+    id: "projetos-eletricos",
+    titulo: "Projetos elétricos",
+    texto:
+      "Planejamento e organização das soluções elétricas conforme a necessidade do imóvel e do serviço.",
+    icone: "📐",
   },
   {
     id: "manutencao",
-    titulo: "Manutenção elétrica",
+    titulo: "Manutenção elétrica e corretiva",
     texto:
-      "Avaliação de falhas, interrupções, aquecimento, mau contato e outros sinais que indicam necessidade de manutenção.",
+      "Avaliação e correção de falhas, interrupções, aquecimento, mau contato e outros problemas da instalação elétrica.",
     icone: "🔧",
   },
   {
-    id: "quadros",
-    titulo: "Quadros e circuitos",
+    id: "iluminacao",
+    titulo: "Iluminação e luminárias",
     texto:
-      "Revisão, organização e adequação de quadros, disjuntores, circuitos e distribuição elétrica.",
+      "Instalação de iluminação externa, instalação e reparo de luminárias.",
+    icone: "💡",
+  },
+  {
+    id: "tomadas",
+    titulo: "Tomadas e interruptores",
+    texto:
+      "Instalação e reparo de tomadas e interruptores em ambientes residenciais e comerciais.",
+    icone: "🔌",
+  },
+  {
+    id: "fiacao",
+    titulo: "Fiação elétrica",
+    texto:
+      "Instalação e reparo de fiação elétrica, com avaliação das condições da instalação existente.",
+    icone: "⚡",
+  },
+  {
+    id: "aterramento",
+    titulo: "Aterramento elétrico",
+    texto:
+      "Instalação de aterramento elétrico conforme a necessidade identificada no atendimento.",
+    icone: "⏚",
+  },
+  {
+    id: "painel",
+    titulo: "Painéis, quadros e padrão",
+    texto:
+      "Reparo de painel elétrico, revisão de quadros, circuitos e adequação de padrão.",
     icone: "🧰",
   },
   {
     id: "inspecao",
-    titulo: "Inspeção elétrica",
+    titulo: "Inspeções elétricas",
     texto:
       "Avaliação visual e técnica para identificar componentes, conexões ou pontos da instalação que precisam de atenção.",
     icone: "🔎",
+  },
+  {
+    id: "restauracao",
+    titulo: "Restauração de instalação elétrica",
+    texto:
+      "Correções e restauração de partes da instalação elétrica de acordo com a condição encontrada no local.",
+    icone: "🛠️",
   },
 ];
 
@@ -91,7 +133,7 @@ export default function ServicosEletricos() {
     "@context": "https://schema.org",
     "@type": "Service",
     name: "Serviços elétricos",
-    serviceType: "Instalação, manutenção e inspeção elétrica",
+    serviceType: servicos.map((servico) => servico.titulo),
     provider: {
       "@type": "Electrician",
       name: "Eletrotécnico GO",
