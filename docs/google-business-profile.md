@@ -7,13 +7,26 @@ Eletrotécnico GO
 Eletricista
 
 ## Categorias/serviços complementares
-- Serviços elétricos
-- Instalações elétricas
+- Instalação predial
+- Projetos elétricos
 - Manutenção elétrica
-- Quadros e circuitos
-- Inspeção elétrica
-- Energia solar
-- Limpeza de placas solares
+- Manutenção corretiva
+- Instalação de iluminação externa
+- Instalação de luminárias
+- Reparo de luminárias
+- Instalação de tomadas e interruptores
+- Reparo de tomadas e interruptores
+- Inspeções elétricas
+- Instalação de aterramento
+- Instalação de fiação elétrica
+- Reparo de fiação elétrica
+- Reparo de painel elétrico
+- Restauração de instalação elétrica
+- Adequação de padrão
+- Higienização / limpeza de placas solares
+- Manutenção preventiva de sistema solar
+- Manutenção de sistema solar
+- Abertura de garantia de equipamentos solares
 
 ## Área de atendimento
 - Goiânia
