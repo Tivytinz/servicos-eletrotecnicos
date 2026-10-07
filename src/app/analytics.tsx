@@ -142,8 +142,13 @@ export default function Analytics() {
 
       if (window.localStorage.getItem(consentKey) !== "accepted") return;
 
-      const analyticsWindow = window as AnalyticsWindow;
-      analyticsWindow.gtag?.("event", "whatsapp_click", {
+      const analyticsWindow = ensureGoogleTagQueue();
+      analyticsWindow?.gtag?.("event", "whatsapp_click", {
+        // Google Ads generated this conversion event with a 2s callback timeout.
+        // All current WhatsApp CTAs open in a new tab, so no navigation delay is
+        // required here and the original page remains available to finish sending.
+        event_callback: () => undefined,
+        event_timeout: 2000,
         page_path: payload.page_path,
         page_title: payload.page_title,
         cta_text: payload.cta_text,
