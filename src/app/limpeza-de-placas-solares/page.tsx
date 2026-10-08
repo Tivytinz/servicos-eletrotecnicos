@@ -430,13 +430,13 @@ export default function LimpezaDePlacasSolares() {
         </div>
       </section>
 
-      <section className="bg-[#06101d]">
+      <section id="regioes" aria-labelledby="regioes-titulo" className="scroll-mt-6 bg-[#06101d]">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8">
           <div>
             <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
               Área de atendimento
             </span>
-            <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+            <h2 id="regioes-titulo" className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
               Atendimento em Goiânia e cidades da região
             </h2>
             <p className="mt-5 text-lg leading-8 text-slate-300">
