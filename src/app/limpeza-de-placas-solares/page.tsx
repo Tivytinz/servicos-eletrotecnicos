@@ -510,13 +510,13 @@ export default function LimpezaDePlacasSolares() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-[#0a1625]">
+      <section id="orcamento" aria-labelledby="orcamento-titulo" className="scroll-mt-6 border-t border-white/10 bg-[#0a1625]">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="overflow-hidden rounded-[2rem] border border-amber-400/20 bg-gradient-to-br from-amber-400/15 via-white/[0.04] to-transparent p-8 sm:p-12">
             <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-300">
               Solicite um orçamento
             </span>
-            <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
+            <h2 id="orcamento-titulo" className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
               Suas placas solares precisam de limpeza?
             </h2>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
