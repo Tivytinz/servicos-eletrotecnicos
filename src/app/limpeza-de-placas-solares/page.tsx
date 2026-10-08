@@ -298,7 +298,7 @@ export default function LimpezaDePlacasSolares() {
         </div>
       </section>
 
-      <section className="bg-[#0a1625]">
+      <section id="como-funciona" aria-label="Como funciona a limpeza solar" className="scroll-mt-6 bg-[#0a1625]">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="grid gap-5 md:grid-cols-3">
             {[
