@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Analytics from "./analytics";
+import WhatsAppSource from "./whatsapp-source";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -64,6 +65,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
+        <WhatsAppSource />
         <Analytics />
         {children}
       </body>
