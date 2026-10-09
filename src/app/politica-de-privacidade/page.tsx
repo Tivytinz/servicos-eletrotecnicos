@@ -79,6 +79,16 @@ export default function PoliticaDePrivacidade() {
               equivalentes de acordo com as configurações do navegador e dos
               respectivos provedores.
             </p>
+            <p className="mt-3">
+              Quando a URL indica origem em anúncio pago do Google, os botões de
+              WhatsApp podem acrescentar essa informação à mensagem pré-preenchida.
+              Para manter esse contexto entre páginas do site, guardamos na
+              sessão do navegador somente um indicador temporário dessa origem,
+              com validade de até 30 minutos, sem armazenar os identificadores
+              individuais do clique nem repassá-los ao WhatsApp. Na ausência
+              desses sinais, a mensagem permanece genérica. Essa indicação não
+              comprova, por si só, a atribuição de uma conversão no Google Ads.
+            </p>
           </section>
 
           <section>
