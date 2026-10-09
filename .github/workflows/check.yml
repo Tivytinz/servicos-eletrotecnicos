@@ -21,5 +21,7 @@ jobs:
           cache: npm
       - name: Instalar dependências
         run: npm ci
+      - name: Auditar vulnerabilidades de produção (alta ou crítica)
+        run: npm audit --omit=dev --audit-level=high
       - name: Verificar lint e compilação
         run: npm run check
