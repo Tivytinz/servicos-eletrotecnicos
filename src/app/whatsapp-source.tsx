@@ -17,17 +17,17 @@ const retentionMs = 30 * 60 * 1000;
  */
 export default function WhatsAppSource() {
   useEffect(() => {
-    let paidThisPage = false;
+    let paidThisPageUntil = 0;
 
     function paidSourceActive(): boolean {
       const search = window.location.search;
 
       if (isGoogleAdsVisit(search)) {
-        paidThisPage = true;
+        paidThisPageUntil = Date.now() + retentionMs;
         try {
           window.sessionStorage.setItem(
             originExpiryKey,
-            String(Date.now() + retentionMs),
+            String(paidThisPageUntil),
           );
         } catch {
           // Modo privado pode impedir storage; a visita atual ainda é identificada.
@@ -36,7 +36,7 @@ export default function WhatsAppSource() {
       }
 
       if (hasOtherCampaignMarker(search)) {
-        paidThisPage = false;
+        paidThisPageUntil = 0;
         try {
           window.sessionStorage.removeItem(originExpiryKey);
         } catch {
@@ -53,7 +53,7 @@ export default function WhatsAppSource() {
         // Fallback apenas enquanto esta página permanecer aberta.
       }
 
-      return paidThisPage;
+      return paidThisPageUntil > Date.now();
     }
 
     // Preserva somente o canal e a expiração durante a sessão (nunca o click ID).
