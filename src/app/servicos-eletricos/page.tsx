@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Serviços Elétricos em Goiânia e Região",
+  title: "Eletricista em Goiânia e Aparecida",
   description:
-    "Instalações, manutenção, quadros, circuitos e inspeção elétrica em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Solicite orçamento pelo WhatsApp.",
+    "Eletricista em Goiânia e Aparecida de Goiânia. Instalações, manutenção, quadros e padrão de energia. Solicite orçamento pelo WhatsApp.",
   alternates: {
     canonical: "/servicos-eletricos",
   },
@@ -12,9 +12,17 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: "/servicos-eletricos",
-    title: "Serviços Elétricos em Goiânia e Região",
+    title: "Eletricista em Goiânia e Aparecida | Eletrotécnico GO",
     description:
-      "Instalações, manutenção, quadros, circuitos e inspeção elétrica para residências e comércios.",
+      "Instalação e manutenção elétrica, reparos, quadros e padrão de energia para residências e comércios em Goiânia e região.",
+    images: [],
+  },
+  twitter: {
+    card: "summary",
+    title: "Eletricista em Goiânia e Aparecida | Eletrotécnico GO",
+    description:
+      "Serviços elétricos, manutenção e adequação de padrão de energia. Orçamento pelo WhatsApp.",
+    images: [],
   },
 };
 
@@ -78,10 +86,17 @@ const servicos = [
   },
   {
     id: "painel",
-    titulo: "Painéis, quadros e padrão",
+    titulo: "Quadros elétricos e disjuntores",
     texto:
-      "Reparo de painel elétrico, revisão de quadros, circuitos e adequação de padrão.",
+      "Revisão e reparo de quadros, disjuntores, painéis e circuitos elétricos conforme a necessidade da instalação.",
     icone: "🧰",
+  },
+  {
+    id: "padrao-energia",
+    titulo: "Instalação e adequação de padrão de energia",
+    texto:
+      "Instalação e adequação de padrão de entrada de energia, conforme avaliação do imóvel e exigências técnicas aplicáveis da concessionária.",
+    icone: "⚡",
   },
   {
     id: "inspecao",
@@ -120,6 +135,16 @@ const faq = [
     resposta:
       "Sim. Fotos e uma descrição objetiva ajudam a entender melhor a situação antes do atendimento presencial.",
   },
+  {
+    pergunta: "Vocês fazem instalação e adequação de padrão de energia?",
+    resposta:
+      "Sim. Atendemos solicitações de instalação e adequação de padrão de entrada de energia. Envie sua cidade e informações do local para avaliar os requisitos técnicos e a disponibilidade.",
+  },
+  {
+    pergunta: "Como confirmar se atendem meu bairro?",
+    resposta:
+      "Informe o bairro, a cidade e o serviço desejado pelo WhatsApp. Confirmamos a disponibilidade antes de organizar o atendimento.",
+  },
 ];
 
 const whatsappNumero = "5562993265087";
@@ -132,7 +157,9 @@ export default function ServicosEletricos() {
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Serviços elétricos",
+    name: "Eletricista em Goiânia e Aparecida de Goiânia",
+    description:
+      "Instalação, manutenção, reparos elétricos, quadros e padrão de entrada de energia em Goiânia e região.",
     serviceType: servicos.map((servico) => servico.titulo),
     provider: {
       "@type": "Electrician",
@@ -205,12 +232,13 @@ export default function ServicosEletricos() {
             <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-bold text-amber-300">
               ⚡ Atendimento em Goiânia e região
             </span>
-            <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.05] tracking-tight sm:text-6xl">
-              Serviços elétricos para residências e comércios
+            <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl xl:text-6xl">
+              Eletricista em Goiânia e Aparecida de Goiânia
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Instalação, manutenção, revisão de quadros e inspeção elétrica com
-              atendimento direto pelo WhatsApp em Goiânia e cidades da região.
+              Instalações, manutenção e reparos elétricos, revisão de quadros e
+              adequação de padrão de energia para residências e comércios.
+              Solicite uma avaliação pelo WhatsApp.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
@@ -275,8 +303,13 @@ export default function ServicosEletricos() {
               Serviços
             </span>
             <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
-              Principais atendimentos elétricos
+              Instalações, manutenção e padrão de energia
             </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-300">
+              Confira os principais serviços disponíveis para residências e
+              comércios. Para padrão de entrada de energia, informe o endereço
+              e o que precisa ser instalado ou adequado.
+            </p>
           </div>
 
           <div className="mt-10 grid gap-5 md:grid-cols-2">
@@ -295,18 +328,19 @@ export default function ServicosEletricos() {
         </div>
       </section>
 
-      <section className="bg-[#06101d]">
+      <section id="regioes" className="bg-[#06101d]">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8">
           <div>
             <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
               Área de atendimento
             </span>
             <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
-              Goiânia e cidades da região
+              Eletricista em Goiânia, Aparecida e região
             </h2>
             <p className="mt-5 text-lg leading-8 text-slate-300">
-              Informe sua cidade pelo WhatsApp para confirmar disponibilidade e
-              organizar o atendimento.
+              Atendemos solicitações de instalação, manutenção e padrão de
+              energia nas cidades abaixo. Informe seu bairro, a cidade e o
+              serviço pelo WhatsApp para confirmar a disponibilidade.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -322,7 +356,7 @@ export default function ServicosEletricos() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-[#071321]">
+      <section id="duvidas" className="border-y border-white/10 bg-[#071321]">
         <div className="mx-auto max-w-5xl px-6 py-16 lg:px-8">
           <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-400">
             Dúvidas frequentes
@@ -354,7 +388,7 @@ export default function ServicosEletricos() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section id="orcamento" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="rounded-[2rem] border border-amber-400/20 bg-gradient-to-br from-amber-400/15 via-white/[0.04] to-transparent p-8 sm:p-12">
           <span className="text-sm font-black uppercase tracking-[0.22em] text-amber-300">
             Orçamento
@@ -363,7 +397,13 @@ export default function ServicosEletricos() {
             Precisa de um serviço elétrico?
           </h2>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-            Envie uma mensagem, explique o que precisa e solicite uma avaliação.
+            Fale diretamente com a Eletrotécnico GO. Informe o tipo de serviço,
+            o bairro e a cidade; se possível, envie fotos para orientar a
+            avaliação inicial e a confirmação da disponibilidade.
+          </p>
+          <p className="mt-4 text-sm leading-6 text-slate-300">
+            Contato: <a href="tel:+5562993265087" className="font-bold text-white underline decoration-amber-400 underline-offset-4">(62) 99326-5087</a>.
+            O orçamento é combinado após entender a necessidade do atendimento.
           </p>
           <a
             href={whatsappLink}
