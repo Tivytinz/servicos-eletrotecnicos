@@ -1,0 +1,31 @@
+name: Smoke - WhatsApp em produção
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tests/smoke-whatsapp-production.mjs"
+      - ".github/workflows/smoke-whatsapp-production.yml"
+  workflow_dispatch:
+
+jobs:
+  browser-smoke:
+    name: Testar origem e CTA no site público
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Instalar dependências do projeto
+        run: npm ci
+      - name: Instalar Playwright apenas no runner
+        run: npm install --no-save --package-lock=false playwright@1.55.1
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Validar fluxos sem enviar mensagem
+        run: node tests/smoke-whatsapp-production.mjs
