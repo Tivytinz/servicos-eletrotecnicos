@@ -42,7 +42,10 @@ async function scenario(title, route, paid) {
   try {
     const result = await openAndInspect(page, route);
     assert.equal(result.destination, "/5562993265087", "Número de WhatsApp mudou");
-    assert.ok(result.text?.includes("Eletrotécnico GO"), "Mensagem base inesperada");
+    const expectedContext = route.startsWith("/limpeza-de-placas-solares")
+      ? "limpeza de placas solares"
+      : "serviços elétricos";
+    assert.ok(result.text?.includes(expectedContext), "Mensagem base inesperada para esta página");
     assert.equal(result.text.startsWith(LABEL), paid, "Marcador de origem inesperado");
     assert.equal((result.text.match(/\[Origem: anúncio do Google\]/g) ?? []).length, paid ? 1 : 0);
     console.log(`PASS: ${title}; marcado=${paid}; H1=${result.h1}`);
