@@ -109,9 +109,14 @@ try {
   const legacyPage = await legacy.newPage();
   await legacyPage.goto(url, { waitUntil: "domcontentloaded" });
   await legacyPage.getByRole("checkbox", { name: /Análise de visitas/ }).waitFor();
+  // Wait for React hydration + useSyncExternalStore to restore legacy storage.
+  await waitForConsent(legacyPage, { analytics_storage: "granted", ad_user_data: "denied" });
+  await legacyPage.waitForFunction(() => {
+    const inputs = [...document.querySelectorAll('aside[aria-label="Preferências de privacidade"] input[type="checkbox"]')];
+    return inputs.length === 2 && inputs[0].checked && !inputs[1].checked;
+  });
   assert.equal(await legacyPage.getByRole("checkbox", { name: /Análise de visitas/ }).isChecked(), true);
   assert.equal(await legacyPage.getByRole("checkbox", { name: /Medição de anúncios/ }).isChecked(), false);
-  await waitForConsent(legacyPage, { analytics_storage: "granted", ad_user_data: "denied" });
   console.log("PASS: legado Analytics não concede medição de anúncios");
   await legacy.close();
 
