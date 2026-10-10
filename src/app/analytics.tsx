@@ -281,6 +281,7 @@ export default function Analytics() {
   if (needsChoice || editing) {
     return (
       <PreferencesPanel
+        key={snapshot}
         initial={preferences}
         onSave={(choice) => {
           // Apply before the next user click/page transition, then persist.
