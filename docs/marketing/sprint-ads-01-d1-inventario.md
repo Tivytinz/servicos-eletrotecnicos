@@ -1,5 +1,7 @@
 # D1 — Inventário inicial e diagnóstico da campanha elétrica
 
+> **Nova atualização de 09/10:** CSV de negativas também auditado: **20 negativas (todas amplas e em nível campanha)**; [relatório específico](./sprint-ads-01-d1-negativas.md). A auditoria dos anúncios e locais continua pendente.
+>
 > **Atualização de 09/10:** o inventário de 10 linhas abaixo era preliminar. Foi recebido o **CSV completo com 27 palavras-chave**, já reconciliado com 244 impressões, 13 cliques e R$ 85,52. Consulte o [inventário integral com decisão proposta para cada termo](./sprint-ads-01-d1-inventario-csv.md). A auditoria de anúncios e palavras-chave negativas continua pendente.
 
 > Status: **parcial, em andamento** · 09/10/2026 · Fonte: capturas manuais do Google Ads de 06–09/10 e documentos do repositório. Não se trata de acesso à conta ao vivo. 

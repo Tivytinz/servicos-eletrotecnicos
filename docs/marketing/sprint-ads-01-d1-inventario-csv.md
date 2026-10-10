@@ -82,13 +82,13 @@ Termos de `instalação elétrica` versus `instalações elétricas` em frase po
 - **Grupo 02 — Aparecida:** `[eletricista aparecida de goiania]` (**já existe** no grupo original) e `"eletricista aparecida de goiania"` (**já existe**) precisam ser **recriadas no grupo novo** se aprovada a reestruturação. Depois de verificar elegibilidade, **pausar as originais** em vez de excluir, preservando relatórios históricos. **Não duplicar em dois grupos ativos.**
 - **Ampliação do grupo 02:** priorizar inicialmente as duas palavras locais acima; as sugestões adicionais de manutenção/instalação em Aparecida são candidatas a testes, não copiar todas de uma vez com orçamento tão pequeno e histórico 1/10.
 - **Amplas:** o plano de pausa temporária das **duas amplas pagas** de Goiânia é prioritário por concentração de gasto. Outras amplas redundantes são candidatas a pausa depois de conferir cobertura e consulta real. A ampla `eletricista perto de mim` deve ser examinada com atenção, pois pode alcançar cidades além de Goiânia/Aparecida.
-- **Negativas:** não foram fornecidas no CSV, porque o arquivo é somente de keywords de pesquisa. Não se pode atestar a configuração atual da lista de negativas.
+- **Negativas:** o CSV separado, posteriormente recebido, confirmou **20 negativas** em correspondência ampla negativa no nível campanha; **15 manter** e **5 revisar** (três por possíveis bloqueios de serviços e duas conforme política de orçamento gratuito). Veja [auditoria específica de negativas](./sprint-ads-01-d1-negativas.md).
 - **Anúncios e assets:** não constam neste CSV. É necessário ver anúncios responsivos/recursos antes de implantar os dois RSAs do planejamento.
 - **Geografia:** as cinco cidades da campanha permanecem **configuração histórica**; confirmar presencialmente na conta na etapa final.
 
 ## Sequência segura de execução (dependente de aprovação)
 
-1. Obter CSV/prints de **Anúncios** e **Palavras-chave negativas** da campanha; validar URLs, textos, ativos, escopo e localização.
+1. **Negativas auditadas (20/20)**; obter CSV/prints de **Anúncios e Recursos** da campanha; validar URLs, textos, ativos, escopo e localização.
 2. Congelar inventário aprovado (manter, migrar, pausar, criar) antes de mudar a conta.
 3. Renomear Grupo 1 para **01 - Eletricista Goiânia**, preservando histórico; atualizar RSA para Goiânia.
 4. Criar **02 - Eletricista Aparecida** com RSA e termos locais de **frase/exata**; pausar as palavras de Aparecida no Grupo 01 apenas depois de confirmar que o Grupo 02 está configurado.
@@ -98,4 +98,4 @@ Termos de `instalação elétrica` versus `instalações elétricas` em frase po
 ## Status da issue #15
 
 **Palavras-chave: inventário completo (27/27) e baseline reconciliado.**  
-**Pendente:** verificação atual de **anúncios, assets, negativas e localização**. A issue deve continuar **aberta** até concluir esses itens. Mesmo um inventário 100% documentado não autoriza a reativação nem alteração da campanha.
+**Pendente:** verificação atual de **anúncios, assets e localização**; negativas concluídas em CSV separado, com revisões sugeridas. A issue deve continuar **aberta** até concluir esses itens. Mesmo um inventário 100% documentado não autoriza a reativação nem alteração da campanha.

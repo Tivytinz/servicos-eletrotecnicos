@@ -45,7 +45,8 @@ Preparar e validar a reorganização de **dois grupos de anúncios** com mensage
 - [x] Campanha pausada e orçamento de R$20/dia identificado.
 - [x] Rascunhos de 2 RSAs (15 títulos + 4 descrições cada) e 15 palavras candidatas na PR #14.
 - [x] **Lista integral das 27 palavras** recebida em CSV e reconciliada com os totais do período. [Inventário integral](./sprint-ads-01-d1-inventario-csv.md).
-- [ ] Revisar **anúncios e negativas** na conta Google Ads, ainda não exportados.
+- [x] **20 palavras-chave negativas** recebidas em CSV e auditadas; todas no nível campanha e com correspondência ampla negativa. [Auditoria das negativas](./sprint-ads-01-d1-negativas.md).
+- [ ] Revisar **anúncios e recursos** atuais na conta Google Ads; ainda não exportados.
 - [ ] Responsável pela execução e janela de implantação aprovados.
 
 ## Definition of Done (DoD)
