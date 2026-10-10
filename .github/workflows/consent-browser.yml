@@ -1,0 +1,44 @@
+name: QA navegador - Consent Mode v2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/analytics.tsx"
+      - "src/lib/consent-preferences.ts"
+      - "tests/consent-browser.mjs"
+      - ".github/workflows/consent-browser.yml"
+  workflow_dispatch:
+
+jobs:
+  consent-browser:
+    name: Testar consentimento em navegador local
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Instalar dependências
+        run: npm ci
+      - name: Instalar Playwright no CI
+        run: npm install --no-save --package-lock=false playwright@1.55.1
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build com ID GA4 fictício (sem enviar dados)
+        run: NEXT_PUBLIC_GA_MEASUREMENT_ID=G-TESTCONSENT npm run build
+      - name: Iniciar servidor de QA
+        run: |
+          NEXT_PUBLIC_GA_MEASUREMENT_ID=G-TESTCONSENT npm run start -- -p 3210 > /tmp/next-consent.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3210/api/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/next-consent.log
+          exit 1
+      - name: Conferir consentimentos e revogação no navegador
+        run: node tests/consent-browser.mjs
