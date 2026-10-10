@@ -2,9 +2,50 @@
 
 > Registro inicial: 08/10/2026. Fonte: capturas de tela fornecidas pelo responsável; os números são fotografia do período e não atualizam automaticamente.
 
+## Estado atual e decisão de otimização — 09/10/2026, 23h12 (Brasília)
+
+> **Fotografia do período 06–09/10/2026, a partir das capturas do Google Ads enviadas pelo responsável.** Não representa métricas em tempo real. A campanha elétrica foi **pausada voluntariamente pelo responsável** para melhorias; **não reativar sem solicitação**. Orçamento permanece configurado em **R$ 20/dia**, estratégia **Maximizar cliques**.
+
+### Indicadores e evidências
+- **244 impressões, 13 cliques, CTR 5,33%, gasto R$ 85,52, CPC médio R$ 6,58 e 0 conversões atribuídas no Google Ads**.
+- **Dois contatos reais pelo WhatsApp em 09/10**, mas a origem individual (anúncio pago versus busca orgânica ou outros canais) **não foi confirmada**. Não usar 2 como conversões atribuídas nem calcular CPL atribuído com esse gasto.
+- Relatório GA4 de 06–09/10: **16 sessões Paid Search**, 1 sessão engajada e **1 `whatsapp_click` em `google / cpc`**. O evento indica clique no link, **não mensagem enviada, lead qualificado nem conversão necessariamente atribuível no Google Ads**. Outras ocorrências `tagassistant.google.com / referral` são tráfego de depuração e devem ser separadas dos clientes reais.
+- Google Ads ↔ GA4 vinculado desde 06/10; marcação automática ("Codificação automática") ativa. Ação **`Lead - WhatsApp`** principal, importada do GA4, com contagem **Uma** e janela de 90 dias. Outras ações visíveis: chamadas dos anúncios (principal) e `Conversation started` (principal, mas não incluída nas metas da conta). Nenhuma duplicidade ativa confirmada na tela de ações.
+- Consent Mode v2 revisado na PR [#12](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/12) e publicado; no Tag Assistant foram confirmados **estado inicial denied** para os quatro sinais e, após aceite explícito, `analytics_storage`, `ad_storage`, `ad_user_data` como **granted** com `ad_personalization=denied`. O hit `whatsapp_click` foi visto no GA4 e na tag Google Ads. Atribuição final no Ads ainda depende de tráfego pago real e processamento.
+
+### Diagnóstico de palavras-chave e gasto
+
+| Palavra | Tipo | Impr. | Cliques | Custo | Índice de qualidade |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `eletricista goiania` | Ampla | 101 | 8 | R$ 47,81 | 3/10 |
+| `eletricista goiânia` | Ampla | 14 | 2 | R$ 16,64 | 3/10 |
+| `[eletricista goiania]` | Exata | 88 | 1 | R$ 5,89 | 3/10 |
+| `"eletricista goiânia"` | Frase | 12 | 1 | R$ 6,56 | 3/10 |
+| `"eletricista aparecida de goiania"` | Frase | 2 | 1 | R$ 8,62 | 1/10 |
+| `eletricista em goiânia` | Ampla | 11 | 0 | R$ 0,00 | 2/10 |
+
+- As duas amplas de Goiânia somaram **R$ 64,45**, aproximadamente **75,4%** do gasto (R$ 85,52). Amostra insuficiente para concluir que são cliques ruins ou que a campanha não é rentável.
+- Nos termos principais de Goiânia, **relevância do anúncio acima da média**, mas **experiência da página de destino e CTR esperado abaixo da média**. Melhorias recentes da landing podem ainda não ter sido reavaliadas pelo Google.
+- Variações de **Aparecida de Goiânia** têm índice **1/10**, relevância do anúncio, CTR esperado e experiência da página abaixo da média; algumas são raramente exibidas por baixo índice de qualidade.
+- O relatório de termos individuais exibiu apenas **R$ 9,46** do gasto; **R$ 76,06** estavam agrupados em "outros termos" não disponibilizados individualmente. Não inferir que todos sejam irrelevantes. Insights também apresentou categoria "termos de pesquisa sem classificação".
+
+### Plano proposto — ainda não executado no Google Ads
+
+1. **Enquanto a campanha está pausada**, preparar auditoria das palavras de correspondência ampla e proposta de pausa **temporária** das duas variações amplas de Goiânia que mais consumiram verba, com preservação do histórico; conferir eventuais duplicações e sobreposições.
+2. Priorizar palavras de **frase e exata** com intenção clara de contratar eletricista. Não negativar termos apenas por serem genéricos; avaliar consultas relevantes, evitando exclusões precipitadas com baixa amostra.
+3. Preparar grupo de anúncios **Goiânia**, grupo **Aparecida de Goiânia** com títulos locais próprios e grupo temático de **instalação/adequação de padrão de energia** (serviço prestado), sem afirmar parceria ou credenciamento com a concessionária.
+4. Avaliar equilíbrio entre segmentação e orçamento limitado de **R$ 20/dia**; evitar fragmentação excessiva, anúncios incoerentes e mudanças simultâneas que dificultem comparação.
+5. Reavaliar **Índice de Qualidade**, relevância, CTR esperado e experiência da página após novo período de circulação. Não prometer melhoria automática da pontuação.
+6. Medir **clique no WhatsApp**, conversa iniciada, orçamento e serviço fechado separadamente; acompanhar importação `Lead - WhatsApp` no Google Ads após novos cliques pagos genuínos.
+7. **Não reativar a campanha nem aumentar orçamento/lances sem autorização do responsável.**
+
+**Próxima tarefa:** elaborar a estrutura completa sugerida (grupos, palavras-chave de frase/exata e anúncios para Goiânia e Aparecida) para aprovação **antes** da reativação.
+
+---
+
 ## Campanha
 - Nome: **Pesquisa | Serviços Elétricos | Goiânia**
-- Situação: ativada, *Qualificada (aprendizado)*
+- Situação histórica inicial: ativada, *Qualificada (aprendizado)*. **Situação atual em 09/10/2026: pausada voluntariamente para otimização.**
 - Início: 06/10/2026
 - Rede: Pesquisa do Google
 - Orçamento: **R$ 20/dia**
@@ -43,7 +84,7 @@ Demais variações de palavras-chave também estão ativas. As palavras mostrada
 - Evento do GA4: `whatsapp_click`
 - Criada em: 06/10/2026
 - Categoria: Contatos; ação **principal**
-- Contagem: **Todas** (configuração observada; avaliar troca para **Uma** para geração de leads)
+- Contagem: **Uma** na conferência mais recente em 09/10/2026 (inicialmente observada como **Todas** em 08/10).
 - Janela de conversão por clique: 90 dias
 - Modelo: atribuição baseada em dados
 - Valor padrão quando ausente no GA4: R$ 1
@@ -115,5 +156,6 @@ As duas primeiras palavras amplas concentraram **R$ 64,45 de R$ 85,52 (~75%)** n
 | 08/10/2026 | Auditoria inicial, região e GA4 DebugView | Cinco cidades confirmadas; evento `whatsapp_click` registrado em depuração; conversões Google Ads ainda pendentes |
 | 08/10/2026 | Registro de baseline e próximos passos | Documentação, **sem alterações na configuração da campanha** |
 | 09/10/2026 | Landing elétrica revisada, CI implantado e PR #7 integrada | Railway confirmou deploy online; sem alteração de orçamento/lances; conversões pós-deploy ainda não verificadas |
+| 09/10/2026 | Revisão GA4/Google Ads/Consent Mode v2 e captura completa das palavras-chave | Tag Assistant confirmou sinais e `whatsapp_click`; anotada a campanha pausada, baseline e proposta de estrutura sem alterar anúncios ou lances |
 
 > Privacidade: evitar salvar IDs de contas publicitárias, dados pessoais de clientes ou tokens neste arquivo.
