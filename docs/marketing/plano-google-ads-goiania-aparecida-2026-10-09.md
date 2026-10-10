@@ -16,7 +16,7 @@
 
 | Elemento | Grupo 01 | Grupo 02 |
 | --- | --- | --- |
-| Grupo | `01 | Eletricista | Goiânia` | `02 | Eletricista | Aparecida` |
+| Grupo | `01 - Eletricista Goiânia` | `02 - Eletricista Aparecida` |
 | Intenção | Serviços elétricos em Goiânia | Serviços elétricos em Aparecida de Goiânia |
 | Anúncios | 1 anúncio responsivo (RSA) específico para Goiânia | 1 anúncio responsivo (RSA) específico para Aparecida |
 | URL final | https://eletrotecnicogo.com.br/servicos-eletricos | https://eletrotecnicogo.com.br/servicos-eletricos |
@@ -27,7 +27,7 @@
 
 **Limitação de cobertura:** duas estruturas centradas em cidades não garantem cobertura de buscas genéricas como "eletricista perto de mim" nem de outros municípios segmentados. Revisar isso no próximo ciclo; não retirar três cidades inadvertidamente.
 
-## Grupo 01 — 01 | Eletricista | Goiânia
+## Grupo 01 — 01 - Eletricista Goiânia
 
 **Objetivo:** Contratação de eletricista e serviços elétricos em Goiânia. **URL final:** https://eletrotecnicogo.com.br/servicos-eletricos.
 
@@ -79,7 +79,7 @@
 
 **Observações:** não fixar títulos em posições na primeira versão; testar combinações. Evitar promessas não verificadas como 24h, emergência imediata, menor preço, orçamento grátis, avaliações fictícias ou credenciamento com concessionárias.
 
-## Grupo 02 — 02 | Eletricista | Aparecida
+## Grupo 02 — 02 - Eletricista Aparecida
 
 **Objetivo:** Consultas com intenção explícita de contratar eletricista em Aparecida de Goiânia. **URL final:** https://eletrotecnicogo.com.br/servicos-eletricos.
 
