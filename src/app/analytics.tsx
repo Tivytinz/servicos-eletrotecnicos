@@ -283,6 +283,8 @@ export default function Analytics() {
       <PreferencesPanel
         initial={preferences}
         onSave={(choice) => {
+          // Apply before the next user click/page transition, then persist.
+          updateGoogleConsent(choice);
           writePreferences(choice);
           setEditing(false);
         }}
