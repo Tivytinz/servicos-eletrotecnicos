@@ -34,7 +34,7 @@
 | `"eletricista aparecida de goiania"` | Frase | 2 | 1 | R$ 8,62 | 1/10 | Aparecida | Criar equivalente no Grupo 02 e pausar original para preservar histórico |
 | `eletricista perto de mim` | Ampla | 2 | 0 | R$ 0,00 | 3/10 | Genérica/local | Avaliar cobertura de outras cidades antes de pausar |
 
-As 10 linhas acima somam **13 cliques e R$ 85,52** nos registros de palavras-chave; conferir o conjunto integral antes de reconciliar com os totais da campanha. Em particular, os primeiros cinco itens do grupo original não provam exclusividade de nenhuma busca, pois termos individuais podem ter sido ocultados.
+As 10 linhas acima somam **13 cliques e R$ 85,52**, exatamente os **totais da campanha nesse período**. Portanto, **todo o gasto e os cliques dessa janela estão representados nas 10 linhas visíveis**. Isso **não equivale a um inventário completo de palavras-chave**: ainda há termos cadastrados que podem ter tido 0 cliques, além de itens ocultos por filtros ou fora da captura.
 
 Duas amplas de Goiânia (`eletricista goiania` e `eletricista goiânia`) = **10 de 13 cliques, R$ 64,45 dos R$ 85,52 de gasto (~75,4%)**. Isso justifica **teste de pausa temporária**, não conclusão de desperdício; a amostra é de apenas 13 cliques e as conversões atribuídas ainda não estão disponíveis.
 
