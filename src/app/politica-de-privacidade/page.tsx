@@ -80,6 +80,23 @@ export default function PoliticaDePrivacidade() {
               respectivos provedores.
             </p>
             <p className="mt-3">
+              A medição tem opções separadas: análises de visitas e cliques
+              no Google Analytics 4, e medição de resultados de anúncios
+              do Google. Ambas são opcionais. A segunda exige a primeira e,
+              quando autorizada, permite cookies relacionados à publicidade
+              e o envio de dados usados para atribuição de conversões aos
+              anúncios. A personalização de publicidade e o remarketing
+              permanecem desativados mesmo com a medição de anúncios autorizada.
+              Nenhuma dessas opções é necessária para solicitar um orçamento.
+            </p>
+            <p className="mt-3">
+              Você pode negar as opções ou escolher quais autorizar. As escolhas
+              ficam salvas neste navegador e podem ser alteradas a qualquer
+              momento pelo botão “Privacidade”, disponível no rodapé da tela.
+              O consentimento anteriormente concedido apenas para o Analytics
+              não é considerado autorização para medição de anúncios.
+            </p>
+            <p className="mt-3">
               Quando a URL indica origem em anúncio pago do Google, os botões de
               WhatsApp podem acrescentar essa informação à mensagem pré-preenchida.
               Para manter esse contexto entre páginas do site, guardamos na
