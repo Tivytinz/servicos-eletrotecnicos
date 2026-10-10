@@ -2,6 +2,8 @@
 
 > **Preparação para aprovação — 09/10/2026.** Nenhuma alteração foi aplicada no Google Ads. A campanha **Pesquisa | Serviços Elétricos | Goiânia** deve permanecer **pausada** até autorização expressa para execução e reativação.
 
+> **Atualização pós-inventário CSV integral (09/10):** foram identificadas **27 palavras existentes**, todas no `Grupo de anúncios 1` (19 com termo Goiânia, 6 Aparecida, 2 genéricas). **Não criar duplicatas** das palavras de frase/exata já existentes. O inventário e recomendações individuais estão em [`sprint-ads-01-d1-inventario-csv.md`](./sprint-ads-01-d1-inventario-csv.md). Os termos sugeridos abaixo são **proposta de destino**, não lista de novos cadastros em massa.
+
 ## Objetivo e premissas
 
 - Campanha existente: **Pesquisa | Serviços Elétricos | Goiânia**. Orçamento **R$ 20/dia**, estratégia **Maximizar cliques**, somente Pesquisa do Google. **Não criar nova campanha** nem aumentar orçamento.
@@ -36,13 +38,13 @@
 | Palavra (colar no Google Ads) | Tipo | Nota de implantação |
 | --- | --- | --- |
 | `[eletricista goiania]` | Exata | Reaproveitar keyword [eletricista goiania] existente, sem duplicar. |
-| `"eletricista goiania"` | Frase | Verificar variante existente com acento; manter apenas uma representação. |
-| `"eletricista residencial goiania"` | Frase | Nova, se não existir. |
-| `"eletricista comercial goiania"` | Frase | Nova, se não existir. |
-| `"manutencao eletrica goiania"` | Frase | Nova, se não existir. |
-| `"instalacao eletrica goiania"` | Frase | Nova, se não existir. |
-| `"servicos eletricos goiania"` | Frase | Nova, se não existir. |
-| `"reparo eletrico goiania"` | Frase | Nova, se não existir. |
+| `"eletricista goiania"` | Frase | **Já existe no Grupo 1**. Manter sem duplicar. |
+| `"eletricista residencial goiania"` | Frase | **Já existe no Grupo 1**. Manter. |
+| `"eletricista comercial goiania"` | Frase | **Já existe no Grupo 1**. Manter. |
+| `"manutencao eletrica goiania"` | Frase | **Já existe**, com acento: `"manutenção elétrica goiania"`. Manter a grafia cadastrada. |
+| `"instalacao eletrica goiania"` | Frase | **Já existe**, com acento: `"instalação elétrica goiania"`. Manter a grafia cadastrada. |
+| `"servicos eletricos goiania"` | Frase | **Já existe**, com acento: `"serviços elétricos goiania"`. Manter a grafia cadastrada. |
+| `"reparo eletrico goiania"` | Frase | **Já existe**, com acento: `"reparo elétrico goiania"`. Manter a grafia cadastrada. |
 
 **Atenção:** as correspondências são sem acento apenas para simplificar o cadastro. O Google já considera variantes próximas de grafia/intenção; evite registrar duplicatas com e sem acento. Palavras em frase também podem acionar variantes com intenção equivalente.
 
@@ -87,12 +89,12 @@
 
 | Palavra (colar no Google Ads) | Tipo | Nota de implantação |
 | --- | --- | --- |
-| `[eletricista aparecida de goiania]` | Exata | Nova, se não existir; manter a variante de frase existente só no novo grupo. |
+| `[eletricista aparecida de goiania]` | Exata | **Já existe no Grupo 1**. Recriar no Grupo 02 após aprovação; depois pausar a original. |
 | `"eletricista aparecida de goiania"` | Frase | Migrar de Grupo de anúncios 1: pausar a antiga e criar no novo grupo. |
-| `"eletricista residencial aparecida de goiania"` | Frase | Nova, se não existir. |
-| `"manutencao eletrica aparecida de goiania"` | Frase | Nova, se não existir. |
-| `"instalacao eletrica aparecida de goiania"` | Frase | Nova, se não existir. |
-| `"servicos eletricos aparecida de goiania"` | Frase | Nova, se não existir. |
+| `"eletricista residencial aparecida de goiania"` | Frase | **Nova opcional**; ainda não existe no CSV. Testar se houver volume. |
+| `"manutencao eletrica aparecida de goiania"` | Frase | **Nova opcional**; ainda não existe no CSV. Testar com relevância validada. |
+| `"instalacao eletrica aparecida de goiania"` | Frase | **Nova opcional**; ainda não existe no CSV. Testar com relevância validada. |
+| `"servicos eletricos aparecida de goiania"` | Frase | **Nova opcional**; ainda não existe no CSV. Testar com relevância validada. |
 | `"eletricista comercial aparecida de goiania"` | Frase | Opcional: somente após avaliar volume de busca. |
 
 **Atenção:** as correspondências são sem acento apenas para simplificar o cadastro. O Google já considera variantes próximas de grafia/intenção; evite registrar duplicatas com e sem acento. Palavras em frase também podem acionar variantes com intenção equivalente.
@@ -129,6 +131,8 @@
 | 4 | Informe seu bairro e o serviço desejado. Fale diretamente com a Eletrotécnico GO. | 81 |
 
 **Observações:** não fixar títulos em posições na primeira versão; testar combinações. Evitar promessas não verificadas como 24h, emergência imediata, menor preço, orçamento grátis, avaliações fictícias ou credenciamento com concessionárias.
+
+**Implantação inicial sugerida para Aparecida:** ativar primeiramente as correspondências **frase + exata já identificadas no grupo original** (recriadas no Grupo 02). Somente adicionar mais palavras de serviço após confirmação da disponibilidade e desempenho, devido ao orçamento reduzido e ao histórico de baixo Índice de Qualidade.
 
 ## Execução sugerida (não realizada)
 

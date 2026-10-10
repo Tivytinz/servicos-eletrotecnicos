@@ -44,7 +44,8 @@ Preparar e validar a reorganização de **dois grupos de anúncios** com mensage
 - [x] Baseline histórico conhecido: 244 impressões, 13 cliques, gasto R$85,52, 0 conversões atribuídas (06–09/10/2026).
 - [x] Campanha pausada e orçamento de R$20/dia identificado.
 - [x] Rascunhos de 2 RSAs (15 títulos + 4 descrições cada) e 15 palavras candidatas na PR #14.
-- [ ] Lista exata e atualizada de palavras, anúncios e negativas revisada **na própria conta Google Ads**.
+- [x] **Lista integral das 27 palavras** recebida em CSV e reconciliada com os totais do período. [Inventário integral](./sprint-ads-01-d1-inventario-csv.md).
+- [ ] Revisar **anúncios e negativas** na conta Google Ads, ainda não exportados.
 - [ ] Responsável pela execução e janela de implantação aprovados.
 
 ## Definition of Done (DoD)
