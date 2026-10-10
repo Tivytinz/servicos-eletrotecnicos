@@ -71,7 +71,7 @@ Os totais batem com os CSVs de palavras-chave e com o histórico da campanha. O 
 - [x] **27/27 palavras-chave positivas** (CSV anterior, [relatório de palavras-chave](./sprint-ads-01-d1-inventario-csv.md)).
 - [x] **20/20 palavras-chave negativas** (CSV anterior, [auditoria de negativas](./sprint-ads-01-d1-negativas.md)).
 - [x] **1/1 anúncio responsivo listado**: títulos, descrições, grupo, URL, estado, qualidade, melhorias, gastos e ausência de pinning conferidos.
-- [ ] **Recursos/Sitelinks:** exportar ou capturar tela com tipo, texto, URLs, associação e status.
+- [x] **Recursos/Sitelinks:** CSV completo recebido (4 associações no nível campanha; 3 serviços elétricos + 1 de limpeza solar). [Auditoria dos sitelinks](./sprint-ads-01-d1-sitelinks.md).
 - [ ] **Locais:** capturar tela de segmentação por presença e cidades ativas, verificando alterações após o histórico.
 - [ ] Confirmar intenção sobre `Reparo Elétrico Rápido` e `orçamento rápido` antes da edição do anúncio.
 - [ ] Revisar o plano final e obter aprovação operacional para alterações. **Não reativar sem autorização explícita.**
