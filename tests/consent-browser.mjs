@@ -75,7 +75,7 @@ try {
   assert.equal(records.filter((x) => x[0] === "event" && x[1] === "whatsapp_click").length, 1);
   console.log("PASS: apenas Analytics é concedido e registra whatsapp_click");
 
-  await page.getByRole("button", { name: "Privacidade" }).click();
+  await page.getByRole("button", { name: /Revisar preferências de cookies e privacidade/ }).click();
   await page.getByRole("checkbox", { name: /Medição de anúncios/ }).check();
   await page.getByRole("button", { name: "Salvar escolhas" }).click();
   await waitForConsent(page, {
@@ -90,7 +90,7 @@ try {
     analytics_storage: "granted", ad_storage: "granted",
     ad_user_data: "granted", ad_personalization: "denied",
   });
-  await page.getByRole("button", { name: "Privacidade" }).click();
+  await page.getByRole("button", { name: /Revisar preferências de cookies e privacidade/ }).click();
   await page.getByRole("button", { name: "Recusar opcionais" }).click();
   await waitForConsent(page, {
     analytics_storage: "denied", ad_storage: "denied",
@@ -119,9 +119,9 @@ try {
   await rejected.addInitScript(() => localStorage.setItem("eletrotecnico_go_analytics_consent", "rejected"));
   const rejectedPage = await rejected.newPage();
   await rejectedPage.goto(url, { waitUntil: "domcontentloaded" });
-  await rejectedPage.getByRole("button", { name: "Privacidade" }).waitFor();
+  await rejectedPage.getByRole("button", { name: /Revisar preferências de cookies e privacidade/ }).waitFor();
   assert.equal(await rejectedPage.locator("script[data-ga-id]").count(), 0);
-  await rejectedPage.getByRole("button", { name: "Privacidade" }).click();
+  await rejectedPage.getByRole("button", { name: /Revisar preferências de cookies e privacidade/ }).click();
   await rejectedPage.getByRole("checkbox", { name: /Análise de visitas/ }).waitFor();
   console.log("PASS: recusa antiga mantida, com opção de revisar");
   await rejected.close();
