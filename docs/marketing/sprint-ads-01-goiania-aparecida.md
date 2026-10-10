@@ -49,8 +49,15 @@ Preparar e validar a reorganização de **dois grupos de anúncios** com mensage
 - [x] **1/1 anúncio responsivo** de pesquisa auditado por CSV (15 títulos, 4 descrições, URL correta, qualidade `Boa`, 0 pins). [Auditoria de anúncio](./sprint-ads-01-d1-anuncios.md).
 - [x] **4 sitelinks** associados ao nível da campanha, todos qualificados: **3 elétricos + 1 solar**. [Auditoria detalhada de sitelinks](./sprint-ads-01-d1-sitelinks.md). Não somar métricas por associação, pois há sobreposição.
 - [x] **Cinco municípios** confirmados por captura atual de Configurações → Locais (10/10/2026): Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade; modo `Inserir outro local` selecionado.
-- [ ] Confirmar **Opções de local → Presença** (seção recolhida na captura) e obter aprovação para desassociar o sitelink solar exclusivamente da campanha elétrica.
+- [x] **Opções de local → Presença** confirmada em captura da configuração expandida em 10/10/2026: selecionado `Presença: pessoas que estão nos locais incluídos ou que frequentam a área`. Não está selecionado `Presença ou interesse`.
+- [ ] **Decisão sobre sitelink solar** ainda depende de aprovação para desassociação exclusiva desta campanha, a tratar na issue #18 (D4), sem bloquear o encerramento do inventário D1.
 - [ ] Responsável pela execução e janela de implantação aprovados.
+
+## Encerramento da auditoria D1 — 10/10/2026
+
+**Inventário concluído:** 27 keywords de pesquisa, 20 negativas, 1 RSA, 4 sitelinks, 5 municípios e modo `Presença`. Fonte: CSVs exportados pelo responsável e duas capturas das configurações de locais. A **issue #15** pode ser fechada como inventário/documentação concluída.
+
+**Itens para execução futura, e não bloqueios do inventário:** solicitação de aprovação para desassociar `Limpeza de Placas` da campanha elétrica (issue #18), revisar promessas de rapidez no RSA de Goiânia (issue #16), e implantar os dois grupos somente com acompanhamento do responsável. Conclusão D1 **não** significa que o Google Ads foi alterado.
 
 ## Definition of Done (DoD)
 
