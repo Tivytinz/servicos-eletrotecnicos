@@ -39,7 +39,7 @@
 6. Medir **clique no WhatsApp**, conversa iniciada, orçamento e serviço fechado separadamente; acompanhar importação `Lead - WhatsApp` no Google Ads após novos cliques pagos genuínos.
 7. **Não reativar a campanha nem aumentar orçamento/lances sem autorização do responsável.**
 
-**Próxima tarefa:** elaborar a estrutura completa sugerida (grupos, palavras-chave de frase/exata e anúncios para Goiânia e Aparecida) para aprovação **antes** da reativação.
+**Plano de reorganização preparado:** [grupos, 15 palavras-chave propostas e 2 anúncios responsivos completos para Goiânia e Aparecida](./plano-google-ads-goiania-aparecida-2026-10-09.md). Documento **pendente de aprovação/aplicação** na conta Google Ads. Não reativar sem solicitação.
 
 ---
 
