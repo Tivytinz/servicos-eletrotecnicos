@@ -48,7 +48,8 @@ Preparar e validar a reorganização de **dois grupos de anúncios** com mensage
 - [x] **20 palavras-chave negativas** recebidas em CSV e auditadas; todas no nível campanha e com correspondência ampla negativa. [Auditoria das negativas](./sprint-ads-01-d1-negativas.md).
 - [x] **1/1 anúncio responsivo** de pesquisa auditado por CSV (15 títulos, 4 descrições, URL correta, qualidade `Boa`, 0 pins). [Auditoria de anúncio](./sprint-ads-01-d1-anuncios.md).
 - [x] **4 sitelinks** associados ao nível da campanha, todos qualificados: **3 elétricos + 1 solar**. [Auditoria detalhada de sitelinks](./sprint-ads-01-d1-sitelinks.md). Não somar métricas por associação, pois há sobreposição.
-- [ ] Confirmar **locais** e modo de presença, e aprovar a decisão de desassociar o sitelink solar exclusivamente desta campanha.
+- [x] **Cinco municípios** confirmados por captura atual de Configurações → Locais (10/10/2026): Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade; modo `Inserir outro local` selecionado.
+- [ ] Confirmar **Opções de local → Presença** (seção recolhida na captura) e obter aprovação para desassociar o sitelink solar exclusivamente da campanha elétrica.
 - [ ] Responsável pela execução e janela de implantação aprovados.
 
 ## Definition of Done (DoD)
