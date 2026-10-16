@@ -6,8 +6,11 @@ import { redirect } from "next/navigation";
 import { consultar } from "@/lib/gestao/db";
 import {
   COOKIE_SESSAO, DURACAO_SESSAO_SEGUNDOS,
-  criarTokenSessao, hashTokenSessao, verificarSenha,
+  criarTokenSessao, hashTokenSessao, verificarSenha, criarHashSenha,
 } from "@/lib/gestao/sessao";
+import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
+
+const HASH_FICTICIO = criarHashSenha("credencial-ficticia-para-equalizar-tempo");
 
 function origemPermitida(origin: string | null, host: string | null): boolean {
   if (!origin || !host) return false;
@@ -33,11 +36,16 @@ export async function entrar(formData: FormData): Promise<void> {
     redirect("/gestao/login?erro=credenciais");
   }
 
+  if (!(await permitirTentativaLogin(email))) {
+    redirect("/gestao/login?erro=credenciais");
+  }
+
   const candidatos = await consultar<{ id: string; senha_hash: string }>(`
     SELECT id, senha_hash FROM gestao.usuarios WHERE email = $1 AND ativo = true LIMIT 1
   `, [email]);
 
-  if (!candidatos[0] || !verificarSenha(senha, candidatos[0].senha_hash)) {
+  const senhaValida = verificarSenha(senha, candidatos[0]?.senha_hash ?? HASH_FICTICIO);
+  if (!candidatos[0] || !senhaValida) {
     // Evitar distinção entre usuário inexistente e senha incorreta na resposta.
     redirect("/gestao/login?erro=credenciais");
   }
