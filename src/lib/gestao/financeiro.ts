@@ -2,7 +2,7 @@
 export type EntradaApuracao = {
   receitaCentavos: number;
   materiaisCentavos: number;
-  kmMilimetros: number;
+  kmMilesimos: number;
   tarifaCentavosKm?: number;
 };
 
@@ -33,11 +33,11 @@ export function apurarRecebimento(entrada: EntradaApuracao): ResultadoApuracao {
   const tarifa = entrada.tarifaCentavosKm ?? 120;
   inteiroSeguroNaoNegativo(entrada.receitaCentavos, "receitaCentavos");
   inteiroSeguroNaoNegativo(entrada.materiaisCentavos, "materiaisCentavos");
-  inteiroSeguroNaoNegativo(entrada.kmMilimetros, "kmMilimetros");
+  inteiroSeguroNaoNegativo(entrada.kmMilesimos, "kmMilesimos");
   inteiroSeguroNaoNegativo(tarifa, "tarifaCentavosKm");
 
   const deslocamentoCentavos = arredondarRazao(
-    BigInt(entrada.kmMilimetros) * BigInt(tarifa), 1000n,
+    BigInt(entrada.kmMilesimos) * BigInt(tarifa), 1000n,
   );
   const provisaoAnunciosCentavos = arredondarRazao(
     BigInt(entrada.receitaCentavos) * 10n, 100n,
