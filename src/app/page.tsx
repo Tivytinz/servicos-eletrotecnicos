@@ -28,9 +28,9 @@ const servicos = [
     icone: "🧰",
   },
   {
-    titulo: "Energia solar",
+    titulo: "Limpeza técnica de sistemas fotovoltaicos",
     texto:
-      "Manutenção e suporte técnico para sistemas fotovoltaicos residenciais e comerciais.",
+      "Limpeza de módulos fotovoltaicos residenciais e comerciais, com avaliação das condições de acesso e do sistema.",
     icone: "☀️",
   },
   {
@@ -183,7 +183,7 @@ export default function Home() {
                 <div className="mt-8 space-y-3">
                   {[
                     "Instalações e manutenção",
-                    "Energia solar",
+                    "Limpeza de sistemas fotovoltaicos",
                     "Limpeza de placas solares",
                   ].map((item) => (
                     <div
