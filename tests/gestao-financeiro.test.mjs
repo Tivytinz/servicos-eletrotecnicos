@@ -5,7 +5,7 @@ import { podeTransicionarOS } from "../src/lib/gestao/estados.ts";
 
 test("apuração conserva centavos e aplica 10% de anúncios, R$ 1,20/km e 20/24/56", () => {
   const r = apurarRecebimento({
-    receitaCentavos: 100_000, materiaisCentavos: 15_000, kmMilimetros: 40_000,
+    receitaCentavos: 100_000, materiaisCentavos: 15_000, kmMilesimos: 40_000,
   });
   assert.deepEqual(r, {
     deslocamentoCentavos: 4_800,
@@ -19,7 +19,7 @@ test("apuração conserva centavos e aplica 10% de anúncios, R$ 1,20/km e 20/24
 
 test("arredondamento de centavos conserva o total distribuído", () => {
   const r = apurarRecebimento({
-    receitaCentavos: 101, materiaisCentavos: 0, kmMilimetros: 0,
+    receitaCentavos: 101, materiaisCentavos: 0, kmMilesimos: 0,
   });
   assert.equal(r.empresaCentavos + r.victorCentavos + r.carlosCentavos,
     r.saldoDistribuivelCentavos);
@@ -27,7 +27,7 @@ test("arredondamento de centavos conserva o total distribuído", () => {
 
 test("saldo negativo não cria distribuição positiva", () => {
   const r = apurarRecebimento({
-    receitaCentavos: 1000, materiaisCentavos: 5000, kmMilimetros: 0,
+    receitaCentavos: 1000, materiaisCentavos: 5000, kmMilesimos: 0,
   });
   assert.ok(r.saldoDistribuivelCentavos < 0);
   assert.equal(r.empresaCentavos + r.victorCentavos + r.carlosCentavos, 0);
@@ -35,9 +35,9 @@ test("saldo negativo não cria distribuição positiva", () => {
 
 test("não aceita valores negativos, fracionários ou inseguros", () => {
   for (const entrada of [
-    { receitaCentavos: -1, materiaisCentavos: 0, kmMilimetros: 0 },
-    { receitaCentavos: 1.5, materiaisCentavos: 0, kmMilimetros: 0 },
-    { receitaCentavos: Number.MAX_SAFE_INTEGER + 1, materiaisCentavos: 0, kmMilimetros: 0 },
+    { receitaCentavos: -1, materiaisCentavos: 0, kmMilesimos: 0 },
+    { receitaCentavos: 1.5, materiaisCentavos: 0, kmMilesimos: 0 },
+    { receitaCentavos: Number.MAX_SAFE_INTEGER + 1, materiaisCentavos: 0, kmMilesimos: 0 },
   ]) {
     assert.throws(() => apurarRecebimento(entrada), RangeError);
   }
