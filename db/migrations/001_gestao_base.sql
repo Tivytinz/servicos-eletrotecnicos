@@ -121,13 +121,13 @@ CREATE TABLE gestao.custos_servico (
   os_id uuid NOT NULL REFERENCES gestao.ordens_servico(id),
   tipo text NOT NULL CHECK (tipo IN ('material','deslocamento','outro')),
   valor_centavos bigint NOT NULL CHECK (valor_centavos >= 0),
-  km_milimetros bigint CHECK (km_milimetros >= 0),
+  km_milesimos bigint CHECK (km_milesimos >= 0),
   tarifa_centavos_km integer CHECK (tarifa_centavos_km >= 0),
   comprovante_referencia text,
   criado_em timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT deslocamento_dados CHECK (
-    (tipo = 'deslocamento' AND km_milimetros IS NOT NULL AND tarifa_centavos_km IS NOT NULL)
-    OR (tipo <> 'deslocamento' AND km_milimetros IS NULL AND tarifa_centavos_km IS NULL)
+    (tipo = 'deslocamento' AND km_milesimos IS NOT NULL AND tarifa_centavos_km IS NOT NULL)
+    OR (tipo <> 'deslocamento' AND km_milesimos IS NULL AND tarifa_centavos_km IS NULL)
   )
 );
 
