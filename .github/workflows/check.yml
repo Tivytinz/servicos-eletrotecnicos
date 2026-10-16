@@ -2,15 +2,30 @@ name: Check
 
 on:
   pull_request:
-    branches: [main]
   push:
-    branches: [main]
+    branches: [main, feat/gestao-auth-leads]
+
+permissions:
+  contents: read
 
 jobs:
   verify:
-    name: Lint e Build
+    name: Lint, testes, banco e build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gestao_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gestao_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,9 +34,24 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-      - name: Instalar dependências
+      - name: Instalar dependências com lockfile
         run: npm ci
-      - name: Auditar vulnerabilidades de produção (alta ou crítica)
+      - name: Auditar vulnerabilidades de produção
         run: npm audit --omit=dev --audit-level=high
-      - name: Verificar lint e compilação
+      - name: Aplicar migrations no PostgreSQL descartável
+        run: |
+          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 < db/migrations/001_gestao_base.sql
+          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 < db/migrations/002_gestao_sessoes.sql
+          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 < db/migrations/003_gestao_login_tentativas.sql
+          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 -c "CREATE ROLE gestao_app LOGIN PASSWORD 'teste-somente-ci'"
+          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v app_role=gestao_app < db/grants/gestao-app.sql
+      - name: Testes, lint e compilação
+        env:
+          GESTAO_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/gestao_test
         run: npm run check
+      - name: Garantir que usuário app não pode escrever em financeiro
+        run: |
+          if docker exec -i "${{ job.services.postgres.id }}" psql -U gestao_app -d gestao_test -v ON_ERROR_STOP=1 -c "INSERT INTO gestao.lancamentos_financeiros (chave_idempotencia, categoria, valor_centavos) VALUES ('teste', 'receita', 1)"; then
+            echo "FALHA: usuário de aplicação possui permissão indevida no financeiro"
+            exit 1
+          fi
