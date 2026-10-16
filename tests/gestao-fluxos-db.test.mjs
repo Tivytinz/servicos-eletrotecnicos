@@ -38,7 +38,7 @@ test("sessão válida, revogada, expirada e usuário inativo no PostgreSQL", {
     );
     assert.equal(sessao.rows[0].token_hash, tokenHash);
     assert.notEqual(sessao.rows[0].token_hash, token);
-    let rows = (await client.query(SQL_BUSCAR_SESSAO, [tokenHash])).rows;
+    const rows = (await client.query(SQL_BUSCAR_SESSAO, [tokenHash])).rows;
     assert.equal(rows.length, 1);
     assert.deepEqual(rows[0].papeis, ["comercial"]);
     assert.equal(temPermissao(rows[0].papeis, "leads:criar"), true);
