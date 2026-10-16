@@ -51,6 +51,7 @@ Em 16/10/2026, o operador executou migrations e criação da role diretamente pe
 1. Confirmar CI de ponta a ponta na branch consolidada: npm ci, audit, lint, testes, build, PostgreSQL descartável e controle de acesso financeiro.
 2. Revisar a árvore de PRs empilhados e promover código à `main` **somente com autorização explícita**, mantendo `GESTAO_HABILITADA` ausente/false.
 3. Após merge e deploy, validar que `/gestao/leads` permanece indisponível e não há regressão no site público.
-4. Criar admin inicial em execução privada e segura, sem senha em logs/CI, somente com autorização do titular; validar a `DATABASE_URL` a partir do serviço web sem registrar credenciais.
+4. Após deploy da `main`, abrir **Railway → serviço `servicos-eletrotecnicos` → Console** e executar `node scripts/gestao-check-connection.mjs`. O script faz apenas `SELECT`, exige a role `gestao_app`, verifica permissões de clientes/sessões e negação de escrita financeira, e **não exibe a URL ou senha**. Resultado esperado: `Conexão privada: APROVADA`. Não usar o console do serviço Postgres para este teste, pois o objetivo é validar a `DATABASE_URL` do web. Em falha, manter a gestão desligada e corrigir a variável no Railway sem compartilhar credenciais.
+5. Criar admin inicial em execução privada e segura, sem senha em logs/CI, somente com autorização do titular.
 5. Ativar o painel apenas após validação E2E de login, logout, limite de tentativas, autorização de leads, CSRF, LGPD e estratégia de backup/restore.
 
