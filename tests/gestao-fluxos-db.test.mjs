@@ -49,7 +49,7 @@ test("sessão válida, revogada, expirada e usuário inativo no PostgreSQL", {
     assert.equal((await client.query(SQL_BUSCAR_SESSAO, [tokenHash])).rowCount, 0);
 
     await client.query(
-      "UPDATE gestao.sessoes SET revogada_em = NULL, expira_em = now() - interval '1 minute' WHERE id = $1",
+      "UPDATE gestao.sessoes SET revogada_em = NULL, criada_em = now() - interval '2 hours', expira_em = now() - interval '1 hour' WHERE id = $1",
       [sessao.rows[0].id],
     );
     assert.equal((await client.query(SQL_BUSCAR_SESSAO, [tokenHash])).rowCount, 0);
