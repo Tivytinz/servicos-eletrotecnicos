@@ -22,7 +22,8 @@ function origemPermitida(origin: string | null, host: string | null): boolean {
 export async function entrar(formData: FormData): Promise<void> {
   if (process.env.GESTAO_HABILITADA !== "true") redirect("/");
   const cabecalhos = await headers();
-  if (!origemPermitida(cabecalhos.get("origin"), cabecalhos.get("host"))) {
+  const host = cabecalhos.get("host");
+  if (!origemPermitida(cabecalhos.get("origin"), host)) {
     throw new Error("Origem não autorizada");
   }
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
