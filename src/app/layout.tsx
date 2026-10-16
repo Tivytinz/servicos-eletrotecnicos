@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     template: "%s | Eletrotécnico GO",
   },
   description:
-    "Serviços eletrotécnicos em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Instalação, manutenção elétrica, energia solar e limpeza de placas solares.",
+    "Serviços eletrotécnicos em Goiânia, Aparecida de Goiânia, Hidrolândia, Senador Canedo e Trindade. Instalação e manutenção elétrica e limpeza de placas solares.",
   keywords: [
     "eletrotécnico Goiânia",
     "serviços elétricos Goiânia",
     "manutenção elétrica Goiânia",
     "limpeza de placas solares Goiânia",
-    "energia solar Goiânia",
+    "limpeza de sistemas fotovoltaicos Goiânia",
     "eletrotécnico Aparecida de Goiânia",
   ],
   alternates: {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Eletrotécnico GO",
     title: "Eletrotécnico em Goiânia e Região | Eletrotécnico GO",
     description:
-      "Serviços elétricos, manutenção e energia solar em Goiânia e cidades da região.",
+      "Serviços elétricos, manutenção elétrica e limpeza de placas solares em Goiânia e região.",
     images: [
       {
         url: "/solar/depois-hq.webp",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Eletrotécnico em Goiânia e Região | Eletrotécnico GO",
     description:
-      "Serviços elétricos, manutenção e energia solar em Goiânia e cidades da região.",
+      "Serviços elétricos, manutenção elétrica e limpeza de placas solares em Goiânia e região.",
     images: ["/solar/depois-hq.webp"],
   },
   robots: {
