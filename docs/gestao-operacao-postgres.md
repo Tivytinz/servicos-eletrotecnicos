@@ -29,8 +29,8 @@
 4. Primeiro rodar `node scripts/gestao-migrate.mjs --check` (retorna 1 quando há pendências). Depois, somente com autorização para executar no banco real:
    `GESTAO_MIGRATIONS_CONFIRM=APLICAR_GESTAO node scripts/gestao-migrate.mjs --apply`
 5. Rodar `node scripts/gestao-migrate.mjs --check` novamente. O executor usa lock, transações e checksums; rejeita drift.
-6. Provisionar role SQL de app e aplicar `db/grants/gestao-app.sql` como proprietário do schema, com `psql -v app_role=gestao_app`. A senha da role deve ser gerada fora do repositório e guardada como segredo.
-7. Validar com conexão da role `gestao_app`: consegue cadastrar clientes/leads e sessões, mas não pode escrever no livro-razão financeiro.
+6. Provisionar role SQL com `GESTAO_ROLE_CONFIRM=CRIAR_GESTAO_APP node scripts/gestao-provision-role.mjs --apply`, usando `DATABASE_URL_ADMIN` e `GESTAO_APP_PASSWORD` (senha aleatória de 32–256 caracteres) somente no processo privado. O script cria `gestao_app` com SCRAM-SHA-256, grants mínimos e teste de negação de escrita financeira. **Não** reutilizar a senha de proprietário do banco. Se a role já existir, o script falha sem girar a senha.
+7. Validar com conexão da role `gestao_app`: consegue cadastrar clientes/leads e sessões, mas não pode escrever no livro-razão financeiro. O script testa leitura e negação financeira; os testes de CI cobrem também cadastro, sessão e limite de login.
 8. Provisionar o primeiro admin **apenas quando** houver aprovação do titular da conta, e nunca em CI.
 9. Configurar `DATABASE_URL` privada da role limitada no serviço web **somente depois** dos passos acima. Não habilitar `GESTAO_HABILITADA` até concluir E2E de autenticação, rate limiting IP/WAF, CSRF, LGPD e restore.
 
@@ -41,3 +41,7 @@ O workflow `Check` usa PostgreSQL descartável e aplica migrations duas vezes pa
 ## Reversão
 
 Não há rollback automático para migrations estruturais. Em falha, o executor desfaz a migration em andamento por transação. Para recuperar mudanças já aplicadas, interromper acessos e restaurar backup verificado em ambiente isolado antes de qualquer operação destrutiva. Não executar `DROP SCHEMA` ou sobrescrever volume sem autorização específica.
+
+## Execução operacional pendente
+
+Em 16/10/2026, a tentativa de criar um serviço temporário de migração pelo conector Railway foi **bloqueada pelas configurações de segurança**. Não há executor remoto disponível por esta integração; **não foi aplicado SQL no PostgreSQL Railway real**. Não contornar a restrição expondo TCP/5432 publicamente ou adicionando a credencial de superusuário ao serviço web. Operador autorizado deve usar execução privada compatível com Railway (por exemplo, tarefa operacional efêmera criada diretamente no painel) e confirmar migrations, role e logs antes de conectar a aplicação.
