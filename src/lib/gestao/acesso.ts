@@ -1,4 +1,3 @@
-import "server-only";
 import { cookies } from "next/headers";
 import { consultar } from "./db";
 import { COOKIE_SESSAO, hashTokenSessao } from "./sessao";
