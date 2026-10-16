@@ -1,6 +1,6 @@
 # PostgreSQL Eletrotécnico GO — operação segura
 
-**Situação em 16/10/2026:** Railway provisionado, PostgreSQL 18 online no ambiente `production`, volume 5 GB. **Nenhuma migration executada no banco real; não há usuários reais.** O site continua na branch `main` e `GESTAO_HABILITADA` deve continuar ausente/false.
+**Situação em 16/10/2026 (verificação assistida pelo operador):** PostgreSQL 18 online em `production`, volume 5 GB. As migrations `001`–`003` foram aplicadas ao banco `railway` via console do Railway, com `COMMIT` e registro de três versões em `gestao.schema_migrations`. A role `gestao_app` foi criada, senha configurada sem compartilhamento, cinco GRANTs aplicados, privilégios de INSERT em clientes/sessões confirmados e INSERT no livro financeiro negado. Login via `psql -h 127.0.0.1 -U gestao_app -d railway -W` confirmado. `DATABASE_URL` adicionada ao serviço web e novo deploy da branch `main` concluído; **a conexão efetiva da aplicação pela URL ainda não foi verificada**. `GESTAO_HABILITADA` permanece ausente/false; ainda não há admin inicial. Backups adiados por decisão do titular; **não inserir dados reais sem estratégia de recuperação**.
 
 ## Topologia e segregação
 
@@ -19,7 +19,7 @@
 5. Registrar data, operador, RPO/RTO observado e resultado do teste. Revisar periodicamente.
 6. Referência Railway: https://docs.railway.com/guides/postgres-backups-restores
 
-**Não foi possível ativar backups via conector nesta etapa; isso deve ser confirmado no painel Railway.** Volume persistente não equivale a backup.
+**Backups foram adiados pelo titular nesta etapa.** Volume persistente não equivale a backup; habilitar e testar restauração antes de dados reais.
 
 ## Aplicação controlada das migrations
 
@@ -44,4 +44,13 @@ Não há rollback automático para migrations estruturais. Em falha, o executor 
 
 ## Execução operacional pendente
 
-Em 16/10/2026, a tentativa de criar um serviço temporário de migração pelo conector Railway foi **bloqueada pelas configurações de segurança**. Não há executor remoto disponível por esta integração; **não foi aplicado SQL no PostgreSQL Railway real**. Não contornar a restrição expondo TCP/5432 publicamente ou adicionando a credencial de superusuário ao serviço web. Operador autorizado deve usar execução privada compatível com Railway (por exemplo, tarefa operacional efêmera criada diretamente no painel) e confirmar migrations, role e logs antes de conectar a aplicação.
+Em 16/10/2026, o operador executou migrations e criação da role diretamente pelo **Console privado do Postgres no Railway**, após bloqueio da criação de executor temporário pelo conector. A role foi criada manualmente; o script `gestao-provision-role.mjs` é para ambientes novos e **não deve ser executado novamente no banco real**, pois a role já existe. Os checksums foram conferidos com os arquivos do GitHub antes de aplicar. O serviço web recebeu `DATABASE_URL` manualmente; OAuth Railway oculta valores e não prova a correção da URL. Não expor porta 5432, não compartilhar senha, não conceder superusuário ao serviço web.
+
+## Critérios de promoção da branch e liberação
+
+1. Confirmar CI de ponta a ponta na branch consolidada: npm ci, audit, lint, testes, build, PostgreSQL descartável e controle de acesso financeiro.
+2. Revisar a árvore de PRs empilhados e promover código à `main` **somente com autorização explícita**, mantendo `GESTAO_HABILITADA` ausente/false.
+3. Após merge e deploy, validar que `/gestao/leads` permanece indisponível e não há regressão no site público.
+4. Criar admin inicial em execução privada e segura, sem senha em logs/CI, somente com autorização do titular; validar a `DATABASE_URL` a partir do serviço web sem registrar credenciais.
+5. Ativar o painel apenas após validação E2E de login, logout, limite de tentativas, autorização de leads, CSRF, LGPD e estratégia de backup/restore.
+
