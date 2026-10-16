@@ -1,4 +1,5 @@
 "use server";
+import { SQL_CADASTRAR_LEAD } from "@/lib/gestao/queries";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -19,14 +20,7 @@ export async function cadastrarLead(formData: FormData): Promise<void> {
     throw new Error("Dados inválidos");
   }
   // A operação precisa ser atômica: uma instrução SQL cria cliente e lead.
-  await consultar(`
-    WITH cliente AS (
-      INSERT INTO gestao.clientes (nome, telefone) VALUES ($1, $2)
-      RETURNING id
-    )
-    INSERT INTO gestao.leads (cliente_id, origem, descricao)
-    SELECT id, $3, $4 FROM cliente
-  `, [nome, telefone || null, origem, descricao]);
+  await consultar(SQL_CADASTRAR_LEAD, [nome, telefone || null, origem, descricao]);
   revalidatePath("/gestao/leads");
   redirect("/gestao/leads");
 }
