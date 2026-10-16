@@ -1,5 +1,5 @@
+-- Aplicada transacionalmente por scripts/gestao-migrate.mjs.
 -- Sessões persistentes, somente hashes de tokens aleatórios.
-BEGIN;
 CREATE TABLE gestao.sessoes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   usuario_id uuid NOT NULL REFERENCES gestao.usuarios(id),
@@ -13,4 +13,3 @@ CREATE TABLE gestao.sessoes (
 CREATE INDEX idx_sessoes_usuario ON gestao.sessoes(usuario_id, expira_em DESC);
 CREATE INDEX idx_sessoes_validade ON gestao.sessoes(expira_em) WHERE revogada_em IS NULL;
 REVOKE ALL ON ALL TABLES IN SCHEMA gestao FROM PUBLIC;
-COMMIT;
