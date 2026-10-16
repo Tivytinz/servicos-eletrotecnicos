@@ -39,10 +39,13 @@ jobs:
       - name: Auditar vulnerabilidades de produção
         run: npm audit --omit=dev --audit-level=high
       - name: Aplicar migrations no PostgreSQL descartável
+        env:
+          DATABASE_URL_ADMIN: postgres://postgres:postgres@127.0.0.1:5432/gestao_test
+          GESTAO_MIGRATIONS_CONFIRM: APLICAR_GESTAO
         run: |
-          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 < db/migrations/001_gestao_base.sql
-          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 < db/migrations/002_gestao_sessoes.sql
-          docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 < db/migrations/003_gestao_login_tentativas.sql
+          node scripts/gestao-migrate.mjs --apply
+          node scripts/gestao-migrate.mjs --apply
+          node scripts/gestao-migrate.mjs --check
           docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v ON_ERROR_STOP=1 -c "CREATE ROLE gestao_app LOGIN PASSWORD 'teste-somente-ci'"
           docker exec -i "${{ job.services.postgres.id }}" psql -U postgres -d gestao_test -v app_role=gestao_app < db/grants/gestao-app.sql
       - name: Testes, lint e compilação
