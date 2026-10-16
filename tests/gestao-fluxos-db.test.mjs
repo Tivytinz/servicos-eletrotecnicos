@@ -115,11 +115,11 @@ test("cadastro parametrizado de lead e cliente é atômico", {
     assert.equal(registro.rows[0].descricao, descricao);
     assert.equal(registro.rows[0].origem, "whatsapp");
     assert.equal(registro.rows[0].telefone, "62999999999");
-    // Falha de CHECK na tabela lead deve reverter também o cliente do CTE.
+    // Falha de NOT NULL na tabela lead deve reverter também o cliente do CTE.
     await client.query("SAVEPOINT antes_da_falha");
     await assert.rejects(
-      client.query(SQL_CADASTRAR_LEAD, ["AB", null, "site", ""]),
-      (error) => error.code === "23514",
+      client.query(SQL_CADASTRAR_LEAD, ["AB", null, "site", null]),
+      (error) => error.code === "23502",
     );
     await client.query("ROLLBACK TO SAVEPOINT antes_da_falha");
     assert.equal((await client.query(
