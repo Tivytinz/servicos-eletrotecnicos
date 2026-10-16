@@ -1,7 +1,7 @@
+-- Aplicada transacionalmente por scripts/gestao-migrate.mjs.
 -- Eletrotécnico GO — fundação de dados da gestão interna (PostgreSQL 15+).
 -- Executar manualmente em banco privado de homologação; não rodar no build da landing.
 -- Nunca conceder acesso direto às tabelas para visitantes anônimos.
-BEGIN;
 CREATE SCHEMA IF NOT EXISTS gestao;
 
 CREATE TABLE gestao.usuarios (
@@ -184,4 +184,3 @@ CREATE INDEX idx_auditoria_entidade ON gestao.auditoria(entidade, entidade_id, c
 -- precisam ser configurados explicitamente antes de usar o banco.
 REVOKE ALL ON SCHEMA gestao FROM PUBLIC;
 REVOKE ALL ON ALL TABLES IN SCHEMA gestao FROM PUBLIC;
-COMMIT;
