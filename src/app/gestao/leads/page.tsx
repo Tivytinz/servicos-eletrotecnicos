@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
-import { exigirPermissao } from "@/lib/gestao/acesso";
+import { usuarioAtual } from "@/lib/gestao/acesso";
+import { temPermissao } from "@/lib/gestao/permissoes";
 import { consultar } from "@/lib/gestao/db";
 import { cadastrarLead } from "./actions";
 
@@ -14,8 +15,9 @@ type Lead = {
 
 export default async function Leads() {
   if (process.env.GESTAO_HABILITADA !== "true") notFound();
-  const usuario = await exigirPermissao("leads:ler");
+  const usuario = await usuarioAtual();
   if (!usuario) redirect("/gestao/login");
+  if (!temPermissao(usuario.papeis, "leads:ler")) redirect("/gestao?erro=sem-permissao");
   const leads = await consultar<Lead>(`
     SELECT l.id, c.nome, c.telefone, l.origem, l.descricao, l.status, l.criado_em
     FROM gestao.leads l JOIN gestao.clientes c ON c.id = l.cliente_id
