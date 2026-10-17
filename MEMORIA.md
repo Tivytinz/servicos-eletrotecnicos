@@ -2,6 +2,20 @@
 
 **Checkpoint:** 17/10/2026. Fonte persistente de continuidade para agentes. Verificar a `main`, PRs e Railway antes de assumir que este registro permanece atual.
 
+## Convites de acesso — 17/10/2026
+
+- Em desenvolvimento na branch `feat/gestao-convites-fundacao-2026-10-17`: migration 005, gerador de token seguro e testes; detalhes em [docs/gestao-convites.md](docs/gestao-convites.md).
+- A conta `victor` foi confirmada como cadastrada manualmente pelo responsável; `carlos` segue pendente, com proposta de definir a própria senha via convite.
+- **Não aplicar migration 005 em produção nem habilitar painel.** O fluxo de emissão/aceite ainda não está implementado. PR e CI devem ser verificados.
+
+- Na PR #46 foram acrescentados SQLs atômicos para emitir, aceitar e revogar convites e teste DB; seguem pendentes API/Server Action, UI, revisão de grants e testes E2E/concorrência. Nenhum recurso ativado em produção.
+
+
+- Interface administrativa em `/gestao/convites` criada atrás de `GESTAO_CONVITES_HABILITADOS`, mas a Server Action falha fechada até implementação da entrega segura do link. Rota pública de aceite ainda redireciona e não coleta senha. **Não habilitar a flag.**
+
+- Etapa avançada da PR #46: migration 006 com funções `SECURITY DEFINER` (`emitir_convite`, `aceitar_convite`, `revogar_convite`), grants limitados a `EXECUTE` para `gestao_app`, Server Actions e telas de emissão/aceite com tokens no fragmento, senha própria e flags desativadas. Testes PostgreSQL descartáveis incluem controle de privilégios e concorrência; CI verde no commit `503b16f` antes da documentação posterior.
+- Ainda faltam revisão de segurança/HTTP E2E, gestão de reenvio/revogação e liberação operacional deliberada. Não confundir código na PR com implantação. Sem merge, sem migrations em produção, sem convite real para Carlos.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.

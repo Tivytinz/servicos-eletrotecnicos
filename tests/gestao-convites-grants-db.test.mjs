@@ -1,0 +1,111 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import pg from "pg";
+import { criarHashSenha } from "../src/lib/gestao/sessao.ts";
+
+const adminUrl = process.env.GESTAO_TEST_DATABASE_URL;
+const appUrl = process.env.GESTAO_TEST_APP_DATABASE_URL;
+
+test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT direto em identidades", {
+  skip: (!adminUrl || !appUrl) && "Requer PostgreSQL e role descartáveis do CI",
+}, async () => {
+  const admin = new pg.Client({ connectionString: adminUrl, connectionTimeoutMillis: 5000 });
+  const app = new pg.Client({ connectionString: appUrl, connectionTimeoutMillis: 5000 });
+  await Promise.all([admin.connect(), app.connect()]);
+  const suffix = randomUUID().replaceAll("-", "").slice(0, 20);
+  const nomeAdmin = "ad_" + suffix;
+  const nomeConvite = "nv_" + suffix;
+  const nomeRevogado = "rv_" + suffix;
+  const sessaoHash = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
+  const hashConvite = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
+  const hashRevogado = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
+  let adminId, contaId;
+  const idsConvites = [];
+  try {
+    const { rows: [ator] } = await admin.query(
+      "INSERT INTO gestao.usuarios (nome, usuario, senha_hash) VALUES ($1,$2,$3) RETURNING id",
+      ["Administrador de teste", nomeAdmin, "hash-de-teste"],
+    );
+    adminId = ator.id;
+    await admin.query("INSERT INTO gestao.usuarios_papeis (usuario_id,papel_codigo) VALUES ($1,'admin')", [adminId]);
+    await admin.query("INSERT INTO gestao.sessoes (usuario_id,token_hash,expira_em) VALUES ($1,$2,now()+interval '1 hour')", [adminId,sessaoHash]);
+
+    await assert.rejects(
+      app.query("INSERT INTO gestao.usuarios (nome,usuario,senha_hash) VALUES ('Abuso',$1,'hash')", ["abuso_" + suffix]),
+      (e) => e.code === "42501",
+    );
+    await assert.rejects(
+      app.query("INSERT INTO gestao.usuarios_papeis (usuario_id,papel_codigo) VALUES ($1,'admin')", [adminId]),
+      (e) => e.code === "42501",
+    );
+    await assert.rejects(
+      app.query("INSERT INTO gestao.convites (token_hash,usuario,papel_codigo,criado_por,expira_em) VALUES ($1,$2,'admin',$3,now()+interval '1 day')", [hashConvite, nomeConvite, adminId]),
+      (e) => e.code === "42501",
+    );
+
+    const emitidoSemSessao = await app.query(
+      "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id", ["f".repeat(64),hashConvite,nomeConvite,"admin"],
+    );
+    assert.equal(emitidoSemSessao.rows[0].id, null);
+    const emitido = await app.query(
+      "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id", [sessaoHash,hashConvite,nomeConvite,"tecnico"],
+    );
+    const conviteId = emitido.rows[0].id;
+    assert.ok(conviteId);
+    idsConvites.push(conviteId);
+
+    const aceito = await app.query(
+      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      [hashConvite, "Convidado Teste", criarHashSenha("senha-segura-descartavel-2026")],
+    );
+    contaId = aceito.rows[0].id;
+    assert.ok(contaId);
+    const repetido = await app.query(
+      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      [hashConvite, "Outro Nome", criarHashSenha("outra-senha-descartavel-2026")],
+    );
+    assert.equal(repetido.rows[0].id, null);
+    const { rows: papeis } = await admin.query(
+      "SELECT papel_codigo FROM gestao.usuarios_papeis WHERE usuario_id=$1", [contaId],
+    );
+    assert.deepEqual(papeis.map(x => x.papel_codigo), ["tecnico"]);
+
+    const aRevogar = await app.query(
+      "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
+      [sessaoHash,hashRevogado,nomeRevogado,"admin"],
+    );
+    assert.ok(aRevogar.rows[0].id);
+    idsConvites.push(aRevogar.rows[0].id);
+    const semPermissao = await app.query(
+      "SELECT gestao.revogar_convite($1,$2) AS revogado",
+      ["f".repeat(64),aRevogar.rows[0].id],
+    );
+    assert.equal(semPermissao.rows[0].revogado, false);
+    const revogado = await app.query(
+      "SELECT gestao.revogar_convite($1,$2) AS revogado",
+      [sessaoHash,aRevogar.rows[0].id],
+    );
+    assert.equal(revogado.rows[0].revogado, true);
+    const revogadoAceito = await app.query(
+      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      [hashRevogado, "Não deveria criar", criarHashSenha("terceira-senha-descartavel-2026")],
+    );
+    assert.equal(revogadoAceito.rows[0].id, null);
+  } finally {
+    if (idsConvites.length) {
+      await admin.query("DELETE FROM gestao.auditoria WHERE entidade='convite' AND entidade_id = ANY($1::uuid[])", [idsConvites]).catch(() => {});
+      await admin.query("DELETE FROM gestao.convites WHERE id = ANY($1::uuid[])", [idsConvites]).catch(() => {});
+    }
+    if (contaId) {
+      await admin.query("DELETE FROM gestao.usuarios_papeis WHERE usuario_id=$1", [contaId]).catch(() => {});
+      await admin.query("DELETE FROM gestao.usuarios WHERE id=$1", [contaId]).catch(() => {});
+    }
+    if (adminId) {
+      await admin.query("DELETE FROM gestao.sessoes WHERE usuario_id=$1", [adminId]).catch(() => {});
+      await admin.query("DELETE FROM gestao.usuarios_papeis WHERE usuario_id=$1", [adminId]).catch(() => {});
+      await admin.query("DELETE FROM gestao.usuarios WHERE id=$1", [adminId]).catch(() => {});
+    }
+    await Promise.all([app.end(), admin.end()]);
+  }
+});
