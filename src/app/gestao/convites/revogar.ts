@@ -4,7 +4,7 @@ import { cookies, headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { usuarioAtual } from "@/lib/gestao/acesso";
 import { consultar } from "@/lib/gestao/db";
-import { origemPermitida } from "@/lib/gestao/origem";
+import { origemConvitePermitida } from "@/lib/gestao/origem-convite";
 import { COOKIE_SESSAO, hashTokenSessao } from "@/lib/gestao/sessao";
 
 /** Revogar um link só funciona com sessão de administrador ativa e Origin válido. */
@@ -14,7 +14,7 @@ export async function revogarConvite(formData: FormData): Promise<void> {
     throw new Error("Convites indisponíveis");
   }
   const h = await headers();
-  if (!origemPermitida(h.get("origin"), h.get("host"))) {
+  if (!origemConvitePermitida(h.get("origin"), h.get("host"), process.env.GESTAO_ORIGEM_PUBLICA)) {
     throw new Error("Origem não autorizada");
   }
   const ator = await usuarioAtual();
