@@ -1,19 +1,22 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { aceitarConvite, type EstadoAceite } from "./actions";
 
 const INICIAL: EstadoAceite = { erro: null, sucesso: false };
 
 export default function FormularioAceite() {
-  const [token, setToken] = useState("");
+  const tokenInput = useRef<HTMLInputElement>(null);
   const [estado, enviar, pendente] = useActionState(aceitarConvite, INICIAL);
 
   useEffect(() => {
-    // O token no fragmento nunca é enviado na URL HTTP ao servidor.
+    // O token vive somente no fragmento e no campo privado do formulário.
+    // Evitar setState em useEffect e não renderizar o segredo em HTML/SSR.
     const secreto = window.location.hash.slice(1);
     window.history.replaceState(null, "", window.location.pathname);
-    if (/^[A-Za-z0-9_-]{43}$/.test(secreto)) setToken(secreto);
+    if (tokenInput.current && /^[A-Za-z0-9_-]{43}$/.test(secreto)) {
+      tokenInput.current.value = secreto;
+    }
   }, []);
 
   if (estado.sucesso) {
@@ -26,7 +29,7 @@ export default function FormularioAceite() {
 
   return (
     <form action={enviar} className="mt-8 space-y-5 rounded-xl border border-white/15 p-6">
-      <input name="token" type="hidden" value={token} />
+      <input name="token" type="hidden" ref={tokenInput} />
       <label className="block">Seu nome
         <input name="nome" required minLength={2} maxLength={160} autoComplete="name"
           className="mt-2 w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
@@ -41,9 +44,9 @@ export default function FormularioAceite() {
           autoComplete="new-password"
           className="mt-2 w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
       </label>
-      {!token && <p role="alert" className="text-rose-300">Link de convite ausente ou inválido.</p>}
+      <p className="text-sm text-slate-300">Utilize o link privado completo enviado pelo administrador.</p>
       {estado.erro && <p role="alert" className="text-rose-300">{estado.erro}</p>}
-      <button type="submit" disabled={!token || pendente}
+      <button type="submit" disabled={pendente}
         className="w-full rounded-lg bg-amber-400 p-3 font-bold text-slate-950 disabled:opacity-60">
         {pendente ? "Criando conta..." : "Ativar minha conta"}
       </button>
