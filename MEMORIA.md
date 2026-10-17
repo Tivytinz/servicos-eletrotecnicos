@@ -10,6 +10,9 @@
 
 - Na PR #46 foram acrescentados SQLs atômicos para emitir, aceitar e revogar convites e teste DB; seguem pendentes API/Server Action, UI, revisão de grants e testes E2E/concorrência. Nenhum recurso ativado em produção.
 
+
+- Interface administrativa em `/gestao/convites` criada atrás de `GESTAO_CONVITES_HABILITADOS`, mas a Server Action falha fechada até implementação da entrega segura do link. Rota pública de aceite ainda redireciona e não coleta senha. **Não habilitar a flag.**
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
