@@ -38,8 +38,8 @@ export async function aceitarConvite(_prev: EstadoAceite, formData: FormData): P
     return { erro: "Confira o nome e a senha (mínimo 12 caracteres).", sucesso: false };
   }
   const [resultado] = await consultar<{ id: string | null }>(
-    "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
-    [tokenHash, nome, criarHashSenha(senha)],
+    "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
+    [tokenHash, nome, criarHashSenha(senha), senha],
   );
   if (!resultado?.id) return { erro: ERRO, sucesso: false };
   return { erro: null, sucesso: true };
