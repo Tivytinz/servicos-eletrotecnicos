@@ -1,0 +1,27 @@
+# Convites de usuários — implementação fase 1
+
+## Requisito
+
+Somente administradores autorizados poderão emitir convite para `admin`, `comercial` ou `tecnico`. Carlos será o primeiro convidado, definindo a própria senha. Convites futuros para funcionários usarão o mesmo fluxo.
+
+## Entregue nesta PR
+
+- Migration `005_gestao_convites.sql`: token **somente como SHA-256**, usuário, papel, responsável, data de expiração, revogação e consumo único.
+- Gerador criptográfico de token (32 bytes), hash, validação de identificador e predicado de expiração.
+- Testes unitários para token, identificação e condições de uso.
+- Nenhum envio externo nem cadastro de usuários é executado por esta fundação.
+
+## Pendências indispensáveis antes de ativar
+
+1. Implementar emissão no backend com autorização `admin` verificada no servidor e auditoria.
+2. Implementar resgate transacional com `SELECT ... FOR UPDATE` e inserção de usuário + papel + marcação de consumo na mesma transação; negar token vencido/usado/revogado e login já existente.
+3. Definir estratégia restrita de acesso SQL para o serviço web sem permitir que funções públicas alterem papéis. Nunca usar `DATABASE_URL_ADMIN` no serviço web.
+4. Criar UI administrativa de convite e UI pública de definição de senha com controles anti-abuso/CSRF, HTTPS, headers anti-cache e ausência de tracking.
+5. Evitar token em logs, analytics e referers; expiração recomendada de 24 horas, uso único e revogação.
+6. Testar concorrência de aceite (somente 1 sucesso), perfis, revogação, expiração e ausência de gravação em banco PostgreSQL descartável.
+7. Executar CI e revisão de segurança antes de aplicação da migration 005. **Nunca aplicá-la em produção automaticamente**.
+8. Manter `GESTAO_HABILITADA` desativada até autorização específica. Não criar convite de Carlos antes de o fluxo estar concluído e validado.
+
+## Status
+
+**Fundação em desenvolvimento**. O fluxo de convites e cadastro de Carlos ainda não está utilizável em produção. A conta genérica `admin` deve permanecer temporariamente ativa; a conta `victor` foi informada como criada pelo responsável, sem inspeção direta de login.
