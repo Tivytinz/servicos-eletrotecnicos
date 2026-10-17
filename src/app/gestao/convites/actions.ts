@@ -5,7 +5,7 @@ import { usuarioAtual } from "@/lib/gestao/acesso";
 import { consultar } from "@/lib/gestao/db";
 import { criarTokenConvite, hashTokenConvite, validarUsuarioConvite } from "@/lib/gestao/convites";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
-import { origemPermitida } from "@/lib/gestao/origem";
+import { origemConvitePermitida } from "@/lib/gestao/origem-convite";
 import { COOKIE_SESSAO, hashTokenSessao } from "@/lib/gestao/sessao";
 
 export type EstadoEmissao = { erro: string | null; link: string | null };
@@ -19,7 +19,7 @@ export async function emitirConvite(_prev: EstadoEmissao, formData: FormData): P
   }
   const h = await headers();
   const origin = h.get("origin");
-  if (!origemPermitida(origin, h.get("host"))) {
+  if (!origemConvitePermitida(origin, h.get("host"), process.env.GESTAO_ORIGEM_PUBLICA)) {
     return { erro: "Origem não autorizada.", link: null };
   }
   const usuarioAtualLogado = await usuarioAtual();
