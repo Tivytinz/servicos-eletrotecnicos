@@ -33,9 +33,12 @@ pg_dump --format=custom --no-owner --no-acl \
   --file=gestao-backup-controlado.dump \
   --host="$PGHOST" --port="$PGPORT" --username="$PGUSER" --dbname="$PGDATABASE" --password
 sha256sum gestao-backup-controlado.dump
-# Restaurar depois em um PostgreSQL descartável com destino explicitamente conferido:
+# Somente em outro servidor PostgreSQL, descartável e previamente preparado:
+: "${TEST_PGHOST:?defina o host de RESTAURAÇÃO ISOLADA}"
+: "${TEST_PGDATABASE:?defina o banco de RESTAURAÇÃO ISOLADO}"
 pg_restore --exit-on-error --no-owner --no-acl \
-  --dbname=gestao_restore_descartavel gestao-backup-controlado.dump
+  --host="$TEST_PGHOST" --username="$TEST_PGUSER" --dbname="$TEST_PGDATABASE" \
+  gestao-backup-controlado.dump
 ```
 
 A última etapa exige que `gestao_restore_descartavel` seja banco de teste **preexistente e vazio, isolado da produção**. O comando de exemplo não é autorização para criá-lo na produção. Dependendo da rede privada Railway, pode ser necessário executar o dump em um ambiente operacional conectado à mesma rede.
