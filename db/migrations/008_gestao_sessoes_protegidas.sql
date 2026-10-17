@@ -124,6 +124,7 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION gestao.emitir_sessao_segura(text,text,text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION gestao.buscar_sessao_segura(text) FROM PUBLIC;
 REVOKE ALL ON FUNCTION gestao.revogar_sessao_segura(text) FROM PUBLIC;
 -- Os GRANT/REVOKE de gestao_app ficam em db/grants e no provisionamento inicial,
 -- porque migrações rodam antes da criação da role no CI.
