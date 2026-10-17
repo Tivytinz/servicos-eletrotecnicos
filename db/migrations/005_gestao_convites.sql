@@ -20,7 +20,9 @@ CREATE TABLE gestao.convites (
     NOT (usado_em IS NOT NULL AND revogado_em IS NOT NULL)
   )
 );
-CREATE INDEX convites_usuario_pendente_idx ON gestao.convites(usuario)
+-- Apenas um convite pendente por usuário; convites expirados são revogados
+-- na função de emissão antes de permitir nova tentativa.
+CREATE UNIQUE INDEX convites_um_pendente_por_usuario_idx ON gestao.convites(usuario)
   WHERE usado_em IS NULL AND revogado_em IS NULL;
 CREATE INDEX convites_expiracao_idx ON gestao.convites(expira_em)
   WHERE usado_em IS NULL AND revogado_em IS NULL;
