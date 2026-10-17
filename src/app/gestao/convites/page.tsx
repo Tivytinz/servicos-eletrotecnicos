@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { usuarioAtual } from "@/lib/gestao/acesso";
-import { consultar } from "@/lib/gestao/db";
+import { consultarConvitesAdmin } from "@/lib/gestao/db-convites";
 import { COOKIE_SESSAO, hashTokenSessao } from "@/lib/gestao/sessao";
 import FormularioConvite from "./form";
 import { revogarConvite } from "./revogar";
@@ -41,7 +41,7 @@ export default async function Convites() {
   }
   // Consulta passa por função SECURITY DEFINER que revalida o RBAC no banco.
   // Nunca retornamos o hash ou o token original dos convites.
-  const convites = await consultar<ConviteResumo>(
+  const convites = await consultarConvitesAdmin<ConviteResumo>(
     "SELECT id, usuario, papel_codigo, criado_em, expira_em, status FROM gestao.listar_convites($1)",
     [hashTokenSessao(tokenSessao)],
   );
@@ -78,6 +78,11 @@ export default async function Convites() {
               {convite.status === "pendente" && (
                 <form action={revogarConvite}>
                   <input type="hidden" name="id" value={convite.id} />
+                  <label className="block text-sm">
+                    Senha de administrador
+                    <input type="password" name="senhaAdministrador" required minLength={12} maxLength={1024}
+                      autoComplete="current-password" className="mt-1 block w-full rounded-lg border border-white/20 bg-slate-900 p-2" />
+                  </label>
                   <button type="submit" className="rounded-lg border border-rose-300/50 px-4 py-2 text-sm text-rose-200 hover:bg-rose-500/10">
                     Revogar convite
                   </button>
