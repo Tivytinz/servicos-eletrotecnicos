@@ -34,7 +34,7 @@ try {
   }
   const result = await client.query(
     `INSERT INTO gestao.verificadores_senha (usuario_id, bcrypt_hash)
-     VALUES ($1, public.crypt($2, public.gen_salt('bf', 12)))
+     VALUES ($1, public.crypt(encode(public.digest(convert_to($2, 'UTF8'), 'sha256'), 'hex'), public.gen_salt('bf', 12)))
      ON CONFLICT (usuario_id) DO NOTHING RETURNING usuario_id`,
     [conta.id, senha],
   );
