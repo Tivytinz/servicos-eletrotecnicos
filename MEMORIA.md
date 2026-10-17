@@ -15,7 +15,9 @@
 
 - Mitigação de 17/10/2026 na PR #46: role `gestao_convites` isolada, pool separado e senha de admin exigida para emitir/revogar. Teste de sessão forjada com `gestao_app` deve receber erro 42501. CI de implementação passou no commit `1dc78ab`, aguardando validação da documentação posterior. **Risco residual de comprometimento conjunto do runtime permanece; PR ainda bloqueada e sem merge.**
 
-- **BLOQUEADOR DE SEGURANÇA NA PR #46:** `gestao_app` possui INSERT/UPDATE em `gestao.sessoes` e pode fabricar sessão admin; `gestao.emitir_convite` confia nesses registros. CI verde não comprova isolamento contra credenciais SQL vazadas. Veja [docs/gestao-convites-risco-sessoes.md](docs/gestao-convites-risco-sessoes.md). **Não fazer merge, deploy, migrations nem grants de convites até corrigir e testar.**
+- **Correção da integridade das sessões na PR #46 (código, não produção):** migrations 008–009 adicionam verificadores bcrypt privados no PostgreSQL, `gestao.emitir_sessao_segura` com senha e limite de tentativas, `gestao.buscar_sessao_segura` via token puro, revogação protegida e invalidam sessões legadas na futura aplicação da migration. `gestao_app` deixa de ter leitura e escrita de `gestao.sessoes`; `gestao_convites` continua sem escrita de sessões. Novos convites passam a registrar os verificadores na aceitação.
+- Para contas antigas `victor` e `admin`, **registro privado do verificador após validação da senha atual é obrigatório** antes de habilitar o login novo. Sem esse passo, contas legadas não entram. Não transmitir senhas em chat, logs ou SQL do navegador. Consulte [docs/gestao-sessoes-autenticadas.md](docs/gestao-sessoes-autenticadas.md) e [docs/gestao-convites-implantacao.md](docs/gestao-convites-implantacao.md).
+- CI `Check` e QA HTTPS passaram no commit `6639469` da PR #46 após a mudança das sessões; verificar novamente o CI do último HEAD após esta documentação. **Sem merge, sem deploy, sem migrations ou grants em produção.** Risco residual de captura de cookies/senhas sob comprometimento do runtime web permanece; necessita avaliação antes de produção.
 
 ## Projeto e arquitetura
 
