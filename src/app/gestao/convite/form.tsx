@@ -7,6 +7,7 @@ const INICIAL: EstadoAceite = { erro: null, sucesso: false };
 
 export default function FormularioAceite() {
   const tokenInput = useRef<HTMLInputElement>(null);
+  const segredo = useRef("");
   const [estado, enviar, pendente] = useActionState(aceitarConvite, INICIAL);
 
   useEffect(() => {
@@ -14,10 +15,17 @@ export default function FormularioAceite() {
     // Evitar setState em useEffect e não renderizar o segredo em HTML/SSR.
     const secreto = window.location.hash.slice(1);
     window.history.replaceState(null, "", window.location.pathname);
-    if (tokenInput.current && /^[A-Za-z0-9_-]{43}$/.test(secreto)) {
-      tokenInput.current.value = secreto;
+    if (/^[A-Za-z0-9_-]{43}$/.test(secreto)) {
+      segredo.current = secreto;
+      if (tokenInput.current) tokenInput.current.value = secreto;
     }
   }, []);
+
+  useEffect(() => {
+    // React pode limpar o formulário após uma tentativa: manter o token no ref
+    // permite corrigir senha/nome sem solicitar um novo convite.
+    if (tokenInput.current && segredo.current) tokenInput.current.value = segredo.current;
+  }, [estado]);
 
   if (estado.sucesso) {
     return <section role="status" className="mt-6 rounded-xl border border-emerald-500/50 p-6">
