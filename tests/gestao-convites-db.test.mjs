@@ -51,7 +51,7 @@ test("convites: emissão admin, negação técnico, consumo único, revogação 
     const token3 = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
     const terceiro = await client.query(SQL_EMITIR_CONVITE, [token3, usuario3, "comercial", admin]);
     assert.equal(terceiro.rowCount, 1);
-    await client.query("UPDATE gestao.convites SET expira_em = now() - interval '1 minute' WHERE id = $1", [terceiro.rows[0].id]);
+    await client.query("UPDATE gestao.convites SET criado_em = now() - interval '2 days', expira_em = now() - interval '1 day' WHERE id = $1", [terceiro.rows[0].id]);
     assert.equal((await client.query(SQL_ACEITAR_CONVITE, [token3, "Expirado", "hash"])).rowCount, 0, "convite vencido não cadastra usuário");
 
   } finally {
