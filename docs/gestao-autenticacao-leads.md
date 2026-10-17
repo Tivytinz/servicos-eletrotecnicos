@@ -1,39 +1,47 @@
-# Gestão — autenticação e cadastro de leads
+# Gestão — autenticação, permissões e solicitações
 
-**Status:** implementação inicial em PR; não ativada nem validada em ambiente real.
+**Estado em 17/10/2026:** implantação inicial realizada no Railway de produção; painel usado somente em testes e mantido desativado por `GESTAO_HABILITADA=false` segundo a operação. A consulta de variáveis do Railway oculta seus valores: confirmar a flag no painel antes de qualquer reativação.
 
-## Entregas
+## Infraestrutura e operações já realizadas
 
-- Migration `002_gestao_sessoes.sql` para sessões persistentes com hash SHA-256 do token aleatório (token bruto só em cookie).
-- Hash de senha `scrypt` com salt aleatório e comparação constante; exige senha de pelo menos 12 caracteres.
-- Cookie `__Host-eg_sessao`: `Secure`, `HttpOnly`, `SameSite=Strict`, `Path=/`, 8h.
-- Autorização por papel no servidor: admin, comercial, técnico. Atribuição de papéis depende de configuração controlada.
-- Login e logout; painel interno e cadastro/listagem de solicitações. Rota só funciona com `GESTAO_HABILITADA=true`.
-- Consultas parametrizadas e validação server-side. Não há autoinscrição pública.
-- A aplicação não registra cliques como leads automaticamente; cadastro é manual e a origem é informada.
+- PostgreSQL próprio no projeto Railway `upbeat-compassion`, ambiente `production`, com volume persistente. **Volume não equivale a backup.**
+- Migrations `001`–`004` aplicadas manualmente em produção; login `admin` criado e validado sem publicar senha.
+- `DATABASE_URL` da aplicação usa usuário restrito `gestao_app`; conexão administrativa não deve estar disponível no serviço web.
+- Login, logout, redirecionamento sem sessão e criação de solicitação fictícia foram testados manualmente. Há um cadastro `Cliente Teste` no banco de produção que deve ser removido de forma controlada.
+- PR #37 corrigiu apresentação de acesso negado e ocultou consentimento de marketing na área de gestão; verificações CI e QA passaram.
+- Este incremento separa interface de **leitura** de leads da permissão **criar**. A Server Action já verifica `leads:criar` no servidor.
 
-## Pré-requisitos obrigatórios para ativação
+## Modelo de acesso atual
 
-1. Banco PostgreSQL **privado** de homologação; `DATABASE_URL` exclusivamente no ambiente de servidor. Não inserir segredo no GitHub.
-2. Aplicar migrations `001`, `002` e `003` em sequência após revisão. Provisionar usuário SQL da aplicação com grants mínimos via `db/grants/gestao-app.sql`, sem papel de superusuário.
-3. Criar administrador inicial com `scripts/gestao-bootstrap-admin.mjs`, usando `DATABASE_URL_ADMIN` de proprietário do schema e credenciais passadas por ambiente seguro; não publicar endpoint de criação de admin.
-4. Configurar `GESTAO_HABILITADA=true` **somente após** validação de segurança, testes de integração, backups e procedimento de recuperação. Até lá, deixar ausente/false.
-5. Ativar TLS em produção, validar host/origin de Server Actions, observar tentativas de login e implementar **limite por IP/WAF na borda** além do limite por conta já implementado antes de exposição pública.
-6. Testar CSRF, abuso, rotação/revogação de sessão, permissões, injeção SQL, exclusão e exportação de dados (LGPD).
-7. CI com PostgreSQL descartável valida migrations e consultas básicas; ainda faltam testes reais ponta a ponta de login/lead e testes de isolamento/negação por perfil.
-8. Atualizar política de privacidade antes de tratar dados pessoais reais.
+| Papel | Ler solicitações | Cadastrar solicitações | Gerir OS | Financeiro |
+| --- | --- | --- | --- | --- |
+| admin | Sim | Sim | Sim | Sim |
+| comercial | Sim | Sim | Não | Não |
+| tecnico | Sim | Não | Sim | Não |
 
-## Limitações conhecidas e riscos
+As permissões `os:gerir` e `financeiro:gerir` estão modeladas, mas não significam que os respectivos módulos estejam implementados. As verificações devem ser feitas no servidor para **toda** operação, mesmo quando um botão não aparece.
 
-- **Não ativar ainda:** há limite distribuído por e-mail (5 tentativas em 15 minutos), mas ainda faltam proteção por IP/WAF na borda, monitoramento de autenticação, testes de integração ponta a ponta e infraestrutura configurada.
-- Listagem de leads é limitada a 100 registros; paginação e filtros ainda pendentes.
-- O primeiro cadastro cria um novo cliente para cada lead; deduplicação e vinculação a clientes existentes ficam para outro incremento.
-- A autorização por papéis é base inicial e requer confirmação com Victor/Carlos antes de liberar acesso a dados reais.
-- O banco e a sessão dependem de conexão ativa; quando desabilitado, as rotas internas devem permanecer inacessíveis.
-- Nenhum deploy, migration ou criação de usuários foi realizado por este PR.
+## Controles implementados
 
-## Dependências e CI
+- Sessões persistentes com hash SHA-256 de token aleatório; cookie `__Host-eg_sessao` `Secure`, `HttpOnly`, `SameSite=Strict`, 8 horas.
+- Senhas com scrypt e salt aleatório; consultas SQL parametrizadas.
+- Usuários inativos e sessões revogadas/expiradas não passam na consulta de autenticação.
+- Controle de tentativas de login por **identificador**, no banco, com limite de 5 tentativas por janela de 15 minutos.
+- Validação de Origin/Host no login; Next.js também aplica proteções próprias para Server Actions.
+- Sem autoinscrição pública; criação do primeiro administrador realizada via operação controlada.
 
-O `package.json` e o `package-lock.json` incluem `pg` e `@types/pg`. O workflow `Check` roda `npm ci`, auditoria de dependências, PostgreSQL 16 descartável, migrations 001–003, testes, lint e build. A verificação só é considerada aprovada depois de um workflow concluído com sucesso para o commit atual.
+## Pendências de segurança e operação
 
-**Railway (16/10/2026):** PostgreSQL 18 próprio provisionado no projeto `upbeat-compassion`, ambiente `production`, serviço `Postgres` (ID `cbf9713e-73c9-4110-8640-63f05f7d47fe`), volume persistente `postgres-volume` (5 GB) e região `sfo`. Implantação `9e53b227-1558-4f90-9ca7-3a5e58b4fdf8` com estado `SUCCESS` e 1/1 réplica online. O serviço web existente continua na `main` e sem mudança. **O banco está vazio para a aplicação: migrations e usuários de gestão não foram provisionados.** Não há variável de conexão adicionada ao web nem feature flag habilitada. Validar política de backups, restauração, gastos e configuração de rede antes de qualquer dado real. Não usar os bancos do Agenda Fashion.
+1. **Proteção contra abuso:** limite por identificador permite bloqueio intencional da conta por terceiros e não limita pulverização de identificadores. Planejar limite por IP na borda, WAF ou mitigação equivalente, sem confiar cegamente em `X-Forwarded-For`.
+2. **Testes de integração/E2E:** login, revogação, expiração, CSRF, autorização por perfil em páginas e Server Actions, entradas malformadas e injeção SQL, com banco descartável e usuários de teste.
+3. **Recuperação:** operador optou por **não contratar backup pago agora**. Não há restauração testada; registrar e aceitar explicitamente risco de perda de dados antes de armazenar dados reais importantes. Persistência do volume não elimina esse risco.
+4. **Privacidade/LGPD:** política de privacidade e procedimento de retenção, exclusão e exportação de dados antes de uso real.
+5. **Operação:** remover com verificação o cadastro fictício, validar grants mínimos, revisar monitoramento e alertas de autenticação, e paginar listagem de 100 leads.
+6. **Integridade de migrations:** antes da próxima migration, comparar o SHA-256 real do arquivo `db/migrations/004_gestao_usuario_login.sql` com o checksum registrado em `gestao.schema_migrations`. Não alterar o histórico sem conferência.
+7. **Ativação:** manter `GESTAO_HABILITADA=false` até revisão de risco e testes adequados. A confirmação visual da flag no Railway cabe ao operador.
+
+## Validação técnica
+
+`npm run check` executa lint, testes e build. O workflow CI utiliza PostgreSQL descartável para os testes de integração disponíveis; isso **não** substitui testes reais de autorização entre perfis nem validação de restauração.
+
+Nenhuma migração, modificação de usuários ou alteração de dados de produção deve ocorrer como efeito deste documento.
