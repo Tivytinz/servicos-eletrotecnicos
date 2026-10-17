@@ -54,6 +54,12 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     const conviteId = emitido.rows[0].id;
     assert.ok(conviteId);
     idsConvites.push(conviteId);
+    // Só pode haver um convite não revogado e não utilizado para o mesmo login.
+    const duplicado = await app.query(
+      "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
+      [sessaoHash, "d".repeat(64), nomeConvite, "admin"],
+    );
+    assert.equal(duplicado.rows[0].id, null, "dois convites ativos para o mesmo login são proibidos");
 
     const aceito = await app.query(
       "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
@@ -92,6 +98,32 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       [hashRevogado, "Não deveria criar", criarHashSenha("terceira-senha-descartavel-2026")],
     );
     assert.equal(revogadoAceito.rows[0].id, null);
+
+    // Um convite vencido pode ser substituído, mas o anterior vira revogado.
+    const nomeVencido = "ve_" + suffix;
+    const hashAntigo = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
+    const hashNovo = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
+    const { rows: [antigo] } = await app.query(
+      "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
+      [sessaoHash, hashAntigo, nomeVencido, "comercial"],
+    );
+    assert.ok(antigo.id);
+    idsConvites.push(antigo.id);
+    await admin.query(
+      "UPDATE gestao.convites SET criado_em=now()-interval '2 days', expira_em=now()-interval '1 day' WHERE id=$1",
+      [antigo.id],
+    );
+    const { rows: [substituto] } = await app.query(
+      "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
+      [sessaoHash, hashNovo, nomeVencido, "comercial"],
+    );
+    assert.ok(substituto.id);
+    idsConvites.push(substituto.id);
+    assert.notEqual(antigo.id, substituto.id);
+    const { rows: [anterior] } = await admin.query(
+      "SELECT revogado_em FROM gestao.convites WHERE id=$1", [antigo.id],
+    );
+    assert.ok(anterior.revogado_em);
   } finally {
     if (idsConvites.length) {
       await admin.query("DELETE FROM gestao.auditoria WHERE entidade='convite' AND entidade_id = ANY($1::uuid[])", [idsConvites]).catch(() => {});
