@@ -42,3 +42,9 @@ Revisão estática da implementação na `main` após a PR #41. Esta auditoria *
 ## Registro da decisão
 
 A implementação atual de `cadastrarLead` já valida `leads:criar` no servidor antes da instrução SQL parametrizada. Nesta etapa, optou-se por **não alterar a Server Action** nem criar um helper desacoplado sem ligação efetiva à rota. A próxima mudança deverá incluir teste de integração que execute a ação real, e não apenas uma função auxiliar ou um teste da matriz de permissões.
+
+## Complemento de testes (PR #45)
+
+- `tests/gestao-rbac-integracao-db.test.mjs` verifica sessão persistida no PostgreSQL descartável, papéis admin/comercial/técnico e negação a usuários anônimos, desconhecidos e revogados.
+- Toda escrita do teste ocorre sob transação revertida com `ROLLBACK`.
+- **Escopo parcial:** o teste usa SQL e a função real da matriz RBAC, mas não invoca diretamente a Server Action `cadastrarLead` nem reproduz HTTP/cookies/CSRF. A lacuna de E2E permanece em aberto.
