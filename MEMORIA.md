@@ -2,6 +2,17 @@
 
 **Checkpoint:** 17/10/2026. Fonte persistente de continuidade para agentes. Verificar a `main`, PRs e Railway antes de assumir que este registro permanece atual.
 
+## Agente ⚡ Desenvolvimento
+
+- Memória dedicada em [docs/agente-desenvolvimento.md](docs/agente-desenvolvimento.md), com regras, checkpoint RBAC e próxima etapa.
+- PR #44 integrada em 17/10/2026 (commit `2a5a597`); testes HTTP/Server Actions reais com PostgreSQL descartável permanecem pendentes.
+- Esta atualização documenta o agente; **não** equivale à implementação nem à validação desses testes.
+
+
+- PR #45 adiciona teste de integração PostgreSQL sessão/RBAC com rollback (`tests/gestao-rbac-integracao-db.test.mjs`); não substitui E2E da Server Action, nem valida CSRF/HTTP. CI pendente de confirmação.
+
+- Decisão dos sócios: Victor e Carlos terão contas individuais com papel `admin`; antes de provisionar, verificar qual conta inicial já existe e a quem pertence. Procedimento em [docs/gestao-dois-socios-admin.md](docs/gestao-dois-socios-admin.md). Nenhuma conta foi criada ou alterada nesta PR.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
