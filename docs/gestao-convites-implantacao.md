@@ -3,6 +3,8 @@
 **Estado:** plano de implantação, **não é autorização para aplicar em produção**.
 **PR:** #46; requer revisão de segurança, CI do último commit e autorização explícita de mudança operacional.
 
+> ⚠️ **BLOQUEADOR ATUAL:** [risco de falsificação de sessões SQL](gestao-convites-risco-sessoes.md). A role `gestao_app` ainda pode criar/alterar sessões e a função de emissão confia nesses registros. **Não executar migrations nem grants em produção enquanto a correção da fronteira de confiança não for implementada e testada.**
+
 ## Condições de liberação
 - `GESTAO_HABILITADA` e `GESTAO_CONVITES_HABILITADOS` devem continuar desativadas durante a preparação.
 - Confirmar URL pública `https://eletrotecnicogo.com.br` para configurar **`GESTAO_ORIGEM_PUBLICA=https://eletrotecnicogo.com.br`**, sem caminho, query, hash, espaços ou barra final obrigatória.
