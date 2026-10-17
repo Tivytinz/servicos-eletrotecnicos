@@ -5,7 +5,7 @@ import { criarHashSenha } from "@/lib/gestao/sessao";
 import { hashTokenConvite } from "@/lib/gestao/convites";
 import { consultar } from "@/lib/gestao/db";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
-import { origemPermitida } from "@/lib/gestao/origem";
+import { origemConvitePermitida } from "@/lib/gestao/origem-convite";
 
 export type EstadoAceite = { erro: string | null; sucesso: boolean };
 const ERRO = "Convite inválido, expirado, já utilizado ou indisponível.";
@@ -17,7 +17,7 @@ export async function aceitarConvite(_prev: EstadoAceite, formData: FormData): P
     return { erro: "Convites indisponíveis.", sucesso: false };
   }
   const h = await headers();
-  if (!origemPermitida(h.get("origin"), h.get("host"))) {
+  if (!origemConvitePermitida(h.get("origin"), h.get("host"), process.env.GESTAO_ORIGEM_PUBLICA)) {
     return { erro: "Origem não autorizada.", sucesso: false };
   }
   const token = String(formData.get("token") ?? "");
