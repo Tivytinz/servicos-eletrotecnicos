@@ -47,8 +47,9 @@ try {
   await admin.query(`CREATE ROLE gestao_app LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD ${literal.rows[0].quoted}`);
   await admin.query("GRANT USAGE ON SCHEMA gestao TO gestao_app");
   await admin.query("GRANT SELECT ON gestao.usuarios, gestao.usuarios_papeis TO gestao_app");
-  await admin.query("GRANT SELECT ON gestao.sessoes TO gestao_app");
+  // Sessões acessíveis exclusivamente por funções que verificam token bruto.
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.emitir_sessao_segura(text,text,text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.buscar_sessao_segura(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.revogar_sessao_segura(text) TO gestao_app");
   await admin.query("GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO gestao_app");
   await admin.query("GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO gestao_app");
