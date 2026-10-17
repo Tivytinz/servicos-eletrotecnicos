@@ -20,6 +20,7 @@ async function criarConvite(page, usuario, papel) {
   await page.goto(BASE + "/gestao/convites");
   await page.getByLabel("Usuário").fill(usuario);
   await page.getByLabel("Perfil de acesso").selectOption(papel);
+  await page.getByLabel("Confirme sua senha de administrador").fill(PASSWORD_ADMIN);
   await page.getByRole("button", { name: "Criar convite" }).click();
   const secreto = page.locator("input[readonly]");
   await secreto.waitFor({ timeout: 15000 });
@@ -103,6 +104,7 @@ try {
   const conviteTecnico = await criarConvite(admin, "ci-tecnico", "tecnico");
   await admin.goto(BASE + "/gestao/convites");
   const linha = admin.locator("li").filter({ hasText: "ci-tecnico" });
+  await linha.getByLabel("Senha de administrador").fill(PASSWORD_ADMIN);
   await linha.getByRole("button", { name: "Revogar convite" }).click();
   await linha.getByText(/Estado: revogado/).waitFor();
 
