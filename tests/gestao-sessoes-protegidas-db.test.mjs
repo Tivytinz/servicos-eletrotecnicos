@@ -48,6 +48,11 @@ test("sessão SQL exige senha, não expõe hash e não pode ser fabricada por ro
       convites.query("SELECT gestao.emitir_sessao_segura($1,$2,$3)", [usuario,senha,"a".repeat(64)]),
       e => e.code === "42501",
     );
+    await assert.rejects(
+      convites.query("SELECT * FROM gestao.buscar_sessao_segura($1)", [criarTokenSessao()]),
+      e => e.code === "42501",
+      "role administrativa não pode consultar sessões sem autorização SQL",
+    );
 
     const solicitar = async (nome, password, token = criarTokenSessao()) =>
       (await app.query("SELECT gestao.emitir_sessao_segura($1,$2,$3) AS id",
