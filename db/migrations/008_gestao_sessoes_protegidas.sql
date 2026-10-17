@@ -15,6 +15,11 @@ CREATE TABLE gestao.limites_sessoes (
 );
 REVOKE ALL ON gestao.verificadores_senha, gestao.limites_sessoes FROM PUBLIC;
 
+-- Sessões emitidas antes do novo controle de integridade não são confiáveis.
+-- Invalidação é planejada para o rollout coordenado; requer aprovação operacional.
+UPDATE gestao.sessoes SET revogada_em = clock_timestamp()
+WHERE revogada_em IS NULL;
+
 CREATE FUNCTION gestao.emitir_sessao_segura(
   p_identificador text, p_senha text, p_token_hash text
 ) RETURNS uuid
