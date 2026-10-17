@@ -6,13 +6,15 @@ import { criarHashSenha } from "../src/lib/gestao/sessao.ts";
 
 const adminUrl = process.env.GESTAO_TEST_DATABASE_URL;
 const appUrl = process.env.GESTAO_TEST_APP_DATABASE_URL;
+const convitesUrl = process.env.GESTAO_TEST_CONVITES_DATABASE_URL;
 
 test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT direto em identidades", {
-  skip: (!adminUrl || !appUrl) && "Requer PostgreSQL e role descartáveis do CI",
+  skip: (!adminUrl || !appUrl || !convitesUrl) && "Requer PostgreSQL e role descartáveis do CI",
 }, async () => {
   const admin = new pg.Client({ connectionString: adminUrl, connectionTimeoutMillis: 5000 });
   const app = new pg.Client({ connectionString: appUrl, connectionTimeoutMillis: 5000 });
-  await Promise.all([admin.connect(), app.connect()]);
+  const convites = new pg.Client({ connectionString: convitesUrl, connectionTimeoutMillis: 5000 });
+  await Promise.all([admin.connect(), app.connect(), convites.connect()]);
   const suffix = randomUUID().replaceAll("-", "").slice(0, 20);
   const nomeAdmin = "ad_" + suffix;
   const nomeConvite = "nv_" + suffix;
@@ -44,18 +46,44 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       (e) => e.code === "42501",
     );
 
-    const emitidoSemSessao = await app.query(
+
+    // Mesmo com INSERT de sessão permitido à role comum, as funções
+    // administrativas não devem ser executáveis com essas credenciais.
+    const hashForjado = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
+    await app.query(
+      "INSERT INTO gestao.sessoes (usuario_id,token_hash,expira_em) VALUES ($1,$2,now()+interval '1 hour')",
+      [adminId, hashForjado],
+    );
+    await assert.rejects(
+      app.query("SELECT gestao.emitir_convite($1,$2,$3,$4)", [hashForjado, "e".repeat(64), "forjado_" + suffix, "admin"]),
+      e => e.code === "42501",
+      "sessão fabricada pela role comum não permite emissão administrativa",
+    );
+    await assert.rejects(
+      app.query("SELECT * FROM gestao.listar_convites($1)", [hashForjado]),
+      e => e.code === "42501",
+    );
+    await assert.rejects(
+      convites.query("INSERT INTO gestao.sessoes (usuario_id,token_hash,expira_em) VALUES ($1,$2,now()+interval '1 hour')", [adminId, "a".repeat(64)]),
+      e => e.code === "42501",
+      "role de convites não pode forjar sessões",
+    );
+    await assert.rejects(
+      convites.query("SELECT gestao.aceitar_convite($1,$2,$3)", ["a".repeat(64), "Teste", criarHashSenha("senha-descartavel-testes-2026")]),
+      e => e.code === "42501",
+    );
+    const emitidoSemSessao = await convites.query(
       "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id", ["f".repeat(64),hashConvite,nomeConvite,"admin"],
     );
     assert.equal(emitidoSemSessao.rows[0].id, null);
-    const emitido = await app.query(
+    const emitido = await convites.query(
       "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id", [sessaoHash,hashConvite,nomeConvite,"tecnico"],
     );
     const conviteId = emitido.rows[0].id;
     assert.ok(conviteId);
     idsConvites.push(conviteId);
     // Só pode haver um convite não revogado e não utilizado para o mesmo login.
-    const duplicado = await app.query(
+    const duplicado = await convites.query(
       "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
       [sessaoHash, "d".repeat(64), nomeConvite, "admin"],
     );
@@ -77,18 +105,18 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     );
     assert.deepEqual(papeis.map(x => x.papel_codigo), ["tecnico"]);
 
-    const aRevogar = await app.query(
+    const aRevogar = await convites.query(
       "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
       [sessaoHash,hashRevogado,nomeRevogado,"admin"],
     );
     assert.ok(aRevogar.rows[0].id);
     idsConvites.push(aRevogar.rows[0].id);
-    const semPermissao = await app.query(
+    const semPermissao = await convites.query(
       "SELECT gestao.revogar_convite($1,$2) AS revogado",
       ["f".repeat(64),aRevogar.rows[0].id],
     );
     assert.equal(semPermissao.rows[0].revogado, false);
-    const revogado = await app.query(
+    const revogado = await convites.query(
       "SELECT gestao.revogar_convite($1,$2) AS revogado",
       [sessaoHash,aRevogar.rows[0].id],
     );
@@ -103,7 +131,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     const nomeVencido = "ve_" + suffix;
     const hashAntigo = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
     const hashNovo = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
-    const { rows: [antigo] } = await app.query(
+    const { rows: [antigo] } = await convites.query(
       "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
       [sessaoHash, hashAntigo, nomeVencido, "comercial"],
     );
@@ -113,7 +141,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       "UPDATE gestao.convites SET criado_em=now()-interval '2 days', expira_em=now()-interval '1 day' WHERE id=$1",
       [antigo.id],
     );
-    const { rows: [substituto] } = await app.query(
+    const { rows: [substituto] } = await convites.query(
       "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
       [sessaoHash, hashNovo, nomeVencido, "comercial"],
     );
@@ -138,6 +166,6 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       await admin.query("DELETE FROM gestao.usuarios_papeis WHERE usuario_id=$1", [adminId]).catch(() => {});
       await admin.query("DELETE FROM gestao.usuarios WHERE id=$1", [adminId]).catch(() => {});
     }
-    await Promise.all([app.end(), admin.end()]);
+    await Promise.all([app.end(), admin.end(), convites.end()]);
   }
 });
