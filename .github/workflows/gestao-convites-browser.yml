@@ -51,12 +51,15 @@ jobs:
           GESTAO_ROLE_CONFIRM: CRIAR_GESTAO_APP
           GESTAO_APP_PASSWORD: credencial-aplicacao-somente-ci-descartavel-2026
           ADMIN_EMAIL: qa-admin@example.test
+          ADMIN_USUARIO: qa-admin@example.test
+          GESTAO_VERIFICADOR_CONFIRM: VALIDAR_CREDENCIAL
           ADMIN_PASSWORD: senha-ci-descartavel-gestao-2026
         run: |
           node scripts/gestao-migrate.mjs --apply
           node scripts/gestao-provision-role.mjs --apply
           GESTAO_CONVITES_ROLE_CONFIRM=CRIAR_ROLE_CONVITES GESTAO_CONVITES_PASSWORD=qa-role-descartavel-unicamente-ci-2026 node scripts/gestao-provision-convites-role.mjs --apply
           node scripts/gestao-bootstrap-admin.mjs
+          node scripts/gestao-registrar-verificador.mjs --apply
       - name: Instalar Playwright e Chromium de QA
         run: |
           npm install --no-save --package-lock=false playwright@1.55.1
