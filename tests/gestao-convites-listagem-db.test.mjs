@@ -5,13 +5,15 @@ import pg from "pg";
 
 const adminUrl = process.env.GESTAO_TEST_DATABASE_URL;
 const appUrl = process.env.GESTAO_TEST_APP_DATABASE_URL;
+const convitesUrl = process.env.GESTAO_TEST_CONVITES_DATABASE_URL;
 
 test("listagem não revela tokens e só atende sessão admin ativa", {
-  skip: (!adminUrl || !appUrl) && "Requer banco descartável com role gestao_app",
+  skip: (!adminUrl || !appUrl || !convitesUrl) && "Requer banco descartável com role gestao_app",
 }, async () => {
   const admin = new pg.Client({ connectionString: adminUrl, connectionTimeoutMillis: 5000 });
   const app = new pg.Client({ connectionString: appUrl, connectionTimeoutMillis: 5000 });
-  await Promise.all([admin.connect(), app.connect()]);
+  const convites = new pg.Client({ connectionString: convitesUrl, connectionTimeoutMillis: 5000 });
+  await Promise.all([admin.connect(), app.connect(), convites.connect()]);
   const tag = randomUUID().replaceAll("-", "").slice(0, 18);
   const sessaoAdmin = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
   const sessaoTecnico = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
@@ -39,7 +41,7 @@ test("listagem não revela tokens e só atende sessão admin ativa", {
       );
     }
     for (const [i, hash] of [hash1, hash2, hash3].entries()) {
-      const { rows: [r] } = await app.query(
+      const { rows: [r] } = await convites.query(
         "SELECT gestao.emitir_convite($1,$2,$3,'comercial') AS id",
         [sessaoAdmin, hash, conviteNomes[i]],
       );
@@ -47,8 +49,8 @@ test("listagem não revela tokens e só atende sessão admin ativa", {
       idConvites.push(r.id);
     }
     await admin.query("UPDATE gestao.convites SET criado_em=now()-interval '2 days', expira_em=now()-interval '1 day' WHERE id=$1", [idConvites[2]]);
-    assert.equal((await app.query("SELECT gestao.revogar_convite($1,$2) AS ok", [sessaoAdmin,idConvites[1]])).rows[0].ok, true);
-    const ativo = await app.query("SELECT * FROM gestao.listar_convites($1)", [sessaoAdmin]);
+    assert.equal((await convites.query("SELECT gestao.revogar_convite($1,$2) AS ok", [sessaoAdmin,idConvites[1]])).rows[0].ok, true);
+    const ativo = await convites.query("SELECT * FROM gestao.listar_convites($1)", [sessaoAdmin]);
     const vistos = ativo.rows.filter(r => conviteNomes.includes(r.usuario));
     assert.equal(vistos.length, 3);
     assert.deepEqual(
@@ -56,10 +58,14 @@ test("listagem não revela tokens e só atende sessão admin ativa", {
       ["expirado", "pendente", "revogado"].sort(),
     );
     assert.ok(vistos.every(r => !("token_hash" in r)), "listagem não pode expor hash do token");
-    assert.equal((await app.query("SELECT * FROM gestao.listar_convites($1)", [sessaoTecnico])).rowCount, 0);
-    assert.equal((await app.query("SELECT * FROM gestao.listar_convites($1)", ["f".repeat(64)])).rowCount, 0);
+    assert.equal((await convites.query("SELECT * FROM gestao.listar_convites($1)", [sessaoTecnico])).rowCount, 0);
+    assert.equal((await convites.query("SELECT * FROM gestao.listar_convites($1)", ["f".repeat(64)])).rowCount, 0);
     await admin.query("UPDATE gestao.usuarios SET ativo=false WHERE id=$1", [idUsuarios[0]]);
-    assert.equal((await app.query("SELECT * FROM gestao.listar_convites($1)", [sessaoAdmin])).rowCount, 0);
+    assert.equal((await convites.query("SELECT * FROM gestao.listar_convites($1)", [sessaoAdmin])).rowCount, 0);
+    await assert.rejects(
+      app.query("SELECT * FROM gestao.listar_convites($1)", [sessaoAdmin]),
+      (e) => e.code === "42501",
+    );
     await assert.rejects(
       app.query("SELECT id FROM gestao.convites LIMIT 1"),
       (e) => e.code === "42501",
@@ -74,6 +80,6 @@ test("listagem não revela tokens e só atende sessão admin ativa", {
       await admin.query("DELETE FROM gestao.usuarios_papeis WHERE usuario_id = ANY($1::uuid[])", [idUsuarios]).catch(() => {});
       await admin.query("DELETE FROM gestao.usuarios WHERE id = ANY($1::uuid[])", [idUsuarios]).catch(() => {});
     }
-    await Promise.all([app.end(), admin.end()]);
+    await Promise.all([app.end(), admin.end(), convites.end()]);
   }
 });
