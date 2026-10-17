@@ -96,13 +96,13 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     assert.equal(duplicado.rows[0].id, null, "dois convites ativos para o mesmo login são proibidos");
 
     const aceito = await app.query(
-      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
       [hashConvite, "Convidado Teste", criarHashSenha("senha-segura-descartavel-2026"), "senha-segura-descartavel-2026"],
     );
     contaId = aceito.rows[0].id;
     assert.ok(contaId);
     const repetido = await app.query(
-      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
       [hashConvite, "Outro Nome", criarHashSenha("outra-senha-descartavel-2026"), "outra-senha-descartavel-2026"],
     );
     assert.equal(repetido.rows[0].id, null);
@@ -128,7 +128,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     );
     assert.equal(revogado.rows[0].revogado, true);
     const revogadoAceito = await app.query(
-      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
       [hashRevogado, "Não deveria criar", criarHashSenha("terceira-senha-descartavel-2026"), "terceira-senha-descartavel-2026"],
     );
     assert.equal(revogadoAceito.rows[0].id, null);
