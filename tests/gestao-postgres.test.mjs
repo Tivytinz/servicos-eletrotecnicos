@@ -21,6 +21,26 @@ test("migrations e privilégios PostgreSQL (requer serviço no CI)", { skip: !ur
       RETURNING tentativas
     `);
     assert.ok(tentativa.rows[0].tentativas >= 1);
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      const created = await client.query(
+        "INSERT INTO gestao.usuarios (nome, usuario, email, senha_hash) VALUES ($1, $2, NULL, $3) RETURNING id",
+        ["Administrador Teste", "admin", "hash-de-teste"],
+      );
+      assert.equal(created.rowCount, 1);
+      await assert.rejects(
+        client.query(
+          "INSERT INTO gestao.usuarios (nome, usuario, email, senha_hash) VALUES ($1, $2, NULL, $3)",
+          ["Duplicado", "admin", "hash-de-teste"],
+        ),
+        /duplicate key value|unique constraint/,
+      );
+    } finally {
+      await client.query("ROLLBACK");
+      client.release();
+    }
+
   } finally {
     await pool.end();
   }
