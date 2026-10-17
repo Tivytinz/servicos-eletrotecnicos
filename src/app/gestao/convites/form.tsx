@@ -23,6 +23,11 @@ export default function FormularioConvite() {
             <option value="admin">Administrador</option>
           </select>
         </label>
+        <label className="block">Confirme sua senha de administrador
+          <input name="senhaAdministrador" type="password" required minLength={12} maxLength={1024}
+            autoComplete="current-password"
+            className="mt-2 w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
+        </label>
         <button disabled={pendente}
           className="rounded-lg bg-amber-400 px-5 py-3 font-bold text-slate-950 disabled:opacity-60">
           {pendente ? "Gerando..." : "Criar convite"}
