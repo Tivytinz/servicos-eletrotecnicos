@@ -15,7 +15,7 @@ const identificador = (process.env.ADMIN_USUARIO ?? "").trim().toLowerCase();
 const senha = process.env.ADMIN_PASSWORD ?? "";
 if (process.argv.length !== 3 || process.argv[2] !== "--apply"
   || process.env.GESTAO_VERIFICADOR_CONFIRM !== "VALIDAR_CREDENCIAL"
-  || !url || !/^[a-z][a-z0-9_.-]{2,31}$/.test(identificador)
+  || !url || !((/^[a-z][a-z0-9_.-]{2,31}$/.test(identificador)) || (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identificador) && identificador.length <= 254))
   || senha.length < 12 || senha.length > 1024) {
   console.error("Requer DATABASE_URL_ADMIN, ADMIN_USUARIO, ADMIN_PASSWORD e GESTAO_VERIFICADOR_CONFIRM=VALIDAR_CREDENCIAL; modo --apply.");
   process.exit(2);
@@ -26,7 +26,7 @@ try {
   client = await pool.connect();
   await client.query("BEGIN");
   const { rows: [conta] } = await client.query(
-    "SELECT id, senha_hash FROM gestao.usuarios WHERE usuario = $1 AND ativo = true FOR UPDATE",
+    "SELECT id, senha_hash FROM gestao.usuarios WHERE (usuario = $1 OR email = $1) AND ativo = true FOR UPDATE",
     [identificador],
   );
   if (!conta || !verificarSenha(senha, conta.senha_hash)) {
