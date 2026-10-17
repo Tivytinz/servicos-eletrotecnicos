@@ -1,6 +1,6 @@
 # Auditoria de limite de confiança — sessões e convites
 
-**Data:** 17/10/2026. **Conclusão: BLOQUEADOR para implantação do fluxo de convites em produção.**
+**Data:** 17/10/2026. **Estado:** vulnerabilidade original identificada e corrigida na branch, ainda sem implantação. PR permanece em revisão de segurança/operacional.
 
 ## Evidência de código
 - `db/grants/gestao-app.sql` e `scripts/gestao-provision-role.mjs` atribuem a `gestao_app` leitura de `gestao.usuarios` e `gestao.usuarios_papeis`, além de `SELECT, INSERT, UPDATE` em `gestao.sessoes`.
@@ -43,3 +43,20 @@
 Esta mitigação **isola o vazamento exclusivo de credenciais da role SQL comum**, mas **não equivale a proteção contra comprometimento do processo web**: o mesmo runtime que tem acesso às duas URLs pode ter seus segredos roubados em conjunto. Nesse cenário, o atacante pode usar a role comum para forjar sessões e a role dedicada para invocar funções; a reautenticação na Server Action também pode ser contornada via SQL direto. Para uma fronteira de autenticação mais forte, ainda é necessário proteger emissão de sessões na camada SQL e/ou isolar as operações administrativas em serviço e segredo independentes com autenticação forte verificável pelo servidor protegido.
 
 **Consequência:** manter o bloqueio da PR e não implantar até revisar explicitamente o risco residual, o isolamento operacional e os testes no último commit. Esta etapa reduz o alcance de vazamento de uma única credencial, mas não encerra a auditoria de sessões.
+
+## Correção complementar — migrations 008 e 009 (não implantadas)
+
+Após a primeira mitigação com duas roles, foi implementada uma fronteira de autenticação no PostgreSQL:
+
+1. A role `gestao_app` deixa de poder **ler ou escrever** a tabela `gestao.sessoes`; a role `gestao_convites` permanece sem qualquer permissão de sessão.
+2. A emissão de sessão exige a **senha real** validada por bcrypt privado no banco, através de `gestao.emitir_sessao_segura`, com limites de tentativas controlados em tabela não legível pela aplicação.
+3. A consulta de identidade usa o token secreto completo (`gestao.buscar_sessao_segura`) e **não revela** `token_hash`; o logout também exige token original.
+4. A migration 008 revoga sessões emitidas antes da nova fronteira de segurança. O aceite de convite (migration 009) grava verificador scrypt e bcrypt na mesma operação.
+5. Senhas de contas existentes precisam ser verificadas e seus verificadores SQL registrados **em terminal operacional isolado** antes do corte; não é possível converter um hash scrypt para bcrypt sem conhecer a senha.
+6. Testes negativos simulam tentativas de INSERT/SELECT/UPDATE pela role comum, leitura de verificador, login errado e reaproveitamento de hashes como bearer token. O QA HTTPS executa login real e convite com contas apenas de teste.
+
+**Risco mitigado nesta branch:** credenciais SQL de `gestao_app` e `gestao_convites`, mesmo juntas, não bastam para fabricar uma sessão de administrador sem senha/token genuíno.
+
+**Risco residual:** comprometimento do próprio runtime web pode capturar senhas e cookies legítimos, além das conexões SQL. Resolver isso exige medidas de isolamento operacional e autenticação adicional; a PR não declara proteção contra execução maliciosa dentro do servidor.
+
+Ver [docs/gestao-sessoes-autenticadas.md](gestao-sessoes-autenticadas.md) e [docs/gestao-convites-implantacao.md](gestao-convites-implantacao.md). **Não realizar merge nem migrations no Railway somente porque o CI está verde.**
