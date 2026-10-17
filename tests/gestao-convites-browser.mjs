@@ -78,6 +78,28 @@ try {
   await carlos.getByRole("link", { name: /Convidar integrante da equipe/ }).waitFor();
   console.log("PASS: novo administrador consegue entrar e possui permissão de convite");
 
+
+  // Um técnico com conta válida não ganha acesso ao gerenciamento de convites.
+  const conviteOperador = await criarConvite(admin, "ci-operador", "tecnico");
+  const operador = await abrirConvite(conviteOperador);
+  await preencherAceite(operador, "Operador de Teste", "senha-ci-operador-exclusiva-2026");
+  await operador.getByRole("status").getByText("Conta criada com sucesso.").waitFor();
+  await operador.getByRole("link", { name: "Entrar na gestão" }).click();
+  await operador.getByLabel("Usuário").fill("ci-operador");
+  await operador.getByLabel("Senha").fill("senha-ci-operador-exclusiva-2026");
+  await operador.getByRole("button", { name: "Entrar" }).click();
+  await operador.waitForURL(BASE + "/gestao");
+  assert.equal(await operador.getByRole("link", { name: /Convidar integrante da equipe/ }).count(), 0);
+  await operador.goto(BASE + "/gestao/convites");
+  await operador.waitForURL(BASE + "/gestao?erro=sem-permissao");
+  console.log("PASS: técnico autenticado não acessa a gestão de convites");
+
+  const semLink = await (await novoContexto()).newPage();
+  await semLink.goto(BASE + "/gestao/convite");
+  await preencherAceite(semLink, "Sem Convite", "senha-ci-sem-convite-2026");
+  await semLink.getByRole("alert").getByText(/Convite inválido/).waitFor();
+  console.log("PASS: cadastro sem token válido é recusado");
+
   const conviteTecnico = await criarConvite(admin, "ci-tecnico", "tecnico");
   await admin.goto(BASE + "/gestao/convites");
   const linha = admin.locator("li").filter({ hasText: "ci-tecnico" });
