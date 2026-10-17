@@ -46,8 +46,8 @@ jobs:
           node scripts/gestao-migrate.mjs --apply
           node scripts/gestao-migrate.mjs --apply
           node scripts/gestao-migrate.mjs --check
-          GESTAO_CONVITES_ROLE_CONFIRM=CRIAR_ROLE_CONVITES GESTAO_CONVITES_PASSWORD=qa-role-descartavel-unicamente-ci-2026 node scripts/gestao-provision-convites-role.mjs --apply
           GESTAO_ROLE_CONFIRM=CRIAR_GESTAO_APP GESTAO_APP_PASSWORD=teste-somente-ci-credencial-descartavel-2026 node scripts/gestao-provision-role.mjs --apply
+          GESTAO_CONVITES_ROLE_CONFIRM=CRIAR_ROLE_CONVITES GESTAO_CONVITES_PASSWORD=qa-role-descartavel-unicamente-ci-2026 node scripts/gestao-provision-convites-role.mjs --apply
       - name: Testes, lint e compilação
         env:
           GESTAO_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/gestao_test
