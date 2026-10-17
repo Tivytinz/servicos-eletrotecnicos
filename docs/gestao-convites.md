@@ -14,6 +14,10 @@ Victor e Carlos são sócios com acesso `admin`, individual. Carlos criará a pr
 
 8. A listagem administrativa é obtida por `gestao.listar_convites` (migration 007), que limita a 100 registros, verifica a sessão admin diretamente no banco e retorna somente login, perfil, datas e estado; nunca retorna tokens ou hashes.
 
+## Bloqueador de segurança
+
+A auditoria identificou que a role SQL `gestao_app` pode fabricar sessões administrativas e invocar a função de emissão; portanto as verificações de RBAC SQL **não são suficientes para proteger o fluxo contra vazamento das credenciais da role**. O recurso **não está aprovado para produção**. Evidências e plano de correção: [gestao-convites-risco-sessoes.md](gestao-convites-risco-sessoes.md). Os testes funcionais verdes não eliminam esse risco.
+
 ## Segurança e menores privilégios
 - `gestao_app` NÃO recebe INSERT/UPDATE direto em `gestao.usuarios`, `gestao.usuarios_papeis` nem `gestao.convites`.
 - Funções `SECURITY DEFINER` têm `search_path` limitado, SQL estático e `REVOKE EXECUTE FROM PUBLIC`. Apenas `gestao_app` recebe EXECUTE explícito por `db/grants/gestao-app.sql` ou pelo provisionamento inicial da role.
