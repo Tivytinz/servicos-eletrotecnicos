@@ -28,7 +28,7 @@
 | #39 | Testes de segurança de sessão e limite por identificador | Integrada; deploy próprio ignorado pelo Railway (SKIPPED), conteúdo incorporado nos commits seguintes |
 | #40 | Limite global provisório de 300 tentativas/15 min, além de 5 por identificador | Integrada, deploy SUCCESS |
 | #41 | Testes de revogação/expiração/inativação de sessão e Origin/Host | Integrada, deploy SUCCESS no commit `b5ab3b1` |
-| #42 | Auditoria RBAC documentada, com pendências de testes HTTP/Server Actions | PR em rascunho no último checkpoint; **não presumir merge** |
+| #42 | Auditoria RBAC documentada, com pendências de testes HTTP/Server Actions | CI aprovado, mas branch incompatível após atualização da main; substituída por PR nova, conferir encerramento |\n| #43 | AGENTS.md, MEMORIA.md e atualização do README | Integrada na main, CI aprovado; deploy documental SKIPPED |
 
 A última implantação **confirmada nesta conversa** para o web service foi a PR #41 (`b5ab3b1`, Railway SUCCESS). Consultar Railway novamente para estado atual.
 
@@ -43,7 +43,7 @@ A última implantação **confirmada nesta conversa** para o web service foi a P
 
 ## Pendências prioritárias
 
-1. Verificar CI e decidir integração da PR #42, que registra auditoria RBAC sem modificar o comportamento.
+1. Integrar a auditoria RBAC em nova PR compatível com a main; consultar [docs/gestao-auditoria-rbac-2026-10-17.md](docs/gestao-auditoria-rbac-2026-10-17.md) após merge.
 2. Testes de integração HTTP/Server Actions com sessões de diferentes papéis, verificando negação e ausência de gravação; não executar no banco de produção.
 3. Revisão de CSRF, LGPD/retensão/exportação/exclusão de dados e isolamento de analytics no painel interno.
 4. Conferir grants mínimos e checksum da migration `004` antes de qualquer nova migration.
