@@ -63,7 +63,7 @@ BEGIN
 
   -- Usuário legado sem verificador bcrypt é negado (migração explícita necessária).
   IF v_usuario_id IS NULL OR
-    public.crypt(p_senha, v_verificador) IS DISTINCT FROM v_verificador THEN
+    public.crypt(encode(public.digest(convert_to(p_senha, 'UTF8'), 'sha256'), 'hex'), v_verificador) IS DISTINCT FROM v_verificador THEN
     RETURN NULL;
   END IF;
 
