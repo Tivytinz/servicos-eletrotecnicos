@@ -11,6 +11,8 @@
 
 - PR #45 adiciona teste de integração PostgreSQL sessão/RBAC com rollback (`tests/gestao-rbac-integracao-db.test.mjs`); não substitui E2E da Server Action, nem valida CSRF/HTTP. CI pendente de confirmação.
 
+- Decisão dos sócios: Victor e Carlos terão contas individuais com papel `admin`; antes de provisionar, verificar qual conta inicial já existe e a quem pertence. Procedimento em [docs/gestao-dois-socios-admin.md](docs/gestao-dois-socios-admin.md). Nenhuma conta foi criada ou alterada nesta PR.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
