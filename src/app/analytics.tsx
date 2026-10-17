@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   CONSENT_CHANGE_EVENT,
@@ -207,6 +208,8 @@ function PreferencesPanel({ initial, onSave }: PreferencesPanelProps) {
 }
 
 export default function Analytics() {
+  const pathname = usePathname();
+  const isGestao = pathname.startsWith("/gestao");
   const snapshot = useSyncExternalStore(
     subscribeConsent,
     getConsentSnapshot,
@@ -216,13 +219,14 @@ export default function Analytics() {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    if (measurementId) updateGoogleConsent(preferences);
+    if (!isGestao && measurementId) updateGoogleConsent(preferences);
     // The snapshot changes on explicit consent changes or cross-tab updates.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snapshot]);
+  }, [snapshot, isGestao]);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
+      if (window.location.pathname.startsWith("/gestao")) return;
       const element = event.target;
       if (!(element instanceof Element)) return;
 
@@ -276,7 +280,8 @@ export default function Analytics() {
     return () => document.removeEventListener("click", onClick, true);
   }, []);
 
-  if (!measurementId) return null;
+  // Páginas internas não exibem consentimento de marketing nem iniciam medição.
+  if (isGestao || !measurementId) return null;
 
   if (needsChoice || editing) {
     return (
