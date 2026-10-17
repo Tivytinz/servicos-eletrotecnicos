@@ -1,6 +1,4 @@
 import { createHash, randomBytes } from "node:crypto";
-import { normalizarIdentificador } from "./identificador.ts";
-
 export const CONVITE_VALIDADE_HORAS = 24;
 export const CONVITE_TOKEN_BYTES = 32;
 
@@ -17,8 +15,8 @@ export function hashTokenConvite(token: string): string {
 }
 
 export function validarUsuarioConvite(valor: string): string | null {
-  const usuario = normalizarIdentificador(valor);
-  return usuario && !usuario.includes("@") ? usuario : null;
+  const usuario = valor.trim().toLowerCase();
+  return /^[a-z][a-z0-9_.-]{2,31}$/.test(usuario) ? usuario : null;
 }
 
 export function convitePodeSerUsado(
