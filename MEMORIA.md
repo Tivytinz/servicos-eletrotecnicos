@@ -13,6 +13,9 @@
 
 - Interface administrativa em `/gestao/convites` criada atrás de `GESTAO_CONVITES_HABILITADOS`, mas a Server Action falha fechada até implementação da entrega segura do link. Rota pública de aceite ainda redireciona e não coleta senha. **Não habilitar a flag.**
 
+- Etapa avançada da PR #46: migration 006 com funções `SECURITY DEFINER` (`emitir_convite`, `aceitar_convite`, `revogar_convite`), grants limitados a `EXECUTE` para `gestao_app`, Server Actions e telas de emissão/aceite com tokens no fragmento, senha própria e flags desativadas. Testes PostgreSQL descartáveis incluem controle de privilégios e concorrência; CI verde no commit `503b16f` antes da documentação posterior.
+- Ainda faltam revisão de segurança/HTTP E2E, gestão de reenvio/revogação e liberação operacional deliberada. Não confundir código na PR com implantação. Sem merge, sem migrations em produção, sem convite real para Carlos.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
