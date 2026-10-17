@@ -32,3 +32,9 @@ Somente administradores autorizados poderão emitir convite para `admin`, `comer
 - `tests/gestao-convites-db.test.mjs` cobre emissão negada a técnico, emissão por admin, uso único e revogação no PostgreSQL descartável, revertendo registros por rollback.
 - **Ainda não há API/Server Action ou frontend para utilizar esses comandos.** Não conceder novas permissões de `INSERT` em usuários/papéis à aplicação até análise de segurança e desenho de privilégios mínimos.
 - Adicionar teste de concorrência em múltiplas conexões, falha por expiração e validação de origem antes de disponibilizar convites reais.
+
+## Preparação de interface
+
+- Interface administrativa em `/gestao/convites` criada atrás de `GESTAO_CONVITES_HABILITADOS`, mas a Server Action falha fechada até implementação da entrega segura do link. Rota pública de aceite ainda redireciona e não coleta senha. **Não habilitar a flag.**
+
+**Bloqueadores de liberação:** concluir entrega segura do token, grants mínimos da aplicação, UI de aceite, rate limiting, CSRF e testes E2E. Não divulgar o recurso como funcional.
