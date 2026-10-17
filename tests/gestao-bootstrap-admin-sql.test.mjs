@@ -15,7 +15,7 @@ test("gera SQL atômico, com hash compatível e sem senha em texto", () => {
   assert.equal(r.status, 0, r.stderr);
   assert.match(r.stdout, /WITH novo_admin AS/);
   assert.match(r.stdout, /INSERT INTO gestao\.usuarios_papeis/);
-  assert.match(r.stdout, /teste@exemplo\.com/);
+  assert.match(r.stdout, /'admin', NULL/);
   assert.doesNotMatch(r.stdout, /Senha-forte-didatica/);
   const hash = r.stdout.match(/scrypt\$16384\$8\$1\$[a-f0-9]{32}\$[a-f0-9]{128}/)?.[0];
   assert.ok(hash);
