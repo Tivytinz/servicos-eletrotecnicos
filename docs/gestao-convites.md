@@ -10,7 +10,9 @@ Victor e Carlos são sócios com acesso `admin`, individual. Carlos criará a pr
 4. Link secreto é exibido **uma única vez** na interface autenticada. Administração copia e compartilha privadamente, sem envio automático de e-mail. O token está no fragmento `#` da URL, não no path/query enviados ao servidor.
 5. Em `/gestao/convite`, o convidado informa nome e senha própria (mínimo 12 caracteres, com confirmação). O browser remove o fragmento imediatamente após ler; o token é enviado somente no POST autenticado por Origem, protegido por limite de tentativas.
 6. Função `gestao.aceitar_convite` faz `SELECT ... FOR UPDATE` no convite e, em operação atômica, cria usuário, atribui perfil previamente definido e marca consumo. Sessões não são criadas automaticamente. Convidado entra em `/gestao/login`.
-7. Função `gestao.revogar_convite` exige sessão admin válida no próprio PostgreSQL; a interface de revogação ainda não foi criada.
+7. Função `gestao.revogar_convite` exige sessão admin válida no próprio PostgreSQL. A interface permite revogar convites pendentes, com validação de Origin, RBAC e revalidação da sessão pelo banco.
+
+8. A listagem administrativa é obtida por `gestao.listar_convites` (migration 007), que limita a 100 registros, verifica a sessão admin diretamente no banco e retorna somente login, perfil, datas e estado; nunca retorna tokens ou hashes.
 
 ## Segurança e menores privilégios
 - `gestao_app` NÃO recebe INSERT/UPDATE direto em `gestao.usuarios`, `gestao.usuarios_papeis` nem `gestao.convites`.
@@ -24,19 +26,21 @@ Victor e Carlos são sócios com acesso `admin`, individual. Carlos criará a pr
 - Testes unitários: entropia/formato do token, hash, nomes de usuário, expiração e revogação.
 - PostgreSQL descartável: emissão negada a técnico, convite usado/revogado/expirado, papel exato e concorrência com duas conexões.
 - Teste específico `gestao_app`: escrita direta em identidades e convites negada (42501), emissão sem sessão negada, emissão/aceite/revogação via funções autorizadas.
+- Teste de listagem: admin ativo enxerga convites, técnico/sessão inválida/admin inativo recebem zero linhas; leitura direta da tabela é negada; estados pendente/revogado/expirado são verificados.
+- Workflow `gestao-convites-browser.yml`: navegador Playwright, banco e contas de teste descartáveis, HTTPS com proxy local, emissão/aceite com senha individual, login, consumo único e revogação. Conferir CI antes de considerar homologado.
 - CI: lint, Node tests, PostgreSQL descartável, type check/build. Consultar resultado **do último commit** antes de habilitar ou realizar merge.
 
 ## Procedimento de implantação — NÃO EXECUTAR ATÉ LIBERAÇÃO
 1. Conferir PR #46, aprovação da CI atual e teste manual em ambiente isolado. Revisar o plano de recuperação para migrações.
-2. Aplicar migrations 005 e 006 com processo de administrador do banco separado da aplicação, sob confirmação explícita. Nunca usar credenciais administrativas no serviço web.
+2. Aplicar migrations 005, 006 e 007 com processo de administrador do banco separado da aplicação, sob confirmação explícita. Nunca usar credenciais administrativas no serviço web.
 3. Aplicar grants da role `gestao_app` como proprietário do schema, via `db/grants/gestao-app.sql`; não executar a criação de role novamente se ela já existir.
 4. Verificar grants e autenticação com o usuário de aplicação sem acesso direto às tabelas de identidade.
 5. Revisar limites de taxa, segurança de URLs, CSRF, registro de eventos e experiência móvel em homologação.
 6. Habilitar o painel e os convites **somente com autorização específica**, em implantação controlada. Gerar convite de Carlos e validar primeiro login pessoal.
 
 ## Pendências
-- UI de listagem/revogação/reenvio (revogação já existe no banco).
-- Teste E2E HTTP com Server Actions e navegadores, inclusive convite com token ausente, repetição de POST, erro de senha e limpeza de fragmento.
+- Reenvio automático ainda não existe. O procedimento seguro é revogar o convite anterior e gerar um novo, pois o token secreto não pode ser recuperado.
+- O teste E2E HTTP em navegador está configurado no CI; falta conferir o resultado e ampliar cenários de token ausente e erros de senha. Repetição e limpeza de fragmento já estão previstos.
 - Revisão de `SECURITY DEFINER` / proprietário das funções e análise de limites/WAF.
 - Revisão funcional do caminho de emissão para convites duplicados e convites vencidos.
 - Revisão final e **merge apenas após aprovação**. Nem o código da PR nem as migrations estão em produção.
