@@ -16,10 +16,10 @@ Victor e Carlos são sócios com acesso `admin`, individual. Carlos criará a pr
 
 ## Bloqueador de segurança
 
-A auditoria identificou que a role SQL `gestao_app` pode fabricar sessões administrativas. A mitigação na branch retirou dela a capacidade de emitir/listar/revogar convites, criou uma role independente `gestao_convites` e passou a exigir a senha pessoal do administrador nas ações sensíveis. Isso diminui o risco de vazamento isolado da conexão comum, mas **não protege o comprometimento conjunto das duas conexões no mesmo runtime**. O recurso **continua não aprovado para produção**. Evidências e plano de correção: [gestao-convites-risco-sessoes.md](gestao-convites-risco-sessoes.md). Os testes funcionais verdes não eliminam esse risco.
+O desenho anterior permitia que `gestao_app` fabricasse sessões. A branch agora inclui migrations 008–009: somente funções protegidas do PostgreSQL criam/consultam/revogam sessões, após validação da senha por bcrypt privado; a role comum não tem mais SELECT/INSERT/UPDATE em `gestao.sessoes`. A role independente `gestao_convites` continua isolada, e o aceite já cadastra verificador para contas novas. Isso mitiga o ataque com credenciais SQL comuns e administrativas, **desde que a senha real e o token secreto não sejam comprometidos**. O comprometimento do processo web ainda permite capturar essas informações. O recurso **continua não autorizado para produção** até a migração controlada das contas legadas e revisão operacional. Evidências e plano de correção: [gestao-convites-risco-sessoes.md](gestao-convites-risco-sessoes.md). Os testes funcionais verdes não eliminam esse risco.
 
 ## Segurança e menores privilégios
-- `gestao_app` NÃO recebe INSERT/UPDATE direto em `gestao.usuarios`, `gestao.usuarios_papeis` nem `gestao.convites`.
+- `gestao_app` NÃO recebe INSERT/UPDATE direto em `gestao.usuarios`, `gestao.usuarios_papeis` nem `gestao.convites`, e NÃO possui leitura/escrita direta na tabela `gestao.sessoes` ou leitura de `gestao.verificadores_senha`.
 - Funções `SECURITY DEFINER` têm `search_path` limitado, SQL estático e `REVOKE EXECUTE FROM PUBLIC`. `gestao_app` pode executar **somente** `aceitar_convite`; `gestao_convites`, com credencial separada em `DATABASE_URL_CONVITES`, pode executar **somente** `emitir_convite`, `listar_convites` e `revogar_convite`. Operações administrativas usam pool SQL distinto.
 - O token completo nunca é salvo em tabelas, registrado em auditoria, incluído em query string ou em analytics. Rotas `/gestao` não iniciam medição de marketing. Links não devem ser publicados.
 - A funcionalidade está fechada por `GESTAO_HABILITADA=true`, `GESTAO_CONVITES_HABILITADOS=true` e a configuração de `GESTAO_ORIGEM_PUBLICA` para ações. Não definir flags em produção antes da revisão. A origem de produção esperada é `https://eletrotecnicogo.com.br`.
@@ -38,11 +38,13 @@ A auditoria identificou que a role SQL `gestao_app` pode fabricar sessões admin
 
 Runbook completo com pré-validação somente leitura, grants, riscos e contingência: [gestao-convites-implantacao.md](gestao-convites-implantacao.md).
 1. Conferir PR #46, aprovação da CI atual e teste manual em ambiente isolado. Revisar o plano de recuperação para migrações.
-2. Aplicar migrations 005, 006 e 007 com processo de administrador do banco separado da aplicação, sob confirmação explícita. Nunca usar credenciais administrativas no serviço web.
-3. Revisar revogação de privilégios administrativos da role `gestao_app` em `db/grants/gestao-app.sql`; criar role `gestao_convites` em processo separado e aplicar `db/grants/gestao-convites.sql`. Não executar a criação de `gestao_app` novamente.
+2. Aplicar migrations 005–009 com processo de administrador do banco separado da aplicação, sob confirmação explícita; a migration 008 revoga sessões anteriores e exige verificador bcrypt para usuários antigos. Nunca usar credenciais administrativas no serviço web.
+3. Revisar revogação de privilégios administrativos e de leitura/escrita de sessões da role `gestao_app` em `db/grants/gestao-app.sql`; criar role `gestao_convites` separadamente e aplicar `db/grants/gestao-convites.sql`. Antes de ativar o código novo, registrar os verificadores das contas antigas com validação privada da senha scrypt existente. Não executar a criação de `gestao_app` novamente.
 4. Verificar as duas roles e confirmar que `gestao_app` não emite/lista/revoga convites e `gestao_convites` não escreve sessões.
 5. Revisar limites de taxa, segurança de URLs, CSRF, registro de eventos e experiência móvel em homologação.
 6. Habilitar o painel e os convites **somente com autorização específica**, em implantação controlada. Gerar convite de Carlos e validar primeiro login pessoal.
+
+Documentação específica da transição de login: [gestao-sessoes-autenticadas.md](gestao-sessoes-autenticadas.md). O plano atualizado é [gestao-convites-implantacao.md](gestao-convites-implantacao.md).
 
 ## Pendências
 - Reenvio automático ainda não existe. O procedimento seguro é revogar o convite anterior e gerar um novo, pois o token secreto não pode ser recuperado.
