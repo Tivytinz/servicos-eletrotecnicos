@@ -39,6 +39,9 @@
 - Testes de matriz de permissões e sessão em DB existem. **Ainda não há evidência de teste E2E/Server Action real com perfis e garantia de ausência de gravação**.
 - A flag do painel e o estado do deploy precisam ser verificados no Railway, sem assumir que estão ativos.
 
+
+- PR #45 adiciona teste de integração PostgreSQL sessão/RBAC com rollback (`tests/gestao-rbac-integracao-db.test.mjs`); não substitui E2E da Server Action, nem valida CSRF/HTTP. CI pendente de confirmação.
+
 ## Próxima tarefa técnica
 
 Implementar e validar testes de integração que executem o comportamento real de `cadastrarLead`, com PostgreSQL descartável e sessões `admin`, `comercial`, `tecnico`, anônima, revogada e expirada. Confirmar sucesso apenas para perfis autorizados, rejeição para os demais e zero gravações quando negados. Cobrir listagem de leads por permissão e proteção de origem/CSRF sem confundir teste estático com HTTP E2E. Não mudar a lógica produtiva só para facilitar mocks.
