@@ -25,9 +25,9 @@ export default async function Login({
       <p className="mb-8 text-slate-300">Acesso exclusivo à equipe do Eletrotécnico GO.</p>
       <form action={entrar} className="space-y-5 rounded-2xl border border-white/15 bg-white/5 p-6">
         <div>
-          <label htmlFor="email" className="mb-2 block">E-mail</label>
-          <input id="email" name="email" type="email" autoComplete="username" required
-            maxLength={254} className="w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
+          <label htmlFor="identificador" className="mb-2 block">Usuário</label>
+          <input id="identificador" name="identificador" type="text" autoComplete="username" required
+            minLength={3} maxLength={254} className="w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
         </div>
         <div>
           <label htmlFor="senha" className="mb-2 block">Senha</label>
