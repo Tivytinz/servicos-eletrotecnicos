@@ -1,21 +1,6 @@
-import { createHash } from "node:crypto";
 import { SQL_LIMITAR_LOGIN } from "./queries";
 import { consultar } from "./db";
-
-const LIMITE_IDENTIFICADOR = 5;
-const LIMITE_GLOBAL = 300;
-const JANELA_MINUTOS = 15;
-
-/** Domínios separados evitam colisões entre identificadores e o contador global. */
-export function chaveTentativaLogin(escopo: "identificador" | "global", valor = ""): string {
-  return createHash("sha256").update(`gestao-login:${escopo}:${valor}`).digest("hex");
-}
-
-export const limitesLogin = Object.freeze({
-  porIdentificador: LIMITE_IDENTIFICADOR,
-  global: LIMITE_GLOBAL,
-  janelaMinutos: JANELA_MINUTOS,
-});
+import { chaveTentativaLogin, limitesLogin } from "./limite-login-config";
 
 /**
  * Defesa em profundidade usando a tabela já provisionada.
@@ -29,10 +14,10 @@ export async function permitirTentativaLogin(identificador: string): Promise<boo
   const global = await consultar<{ tentativas: number }>(
     SQL_LIMITAR_LOGIN, [chaveTentativaLogin("global")],
   );
-  if ((global[0]?.tentativas ?? LIMITE_GLOBAL + 1) > LIMITE_GLOBAL) return false;
+  if ((global[0]?.tentativas ?? limitesLogin.global + 1) > limitesLogin.global) return false;
 
   const conta = await consultar<{ tentativas: number }>(
     SQL_LIMITAR_LOGIN, [chaveTentativaLogin("identificador", identificador)],
   );
-  return (conta[0]?.tentativas ?? LIMITE_IDENTIFICADOR + 1) <= LIMITE_IDENTIFICADOR;
+  return (conta[0]?.tentativas ?? limitesLogin.porIdentificador + 1) <= limitesLogin.porIdentificador;
 }
