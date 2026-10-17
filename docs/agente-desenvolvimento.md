@@ -11,6 +11,8 @@
 - Essa memória complementa os documentos existentes; em divergências, prevalecem código atual, CI e evidências verificadas em produção.
 - Manter contexto entre sessões por meio de checkpoints no repositório, não presumir que a conversa anterior esteja disponível.
 
+- Decisão dos sócios: Victor e Carlos terão contas individuais com papel `admin`; antes de provisionar, verificar qual conta inicial já existe e a quem pertence. Procedimento em [docs/gestao-dois-socios-admin.md](docs/gestao-dois-socios-admin.md). Nenhuma conta foi criada ou alterada nesta PR.
+
 ## Produto e arquitetura
 
 - Eletrotécnico GO oferece serviços elétricos e limpeza de placas solares na região de Goiânia.
