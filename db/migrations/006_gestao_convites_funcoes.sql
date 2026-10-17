@@ -29,6 +29,11 @@ BEGIN
   ) THEN
     RETURN NULL;
   END IF;
+  -- Revoga links expirados do mesmo usuário antes de reemitir. O índice único
+  -- impede que dois administradores emitam simultaneamente links ativos iguais.
+  UPDATE gestao.convites c SET revogado_em = clock_timestamp()
+  WHERE c.usuario = p_usuario AND c.usado_em IS NULL
+    AND c.revogado_em IS NULL AND c.expira_em <= clock_timestamp();
   -- Mesmo que uma action receba um usuário arbitrário, a sessão e o papel são
   -- verificados pelo banco. A integridade do token é garantida por UNIQUE.
   INSERT INTO gestao.convites (token_hash, usuario, papel_codigo, criado_por, expira_em)
