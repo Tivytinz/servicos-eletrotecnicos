@@ -8,6 +8,8 @@
 - A conta `victor` foi confirmada como cadastrada manualmente pelo responsável; `carlos` segue pendente, com proposta de definir a própria senha via convite.
 - **Não aplicar migration 005 em produção nem habilitar painel.** O fluxo de emissão/aceite ainda não está implementado. PR e CI devem ser verificados.
 
+- Na PR #46 foram acrescentados SQLs atômicos para emitir, aceitar e revogar convites e teste DB; seguem pendentes API/Server Action, UI, revisão de grants e testes E2E/concorrência. Nenhum recurso ativado em produção.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
