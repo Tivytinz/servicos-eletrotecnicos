@@ -47,12 +47,18 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     );
 
 
-    // Mesmo com INSERT de sessão permitido à role comum, as funções
-    // administrativas não devem ser executáveis com essas credenciais.
+    // A role SQL comum não pode fabricar nem ler tokens de sessões administrativas.
     const hashForjado = randomUUID().replaceAll("-", "") + randomUUID().replaceAll("-", "");
-    await app.query(
-      "INSERT INTO gestao.sessoes (usuario_id,token_hash,expira_em) VALUES ($1,$2,now()+interval '1 hour')",
-      [adminId, hashForjado],
+    await assert.rejects(
+      app.query(
+        "INSERT INTO gestao.sessoes (usuario_id,token_hash,expira_em) VALUES ($1,$2,now()+interval '1 hour')",
+        [adminId, hashForjado],
+      ),
+      e => e.code === "42501",
+    );
+    await assert.rejects(
+      app.query("SELECT token_hash FROM gestao.sessoes LIMIT 1"),
+      e => e.code === "42501",
     );
     await assert.rejects(
       app.query("SELECT gestao.emitir_convite($1,$2,$3,$4)", [hashForjado, "e".repeat(64), "forjado_" + suffix, "admin"]),
@@ -69,7 +75,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       "role de convites não pode forjar sessões",
     );
     await assert.rejects(
-      convites.query("SELECT gestao.aceitar_convite($1,$2,$3)", ["a".repeat(64), "Teste", criarHashSenha("senha-descartavel-testes-2026")]),
+      convites.query("SELECT gestao.aceitar_convite($1,$2,$3,$4)", ["a".repeat(64), "Teste", criarHashSenha("senha-descartavel-testes-2026"), "senha-descartavel-testes-2026"]),
       e => e.code === "42501",
     );
     const emitidoSemSessao = await convites.query(
@@ -91,13 +97,13 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
 
     const aceito = await app.query(
       "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
-      [hashConvite, "Convidado Teste", criarHashSenha("senha-segura-descartavel-2026")],
+      [hashConvite, "Convidado Teste", criarHashSenha("senha-segura-descartavel-2026"), "senha-segura-descartavel-2026"],
     );
     contaId = aceito.rows[0].id;
     assert.ok(contaId);
     const repetido = await app.query(
       "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
-      [hashConvite, "Outro Nome", criarHashSenha("outra-senha-descartavel-2026")],
+      [hashConvite, "Outro Nome", criarHashSenha("outra-senha-descartavel-2026"), "outra-senha-descartavel-2026"],
     );
     assert.equal(repetido.rows[0].id, null);
     const { rows: papeis } = await admin.query(
@@ -123,7 +129,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     assert.equal(revogado.rows[0].revogado, true);
     const revogadoAceito = await app.query(
       "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
-      [hashRevogado, "Não deveria criar", criarHashSenha("terceira-senha-descartavel-2026")],
+      [hashRevogado, "Não deveria criar", criarHashSenha("terceira-senha-descartavel-2026"), "terceira-senha-descartavel-2026"],
     );
     assert.equal(revogadoAceito.rows[0].id, null);
 
