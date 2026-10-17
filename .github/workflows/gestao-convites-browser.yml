@@ -65,12 +65,14 @@ jobs:
           DATABASE_URL: postgres://gestao_app:credencial-aplicacao-somente-ci-descartavel-2026@127.0.0.1:5432/gestao_test
           GESTAO_HABILITADA: "true"
           GESTAO_CONVITES_HABILITADOS: "true"
+          GESTAO_ORIGEM_PUBLICA: "https://localhost:3443"
         run: npm run build
       - name: Iniciar aplicação e proxy HTTPS local
         env:
           DATABASE_URL: postgres://gestao_app:credencial-aplicacao-somente-ci-descartavel-2026@127.0.0.1:5432/gestao_test
           GESTAO_HABILITADA: "true"
           GESTAO_CONVITES_HABILITADOS: "true"
+          GESTAO_ORIGEM_PUBLICA: "https://localhost:3443"
         run: |
           npm run start -- -p 3210 > /tmp/gestao-next-qa.log 2>&1 &
           openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=localhost" \
