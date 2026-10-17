@@ -26,13 +26,13 @@ As permissões `os:gerir` e `financeiro:gerir` estão modeladas, mas não signif
 - Sessões persistentes com hash SHA-256 de token aleatório; cookie `__Host-eg_sessao` `Secure`, `HttpOnly`, `SameSite=Strict`, 8 horas.
 - Senhas com scrypt e salt aleatório; consultas SQL parametrizadas.
 - Usuários inativos e sessões revogadas/expiradas não passam na consulta de autenticação.
-- Controle de tentativas de login por **identificador**, no banco, com limite de 5 tentativas por janela de 15 minutos.
+- Controle de tentativas de login por **identificador** (5/15 min) e **limite global** (300/15 min), compartilhados no PostgreSQL. O contador global é uma proteção provisória contra pulverização de identificadores, sem depender de cabeçalhos de IP.
 - Validação de Origin/Host no login; Next.js também aplica proteções próprias para Server Actions.
 - Sem autoinscrição pública; criação do primeiro administrador realizada via operação controlada.
 
 ## Pendências de segurança e operação
 
-1. **Proteção contra abuso:** limite por identificador permite bloqueio intencional da conta por terceiros e não limita pulverização de identificadores. Planejar limite por IP na borda, WAF ou mitigação equivalente, sem confiar cegamente em `X-Forwarded-For`.
+1. **Proteção contra abuso:** limite global reduz pulverização de identificadores, mas pode ser esgotado por um atacante e impedir logins legítimos por até 15 minutos. Limite por identificador também permite bloqueio intencional de uma conta. São defesas provisórias, **não equivalem a WAF nem proteção por IP confiável**. Planejar mitigação na borda quando for possível, sem confiar cegamente em `X-Forwarded-For`. Monitorar bloqueios e rever o teto global com dados de tráfego legítimo.
 2. **Testes de integração/E2E:** login, revogação, expiração, CSRF, autorização por perfil em páginas e Server Actions, entradas malformadas e injeção SQL, com banco descartável e usuários de teste.
 3. **Recuperação:** operador optou por **não contratar backup pago agora**. Não há restauração testada; registrar e aceitar explicitamente risco de perda de dados antes de armazenar dados reais importantes. Persistência do volume não elimina esse risco.
 4. **Privacidade/LGPD:** política de privacidade e procedimento de retenção, exclusão e exportação de dados antes de uso real.
