@@ -19,6 +19,8 @@
 - Para contas antigas `victor` e `admin`, **registro privado do verificador após validação da senha atual é obrigatório** antes de habilitar o login novo. Sem esse passo, contas legadas não entram. Não transmitir senhas em chat, logs ou SQL do navegador. Consulte [docs/gestao-sessoes-autenticadas.md](docs/gestao-sessoes-autenticadas.md) e [docs/gestao-convites-implantacao.md](docs/gestao-convites-implantacao.md).
 - CI `Check` e QA HTTPS passaram no commit `6639469` da PR #46 após a mudança das sessões; verificar novamente o CI do último HEAD após esta documentação. **Sem merge, sem deploy, sem migrations ou grants em produção.** Risco residual de captura de cookies/senhas sob comprometimento do runtime web permanece; necessita avaliação antes de produção.
 
+- **Pré-implantação 17/10/2026:** criado `scripts/gestao-preflight.mjs --check` (somente leitura; verifica migrations e checksums, roles, privilégio de sessões e contagem agregada de verificadores), integrado ao CI em PostgreSQL descartável. Roteiro de backup lógico com `pg_dump` e restauração obrigatoriamente testada em ambiente isolado em [docs/gestao-preflight-e-recuperacao.md](docs/gestao-preflight-e-recuperacao.md). Nenhum backup, comando DBA ou migration foi executado na produção por essa etapa. `gestao.buscar_sessao_segura(text)` agora possui `REVOKE EXECUTE FROM PUBLIC` explícito com teste de negação na role de convites. Necessária revisão do CI no último HEAD e autorização independente para cada passo operacional.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
