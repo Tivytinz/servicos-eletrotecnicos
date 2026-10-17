@@ -28,6 +28,7 @@ export default async function Leads() {
       <a href="/gestao" className="text-amber-300">← Painel</a>
       <h1 className="mt-6 text-3xl font-bold">Solicitações e clientes</h1>
       <p className="mt-2 text-slate-300">Cadastre pedidos recebidos pelo WhatsApp, site ou indicação.</p>
+      {temPermissao(usuario.papeis, "leads:criar") ? (
       <form action={cadastrarLead} className="mt-8 grid gap-4 rounded-xl border border-white/15 bg-white/5 p-6">
         <label>Cliente <input name="nome" required minLength={2} maxLength={200}
           className="mt-2 block w-full rounded-lg bg-slate-900 p-3" /></label>
@@ -44,6 +45,11 @@ export default async function Leads() {
           className="mt-2 block min-h-24 w-full rounded-lg bg-slate-900 p-3" /></label>
         <button className="rounded-lg bg-amber-400 p-3 font-bold text-slate-950">Registrar solicitação</button>
       </form>
+      ) : (
+        <p className="mt-8 rounded-lg border border-white/15 p-4 text-slate-300">
+          Seu perfil pode consultar solicitações, mas não cadastrar novas.
+        </p>
+      )}
       <h2 className="mt-10 text-xl font-bold">Últimas solicitações</h2>
       <div className="mt-4 space-y-3">
         {leads.length === 0 && <p className="text-slate-300">Nenhuma solicitação cadastrada.</p>}
