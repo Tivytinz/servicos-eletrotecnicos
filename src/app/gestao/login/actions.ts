@@ -10,18 +10,9 @@ import {
 } from "@/lib/gestao/sessao";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
 import { normalizarIdentificador } from "@/lib/gestao/identificador";
+import { origemPermitida } from "@/lib/gestao/origem";
 
 const HASH_FICTICIO = criarHashSenha("credencial-ficticia-para-equalizar-tempo");
-
-function origemPermitida(origin: string | null, host: string | null): boolean {
-  if (!origin || !host) return false;
-  try {
-    const url = new URL(origin);
-    return url.protocol === "https:" && url.host === host;
-  } catch {
-    return false;
-  }
-}
 
 export async function entrar(formData: FormData): Promise<void> {
   if (process.env.GESTAO_HABILITADA !== "true") redirect("/");
