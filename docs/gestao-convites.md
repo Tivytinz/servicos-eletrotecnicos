@@ -38,3 +38,9 @@ Somente administradores autorizados poderão emitir convite para `admin`, `comer
 - Interface administrativa em `/gestao/convites` criada atrás de `GESTAO_CONVITES_HABILITADOS`, mas a Server Action falha fechada até implementação da entrega segura do link. Rota pública de aceite ainda redireciona e não coleta senha. **Não habilitar a flag.**
 
 **Bloqueadores de liberação:** concluir entrega segura do token, grants mínimos da aplicação, UI de aceite, rate limiting, CSRF e testes E2E. Não divulgar o recurso como funcional.
+
+## Validação adicional
+
+- Corrigido import TypeScript de `convites.ts` incompatível com o runner Node 24, identificado em CI com falha.
+- Acrescentada verificação em PostgreSQL descartável de que convite expirado não pode ser aceito.
+- Ainda faltam testes concorrentes com múltiplas conexões e revisão da instrução de aceite antes de habilitar a funcionalidade.
