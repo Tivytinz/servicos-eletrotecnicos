@@ -25,3 +25,10 @@ Somente administradores autorizados poderão emitir convite para `admin`, `comer
 ## Status
 
 **Fundação em desenvolvimento**. O fluxo de convites e cadastro de Carlos ainda não está utilizável em produção. A conta genérica `admin` deve permanecer temporariamente ativa; a conta `victor` foi informada como criada pelo responsável, sem inspeção direta de login.
+
+## Etapa 2 — operações SQL preparadas
+
+- `src/lib/gestao/convites-sql.ts` adiciona emissão autorizada pelo papel admin, aceite atômico com bloqueio de linha, atribuição de papel do próprio convite e revogação restrita a admin.
+- `tests/gestao-convites-db.test.mjs` cobre emissão negada a técnico, emissão por admin, uso único e revogação no PostgreSQL descartável, revertendo registros por rollback.
+- **Ainda não há API/Server Action ou frontend para utilizar esses comandos.** Não conceder novas permissões de `INSERT` em usuários/papéis à aplicação até análise de segurança e desenho de privilégios mínimos.
+- Adicionar teste de concorrência em múltiplas conexões, falha por expiração e validação de origem antes de disponibilizar convites reais.
