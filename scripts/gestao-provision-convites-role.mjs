@@ -37,7 +37,7 @@ try {
   }
   for (const fn of [
     "gestao.emitir_convite(text,text,text,text)",
-    "gestao.aceitar_convite(text,text,text)",
+    "gestao.aceitar_convite(text,text,text,text)",
     "gestao.revogar_convite(text,uuid)",
     "gestao.listar_convites(text)",
   ]) {
@@ -70,7 +70,7 @@ if (!process.exitCode) {
   try {
     const q = await check.query(`SELECT
       has_function_privilege(current_user, 'gestao.emitir_convite(text,text,text,text)', 'EXECUTE') AS emitir,
-      has_function_privilege(current_user, 'gestao.aceitar_convite(text,text,text)', 'EXECUTE') AS aceitar,
+      has_function_privilege(current_user, 'gestao.aceitar_convite(text,text,text,text)', 'EXECUTE') AS aceitar,
       has_table_privilege(current_user, 'gestao.sessoes', 'INSERT') AS insere_sessao`);
     if (!q.rows[0].emitir || q.rows[0].aceitar || q.rows[0].insere_sessao) {
       throw new Error("Permissões excessivas ou incompletas");
