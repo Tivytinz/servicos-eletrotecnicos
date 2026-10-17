@@ -3,6 +3,8 @@
 import { cookies, headers } from "next/headers";
 import { usuarioAtual } from "@/lib/gestao/acesso";
 import { consultar } from "@/lib/gestao/db";
+import { consultarConvitesAdmin } from "@/lib/gestao/db-convites";
+import { verificarSenha } from "@/lib/gestao/sessao";
 import { criarTokenConvite, hashTokenConvite, validarUsuarioConvite } from "@/lib/gestao/convites";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
 import { origemConvitePermitida } from "@/lib/gestao/origem-convite";
@@ -41,8 +43,23 @@ export async function emitirConvite(_prev: EstadoEmissao, formData: FormData): P
     return { erro: "Muitas tentativas. Aguarde antes de tentar novamente.", link: null };
   }
 
+
+  // Segundo fator de autorização: conhecimento da senha pessoal atual.
+  // Uma sessão artificial no banco não é suficiente por si só para passar por esta action.
+  const senhaAdministrador = String(formData.get("senhaAdministrador") ?? "");
+  if (senhaAdministrador.length < 12 || senhaAdministrador.length > 1024) {
+    return { erro: "Confirme sua senha de administrador.", link: null };
+  }
+  const [credencial] = await consultar<{ senha_hash: string }>(
+    "SELECT senha_hash FROM gestao.usuarios WHERE id=$1 AND ativo=true",
+    [usuarioAtualLogado.id],
+  );
+  if (!credencial || !verificarSenha(senhaAdministrador, credencial.senha_hash)) {
+    return { erro: "Não foi possível confirmar sua senha.", link: null };
+  }
+
   const token = criarTokenConvite();
-  const resultado = await consultar<{ id: string | null }>(
+  const resultado = await consultarConvitesAdmin<{ id: string | null }>(
     "SELECT gestao.emitir_convite($1,$2,$3,$4) AS id",
     [hashTokenSessao(cookie), hashTokenConvite(token), nomeUsuario, papel],
   );
