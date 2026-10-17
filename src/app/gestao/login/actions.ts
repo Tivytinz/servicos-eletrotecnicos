@@ -9,6 +9,7 @@ import {
   criarTokenSessao, hashTokenSessao, verificarSenha, criarHashSenha,
 } from "@/lib/gestao/sessao";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
+import { normalizarIdentificador } from "@/lib/gestao/identificador";
 
 const HASH_FICTICIO = criarHashSenha("credencial-ficticia-para-equalizar-tempo");
 
@@ -29,20 +30,20 @@ export async function entrar(formData: FormData): Promise<void> {
   if (!origemPermitida(cabecalhos.get("origin"), host)) {
     throw new Error("Origem não autorizada");
   }
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const identificador = normalizarIdentificador(String(formData.get("identificador") ?? ""));
   const senha = String(formData.get("senha") ?? "");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254
-    || senha.length < 12 || senha.length > 1024) {
+  if (!identificador || senha.length < 12 || senha.length > 1024) {
     redirect("/gestao/login?erro=credenciais");
   }
 
-  if (!(await permitirTentativaLogin(email))) {
+  if (!(await permitirTentativaLogin(identificador))) {
     redirect("/gestao/login?erro=credenciais");
   }
 
   const candidatos = await consultar<{ id: string; senha_hash: string }>(`
-    SELECT id, senha_hash FROM gestao.usuarios WHERE email = $1 AND ativo = true LIMIT 1
-  `, [email]);
+    SELECT id, senha_hash FROM gestao.usuarios
+    WHERE (usuario = $1 OR email = $1) AND ativo = true LIMIT 1
+  `, [identificador]);
 
   const senhaValida = verificarSenha(senha, candidatos[0]?.senha_hash ?? HASH_FICTICIO);
   if (!candidatos[0] || !senhaValida) {
