@@ -28,3 +28,18 @@
 - O usuário recusou custo de backup nesta fase; nenhuma operação de produção sem decisão operacional específica.
 
 **O objetivo da auditoria é detectar uma lacuna real do desenho atual; não basta confiar somente em RBAC de aplicação ou em funções `SECURITY DEFINER` quando a mesma role pode construir os atributos usados como prova de autorização.**
+
+## Mitigação implementada na branch (a validar)
+
+- A `gestao_app` não recebe mais EXECUTE para `emitir_convite`, `listar_convites` ou `revogar_convite` e continua somente com `aceitar_convite`. O arquivo `db/grants/gestao-app.sql` agora revoga explicitamente privilégios administrativos anteriores.
+- Nova role `gestao_convites`, sem privilégios de escrita em `gestao.sessoes` ou tabelas de usuários, recebe exclusivamente EXECUTE das três operações administrativas. Provisionamento isolado: `scripts/gestao-provision-convites-role.mjs`; grants para role existente: `db/grants/gestao-convites.sql`.
+- O backend usa `DATABASE_URL_CONVITES` em pool separado; o pool recusa usar a URL comum e recusa uma role SQL diferente de `gestao_convites`. A ausência dessa conexão bloqueia as operações.
+- Emissão e revogação exigem nova digitação da senha pessoal, verificada no servidor via scrypt, além de sessão, RBAC e limite de tentativas.
+- O teste adversarial grava uma sessão administrativa forjada com credenciais `gestao_app` e exige `42501` nas funções de emissão e listagem; verifica também que `gestao_convites` não escreve sessões nem executa a função pública de aceite.
+- Testes funcionais HTTPS usam duas credenciais SQL fictícias **somente em banco descartável**.
+
+### Limites e risco residual
+
+Esta mitigação **isola o vazamento exclusivo de credenciais da role SQL comum**, mas **não equivale a proteção contra comprometimento do processo web**: o mesmo runtime que tem acesso às duas URLs pode ter seus segredos roubados em conjunto. Nesse cenário, o atacante pode usar a role comum para forjar sessões e a role dedicada para invocar funções; a reautenticação na Server Action também pode ser contornada via SQL direto. Para uma fronteira de autenticação mais forte, ainda é necessário proteger emissão de sessões na camada SQL e/ou isolar as operações administrativas em serviço e segredo independentes com autenticação forte verificável pelo servidor protegido.
+
+**Consequência:** manter o bloqueio da PR e não implantar até revisar explicitamente o risco residual, o isolamento operacional e os testes no último commit. Esta etapa reduz o alcance de vazamento de uma única credencial, mas não encerra a auditoria de sessões.
