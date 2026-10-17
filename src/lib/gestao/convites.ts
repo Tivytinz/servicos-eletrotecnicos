@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { normalizarIdentificador } from "./identificador";
+import { normalizarIdentificador } from "./identificador.ts";
 
 export const CONVITE_VALIDADE_HORAS = 24;
 export const CONVITE_TOKEN_BYTES = 32;
