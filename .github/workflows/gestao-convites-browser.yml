@@ -1,0 +1,88 @@
+name: QA Convites — navegador HTTPS
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/gestao/**"
+      - "src/lib/gestao/**"
+      - "db/migrations/**"
+      - "db/grants/**"
+      - "scripts/gestao-qa-tls-proxy.mjs"
+      - "tests/gestao-convites-browser.mjs"
+      - ".github/workflows/gestao-convites-browser.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    name: Convite, senha, RBAC e revogação em HTTPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gestao_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gestao_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Instalar dependências
+        run: npm ci
+      - name: Preparar Postgres descartável e administrador fictício
+        env:
+          DATABASE_URL_ADMIN: postgres://postgres:postgres@127.0.0.1:5432/gestao_test
+          GESTAO_MIGRATIONS_CONFIRM: APLICAR_GESTAO
+          GESTAO_ROLE_CONFIRM: CRIAR_GESTAO_APP
+          GESTAO_APP_PASSWORD: credencial-aplicacao-somente-ci-descartavel-2026
+          ADMIN_EMAIL: qa-admin@example.test
+          ADMIN_PASSWORD: senha-ci-descartavel-gestao-2026
+        run: |
+          node scripts/gestao-migrate.mjs --apply
+          node scripts/gestao-provision-role.mjs --apply
+          node scripts/gestao-bootstrap-admin.mjs
+      - name: Instalar Playwright e Chromium de QA
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.1
+          npx playwright install --with-deps chromium
+      - name: Build com gestão ativa somente no PostgreSQL descartável
+        env:
+          DATABASE_URL: postgres://gestao_app:credencial-aplicacao-somente-ci-descartavel-2026@127.0.0.1:5432/gestao_test
+          GESTAO_HABILITADA: "true"
+          GESTAO_CONVITES_HABILITADOS: "true"
+        run: npm run build
+      - name: Iniciar aplicação e proxy HTTPS local
+        env:
+          DATABASE_URL: postgres://gestao_app:credencial-aplicacao-somente-ci-descartavel-2026@127.0.0.1:5432/gestao_test
+          GESTAO_HABILITADA: "true"
+          GESTAO_CONVITES_HABILITADOS: "true"
+        run: |
+          npm run start -- -p 3210 > /tmp/gestao-next-qa.log 2>&1 &
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=localhost" \
+            -keyout /tmp/gestao-qa-key.pem -out /tmp/gestao-qa-cert.pem > /dev/null 2>&1
+          GESTAO_QA_PROXY=LOCAL_DESCARTAVEL node scripts/gestao-qa-tls-proxy.mjs \
+            /tmp/gestao-qa-key.pem /tmp/gestao-qa-cert.pem > /tmp/gestao-qa-proxy.log 2>&1 &
+          for i in $(seq 1 50); do
+            if curl -kfsS https://localhost:3443/gestao/login > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo "Serviço de QA não iniciou"
+          tail -n 60 /tmp/gestao-next-qa.log
+          exit 1
+      - name: Testar login, convite, aceite, uso único e revogação
+        run: node tests/gestao-convites-browser.mjs
