@@ -11,6 +11,12 @@
 
 **Compatibilidade:** após o corte para o novo código, contas existentes (`victor`, `admin`) que não tiverem `gestao.verificadores_senha` **não conseguirão efetuar login**. É obrigatório planejar o registro privado dos verificadores antes de reativar o painel.
 
+## Inventário somente leitura e recuperação
+
+Procedimento complementar: [gestao-preflight-e-recuperacao.md](gestao-preflight-e-recuperacao.md).
+
+Foi adicionado `scripts/gestao-preflight.mjs --check`, que examina checksums de migrations, privilégios SQL e cobertura agregada de verificadores em transação READ ONLY, sem modificar o banco. Ele é testado somente com PostgreSQL descartável no CI. **A ausência de inconsistências não comprova backup/restore nem autoriza a implantação.** Para recuperação sem assinatura de backup gerenciado, avaliar dump lógico e **restauração testada em banco isolado**, com proteção adequada dos dados e custos de armazenamento/transferência considerados.
+
 ## Critérios prévios
 - Aprovação explícita do responsável para migrar e modificar credenciais/variáveis no Railway. A autorização de desenvolvimento da PR não é autorização operacional.
 - Análise do risco residual de comprometimento do processo web, revisão de `SECURITY DEFINER`/pgcrypto e confirmação de CI + Playwright HTTPS no último commit.
@@ -19,7 +25,7 @@
 - Senhas e URLs SQL jamais colocadas em GitHub, screenshots, chats, parâmetros CLI, logs ou no build do Next.js.
 
 ## Sequência proposta — apenas com autorização posterior
-1. Confirmar no banco somente leitura as migrations 001–004, roles existentes, existência das contas e estado atual dos serviços. Confirmar também qual commit está realmente rodando no Railway.
+1. Confirmar no banco somente leitura as migrations 001–004, roles existentes, cobertura de verificadores (quando aplicável) e estado atual dos serviços, preferindo o inventário `scripts/gestao-preflight.mjs --check` em terminal operacional privado. Esse comando não é executado em produção nesta PR. Confirmar também qual commit está realmente rodando no Railway.
 2. Preparar mecanismo de recuperação testado, janela de migração e rollback do código. Não alterar a `main` enquanto não houver decisão de merge.
 3. Em execução isolada com credenciais administrativas, aplicar migrations **005–009** com `scripts/gestao-migrate.mjs`, confirmação operacional e análise de checksums. A 008 **revoga sessões existentes**.
 4. A role `gestao_app` já existe: **não** recriá-la. Aplicar `db/grants/gestao-app.sql` como proprietário do schema. Isso retira `SELECT/INSERT/UPDATE/DELETE` de `gestao.sessoes` e concede exclusivamente EXECUTE nas funções de login/consulta/logout e aceite de convite.
