@@ -8,6 +8,9 @@
 - PR #44 integrada em 17/10/2026 (commit `2a5a597`); testes HTTP/Server Actions reais com PostgreSQL descartável permanecem pendentes.
 - Esta atualização documenta o agente; **não** equivale à implementação nem à validação desses testes.
 
+
+- PR #45 adiciona teste de integração PostgreSQL sessão/RBAC com rollback (`tests/gestao-rbac-integracao-db.test.mjs`); não substitui E2E da Server Action, nem valida CSRF/HTTP. CI pendente de confirmação.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
