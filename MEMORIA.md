@@ -2,6 +2,12 @@
 
 **Checkpoint:** 17/10/2026. Fonte persistente de continuidade para agentes. Verificar a `main`, PRs e Railway antes de assumir que este registro permanece atual.
 
+## Agente ⚡ Desenvolvimento
+
+- Memória dedicada em [docs/agente-desenvolvimento.md](docs/agente-desenvolvimento.md), com regras, checkpoint RBAC e próxima etapa.
+- PR #44 integrada em 17/10/2026 (commit `2a5a597`); testes HTTP/Server Actions reais com PostgreSQL descartável permanecem pendentes.
+- Esta atualização documenta o agente; **não** equivale à implementação nem à validação desses testes.
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
