@@ -3,7 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import test from "node:test";
 import pg from "pg";
 import { SQL_LIMITAR_LOGIN } from "../src/lib/gestao/queries.ts";
-import { chaveTentativaLogin, limitesLogin } from "../src/lib/gestao/limite-login.ts";
+import { chaveTentativaLogin, limitesLogin } from "../src/lib/gestao/limite-login-config.ts";
 
 // Usa somente banco descartável explicitamente destinado a testes.
 // Não reutilizar DATABASE_URL da aplicação/produção.
