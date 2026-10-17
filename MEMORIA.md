@@ -13,6 +13,8 @@
 - Revisão pré-implantação da PR #46: passou a exigir `GESTAO_ORIGEM_PUBLICA` com origem HTTPS fixa no servidor, introduziu índice único para um convite pendente por login, revogação automática de links vencidos ao reemitir e testes extras de técnico sem permissão/token ausente. Runbook operacional em [docs/gestao-convites-implantacao.md](docs/gestao-convites-implantacao.md); **CI do novo commit precisa ser verificado novamente**.
 - **Bloqueadores antes de produção:** revisão final de segurança e ambiente operacional, migrações/grants controlados, plano de rollback/recuperação, conferência da main, decisão explícita do responsável para habilitar `/gestao` e convites, e verificação de login pessoal. Não fazer merge ou aplicar migrations apenas por CI verde.
 
+- **BLOQUEADOR DE SEGURANÇA NA PR #46:** `gestao_app` possui INSERT/UPDATE em `gestao.sessoes` e pode fabricar sessão admin; `gestao.emitir_convite` confia nesses registros. CI verde não comprova isolamento contra credenciais SQL vazadas. Veja [docs/gestao-convites-risco-sessoes.md](docs/gestao-convites-risco-sessoes.md). **Não fazer merge, deploy, migrations nem grants de convites até corrigir e testar.**
+
 ## Projeto e arquitetura
 
 - Repositório: `Tivytinz/servicos-eletrotecnicos`.
