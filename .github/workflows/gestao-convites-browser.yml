@@ -55,6 +55,7 @@ jobs:
         run: |
           node scripts/gestao-migrate.mjs --apply
           node scripts/gestao-provision-role.mjs --apply
+          GESTAO_CONVITES_ROLE_CONFIRM=CRIAR_ROLE_CONVITES GESTAO_CONVITES_PASSWORD=qa-role-descartavel-unicamente-ci-2026 node scripts/gestao-provision-convites-role.mjs --apply
           node scripts/gestao-bootstrap-admin.mjs
       - name: Instalar Playwright e Chromium de QA
         run: |
