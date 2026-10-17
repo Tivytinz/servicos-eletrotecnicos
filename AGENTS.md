@@ -5,6 +5,7 @@ Este arquivo é a entrada obrigatória para agentes de IA, assistentes de códig
 ## Leitura inicial (nesta ordem)
 
 1. [MEMORIA.md](MEMORIA.md): checkpoint operacional e prioridades.
+1. [docs/agente-desenvolvimento.md](docs/agente-desenvolvimento.md): memória e missão do agente ⚡ Desenvolvimento.
 2. [README.md](README.md): visão geral da aplicação (verifique se há trechos desatualizados).
 3. [docs/modelo-gestao-servicos.md](docs/modelo-gestao-servicos.md): regras e visão do módulo interno.
 4. [docs/gestao-autenticacao-leads.md](docs/gestao-autenticacao-leads.md): estado de segurança, riscos e pendências.
