@@ -67,6 +67,7 @@ jobs:
           GESTAO_HABILITADA: "true"
           GESTAO_CONVITES_HABILITADOS: "true"
           GESTAO_ORIGEM_PUBLICA: "https://localhost:3443"
+          DATABASE_URL_CONVITES: postgres://gestao_convites:qa-role-descartavel-unicamente-ci-2026@127.0.0.1:5432/gestao_test
         run: npm run build
       - name: Iniciar aplicação e proxy HTTPS local
         env:
@@ -74,6 +75,7 @@ jobs:
           GESTAO_HABILITADA: "true"
           GESTAO_CONVITES_HABILITADOS: "true"
           GESTAO_ORIGEM_PUBLICA: "https://localhost:3443"
+          DATABASE_URL_CONVITES: postgres://gestao_convites:qa-role-descartavel-unicamente-ci-2026@127.0.0.1:5432/gestao_test
         run: |
           npm run start -- -p 3210 > /tmp/gestao-next-qa.log 2>&1 &
           openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=localhost" \
