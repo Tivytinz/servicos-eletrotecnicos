@@ -10,6 +10,7 @@
 - Segurança: Server Actions exigem HTTPS/Origin e sessão; funções `SECURITY DEFINER` verificam RBAC no banco; role `gestao_app` só recebe EXECUTE nessas funções, jamais INSERT/UPDATE direto em identidades. Testes de PostgreSQL descartável abrangem grants, concorrência, expiração e RBAC.
 - **CI principal e QA Playwright HTTPS aprovados** no commit `9af141a` (runs Check `39055453949` e QA `39055453939`): login admin, emissão, criação de senha, aceite único, login do convidado e revogação. Testes usam banco efêmero e contas fictícias, sem modificar Railway.
 - Situação dos sócios: `victor` foi informado como provisionado manualmente pelo responsável e `carlos` **ainda não foi convidado**. Conta genérica `admin` permanece ativa temporariamente.
+- Revisão pré-implantação da PR #46: passou a exigir `GESTAO_ORIGEM_PUBLICA` com origem HTTPS fixa no servidor, introduziu índice único para um convite pendente por login, revogação automática de links vencidos ao reemitir e testes extras de técnico sem permissão/token ausente. Runbook operacional em [docs/gestao-convites-implantacao.md](docs/gestao-convites-implantacao.md); **CI do novo commit precisa ser verificado novamente**.
 - **Bloqueadores antes de produção:** revisão final de segurança e ambiente operacional, migrações/grants controlados, plano de rollback/recuperação, conferência da main, decisão explícita do responsável para habilitar `/gestao` e convites, e verificação de login pessoal. Não fazer merge ou aplicar migrations apenas por CI verde.
 
 ## Projeto e arquitetura
