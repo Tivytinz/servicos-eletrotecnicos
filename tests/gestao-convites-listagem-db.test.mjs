@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
 import pg from "pg";
-import { criarHashSenha } from "../src/lib/gestao/sessao.ts";
 
 const adminUrl = process.env.GESTAO_TEST_DATABASE_URL;
 const appUrl = process.env.GESTAO_TEST_APP_DATABASE_URL;
