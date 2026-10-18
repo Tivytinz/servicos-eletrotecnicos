@@ -49,6 +49,16 @@ jobs:
           GESTAO_ROLE_CONFIRM=CRIAR_GESTAO_APP GESTAO_APP_PASSWORD=teste-somente-ci-credencial-descartavel-2026 node scripts/gestao-provision-role.mjs --apply
           GESTAO_CONVITES_ROLE_CONFIRM=CRIAR_ROLE_CONVITES GESTAO_CONVITES_PASSWORD=qa-role-descartavel-unicamente-ci-2026 node scripts/gestao-provision-convites-role.mjs --apply
           node scripts/gestao-preflight.mjs --check
+      - name: Testar backup e restauração no PostgreSQL descartável
+        env:
+          CI: "true"
+          GESTAO_BACKUP_QA: BANCO_DESCARTAVEL
+          PGHOST: 127.0.0.1
+          PGPORT: "5432"
+          PGUSER: postgres
+          PGDATABASE: gestao_test
+          PGPASSWORD: postgres
+        run: bash scripts/gestao-backup-restore-ci.sh
       - name: Testes, lint e compilação
         env:
           GESTAO_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/gestao_test
