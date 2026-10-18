@@ -15,6 +15,14 @@ Novo comando: `node scripts/gestao-preflight.mjs --check`.
 
 O CI executa esse inventário contra um **PostgreSQL descartável**, depois de aplicar migrations e provisionar as roles. Não executamos este comando no banco de produção nesta PR.
 
+## Teste automatizado de recuperação — CI aprovado
+
+A PR #46 adiciona `scripts/gestao-backup-restore-ci.sh`, executado no workflow `Check` **somente com PostgreSQL descartável** (host 127.0.0.1, banco `gestao_test`, credenciais fictícias de CI e confirmação `GESTAO_BACKUP_QA=BANCO_DESCARTAVEL`). O script recusa qualquer outro alvo, não publica arquivos como artefatos e limpa o dump temporário e o banco restaurado.
+
+O teste executa `pg_dump` em formato customizado, verifica existência e integridade estrutural do arquivo, restaura com `pg_restore --exit-on-error` em outro banco (`gestao_restore_qa`), compara os registros de migrations e checksums, os papéis e contagens de usuários e as funções no schema `gestao`. O primeiro ensaio encontrou um erro de passagem de STDIN para o contêiner do `pg_restore`; a correção foi aplicada e a etapa passou no CI.
+
+**Limite essencial:** esse ensaio **não representa backup de produção**, não verifica dados reais nem atesta recuperação a partir do Railway. A cópia recuperável real e a restauração em infraestrutura isolada ainda exigem um ambiente operacional com acesso privado, local de armazenamento seguro, avaliação de custo e aprovação específica.
+
 ## Recuperação sem contratação obrigatória de backup gerenciado
 
 É possível avaliar um backup lógico manual com as ferramentas nativas do PostgreSQL, mas isso **não significa ausência garantida de custo**: armazenamento local seguro, tráfego de rede e ambiente de restauração podem ter custo. A opção só será considerada recuperável depois de **restauração testada**, e requer autorização operacional separada.
