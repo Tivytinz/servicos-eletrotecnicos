@@ -21,7 +21,7 @@ archive_dir="$(mktemp -d)"
 archive="${archive_dir}/gestao-qa.dump"
 restore_created=0
 run_pg() {
-  docker run --rm --network host \
+  docker run --rm -i --network host \
     -e PGHOST=127.0.0.1 -e PGPORT=5432 -e PGUSER=postgres \
     -e PGPASSWORD=postgres postgres:16 "$@"
 }
