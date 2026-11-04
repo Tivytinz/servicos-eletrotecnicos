@@ -41,7 +41,7 @@ async function scenario(title, route, paid) {
   const page = await context.newPage();
   try {
     const result = await openAndInspect(page, route);
-    assert.equal(result.destination, "/5562993265087", "Número de WhatsApp mudou");
+    assert.equal(result.destination, "/5562996105841", "Número de WhatsApp mudou");
     const expectedContext = route.startsWith("/limpeza-de-placas-solares")
       ? "limpeza de placas solares"
       : "serviços elétricos";
