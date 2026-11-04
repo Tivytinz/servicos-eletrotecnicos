@@ -4,6 +4,7 @@
 
 - Solicitada a atualização do destino dos CTAs do WhatsApp em todas as páginas públicas para o número empresarial `(62) 99610-5841` (`wa.me/5562996105841`), mantendo as mensagens e a identificação da origem de campanhas.
 - Atualizados também os telefones visíveis, dados estruturados e política de privacidade; testes com destino do WhatsApp ajustados para o novo número.
+- CI da mudança identificou vulnerabilidade crítica de produção em `next@16.3.8`; atualização controlada de `next` e `eslint-config-next` para `16.4.5`, com lockfile gerado em runner temporário. A auditoria de produção passou na geração do lockfile; validação integral da PR permanece necessária.
 - Branch: `fix/whatsapp-business-99610-5841`. A presença do código na branch não comprova publicação; confirmar CI, merge e produção antes de encerrar a implantação.
 
 
