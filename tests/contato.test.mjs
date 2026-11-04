@@ -34,7 +34,7 @@ test("páginas de atendimento importam a fonte única, sem números duplicados",
   ];
   for (const path of paths) {
     const source = readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
-    assert.match(source, /from "@\\/lib\\/contato"/, path);
+    assert.ok(source.includes('from "@/lib/contato"'), path);
     assert.doesNotMatch(source, /5562996105841|5562993265087|99326-5087|99610-5841/, path);
   }
 });
