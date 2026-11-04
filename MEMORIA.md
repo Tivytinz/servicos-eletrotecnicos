@@ -1,11 +1,20 @@
 # MEMORIA — Eletrotécnico GO
 
+## Checkpoint de auditoria e correções — 04/11/2026
+
+- Publicação confirmada: `main` commit `5939646`, GitHub Actions `Check` aprovado e Railway web `SUCCESS`; web e PostgreSQL `online` na última verificação operacional.
+- Nova preparação **sem merge/deploy** na branch `fix/auditoria-contato-smoke-2026-11-04`: contato centralizado, testes unitários, smoke para todos os CTAs/home/healthcheck e agendamento diário após merge.
+- Plano e critérios de aceite: [docs/plano-correcoes-pos-auditoria-2026-11-04.md](docs/plano-correcoes-pos-auditoria-2026-11-04.md).
+- Pendências **não executadas**: backup/restauração real, revisão da PR #46 e das migrações de gestão, proteção da `main` (observada desprotegida) e condicionamento de deploy no Railway por CI.
+- Não declarar a checagem diária ativa nem os fluxos de `/gestao` protegidos pela PR #46 até integração/validação e autorização específica.
+
+
 ## Atualização de contato — 04/11/2026
 
 - Solicitada a atualização do destino dos CTAs do WhatsApp em todas as páginas públicas para o número empresarial `(62) 99610-5841` (`wa.me/5562996105841`), mantendo as mensagens e a identificação da origem de campanhas.
 - Atualizados também os telefones visíveis, dados estruturados e política de privacidade; testes com destino do WhatsApp ajustados para o novo número.
-- CI da mudança identificou vulnerabilidade crítica de produção em `next@16.3.8`; atualização controlada de `next` e `eslint-config-next` para `16.4.5`, com lockfile gerado em runner temporário. A auditoria de produção passou na geração do lockfile; validação integral da PR permanece necessária.
-- Branch: `fix/whatsapp-business-99610-5841`. A presença do código na branch não comprova publicação; confirmar CI, merge e produção antes de encerrar a implantação.
+- CI da mudança identificou vulnerabilidade crítica em `next@16.3.8`; `next` e `eslint-config-next` foram atualizados para `16.4.5`, com auditoria de produção, testes e build aprovados no último HEAD da PR #47.
+- PR #47 foi integrada e publicada em 04/11/2026. O teste de navegador na branch passou; a execução pós-deploy contra produção ainda necessita de evidência própria.
 
 
 **Checkpoint:** 17/10/2026. Fonte persistente de continuidade para agentes. Verificar a `main`, PRs e Railway antes de assumir que este registro permanece atual.
@@ -38,7 +47,7 @@
 | #41 | Testes de revogação/expiração/inativação de sessão e Origin/Host | Integrada, deploy SUCCESS no commit `b5ab3b1` |
 | #42 | Auditoria RBAC documentada, com pendências de testes HTTP/Server Actions | CI aprovado, mas branch incompatível após atualização da main; substituída por PR nova, conferir encerramento |\n| #43 | AGENTS.md, MEMORIA.md e atualização do README | Integrada na main, CI aprovado; deploy documental SKIPPED |
 
-A última implantação **confirmada nesta conversa** para o web service foi a PR #41 (`b5ab3b1`, Railway SUCCESS). Consultar Railway novamente para estado atual.
+A última implantação web confirmada na auditoria de 04/11/2026 é a PR #47, commit `5939646`, Railway `SUCCESS`. O registro anterior da PR #41 permanece como histórico.
 
 ## Segurança já implementada
 
