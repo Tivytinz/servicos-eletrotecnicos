@@ -138,7 +138,7 @@ export default function PoliticaDePrivacidade() {
             <p className="mt-3">
               Para dúvidas sobre esta política ou sobre informações fornecidas
               durante um atendimento, entre em contato pelo WhatsApp
-              <strong className="text-white"> (62) 99326-5087</strong>.
+              <strong className="text-white"> (62) 99610-5841</strong>.
             </p>
           </section>
         </div>
