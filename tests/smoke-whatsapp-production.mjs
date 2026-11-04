@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
 
-const BASE_URL = "https://eletrotecnicogo.com.br";
+const BASE_URL = process.env.WHATSAPP_SMOKE_BASE_URL ?? "https://eletrotecnicogo.com.br";
 const LABEL = "[Origem: anúncio do Google]\n";
 const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
 
