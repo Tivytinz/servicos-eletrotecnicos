@@ -1,4 +1,4 @@
-name: Smoke - WhatsApp em produção
+name: Smoke - WhatsApp (PR local / produção manual)
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   browser-smoke:
-    name: Testar origem e CTA no site público
+    name: Testar origem e CTA do WhatsApp
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -27,5 +27,20 @@ jobs:
         run: npm install --no-save --package-lock=false playwright@1.55.1
       - name: Instalar Chromium
         run: npx playwright install --with-deps chromium
+      - name: Compilar versão da PR para smoke local
+        if: github.event_name == 'pull_request'
+        run: npm run build
+      - name: Iniciar servidor local para PR
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run start -- -p 3211 > /tmp/whatsapp-smoke.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3211/api/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/whatsapp-smoke.log
+          exit 1
       - name: Validar fluxos sem enviar mensagem
+        env:
+          WHATSAPP_SMOKE_BASE_URL: ${{ github.event_name == 'pull_request' && 'http://127.0.0.1:3211' || 'https://eletrotecnicogo.com.br' }}
         run: node tests/smoke-whatsapp-production.mjs
