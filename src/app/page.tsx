@@ -55,7 +55,7 @@ const diferenciais = [
   "Foco em segurança e organização",
 ];
 
-const whatsappNumero = "5562993265087";
+const whatsappNumero = "5562996105841";
 const whatsappMensagem =
   "Olá, vi o site Eletrotécnico GO e gostaria de solicitar um orçamento.";
 const whatsappLink =
@@ -67,7 +67,7 @@ export default function Home() {
     "@type": "Electrician",
     name: "Eletrotécnico GO",
     url: "https://eletrotecnicogo.com.br",
-    telephone: "+55 62 99326-5087",
+    telephone: "+55 62 99610-5841",
     areaServed: cidades.map((cidade) => ({
       "@type": "City",
       name: cidade,
@@ -415,7 +415,7 @@ export default function Home() {
             </a>
 
             <p className="mt-4 text-sm text-slate-400">
-              WhatsApp: (62) 99326-5087
+              WhatsApp: (62) 99610-5841
             </p>
           </div>
         </div>
