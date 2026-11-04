@@ -1,12 +1,25 @@
-name: Smoke - WhatsApp (PR local / produção manual)
+name: Smoke - WhatsApp (PR local / produção monitorada)
 
 on:
   pull_request:
     branches: [main]
     paths:
+      - "src/app/page.tsx"
+      - "src/app/servicos-eletricos/page.tsx"
+      - "src/app/limpeza-de-placas-solares/page.tsx"
+      - "src/app/whatsapp-source.tsx"
+      - "src/app/api/health/route.ts"
+      - "src/lib/contato.ts"
+      - "src/lib/whatsapp-source.ts"
       - "tests/smoke-whatsapp-production.mjs"
       - ".github/workflows/smoke-whatsapp-production.yml"
+  # Verificação diária de produção; execuções agendadas podem atrasar.
+  schedule:
+    - cron: "17 11 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   browser-smoke:
