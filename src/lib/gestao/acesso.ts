@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
-import { SQL_BUSCAR_SESSAO } from "./queries";
+import { SQL_BUSCAR_SESSAO_SEGURA } from "./queries";
 import { consultar } from "./db";
-import { COOKIE_SESSAO, hashTokenSessao } from "./sessao";
+import { COOKIE_SESSAO } from "./sessao";
 import { type AcaoGestao, type PapelGestao, temPermissao } from "./permissoes";
 
 export type UsuarioAutenticado = {
@@ -15,7 +15,7 @@ export async function usuarioAtual(): Promise<UsuarioAutenticado | null> {
   if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) return null;
   const linhas = await consultar<{
     id: string; nome: string; papeis: PapelGestao[];
-  }>(SQL_BUSCAR_SESSAO, [hashTokenSessao(token)]);
+  }>(SQL_BUSCAR_SESSAO_SEGURA, [token]);
   return linhas[0] ?? null;
 }
 

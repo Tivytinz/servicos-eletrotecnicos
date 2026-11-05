@@ -32,3 +32,7 @@ export const SQL_CADASTRAR_LEAD = `
   SELECT id, $3, $4 FROM cliente
   RETURNING id, cliente_id
 `;
+
+/** API da aplicação: recebe token original e impede acesso ao hash na tabela. */
+export const SQL_BUSCAR_SESSAO_SEGURA =
+  "SELECT id, nome, papeis FROM gestao.buscar_sessao_segura($1)";

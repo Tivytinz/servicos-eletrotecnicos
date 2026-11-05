@@ -27,12 +27,12 @@ try {
   `);
   const item = rows[0];
   const seguro = item?.usuario === "gestao_app"
-    && item.esquema === true && item.clientes === true && item.sessoes === true
+    && item.esquema === true && item.clientes === true && item.sessoes === false
     && item.financeiro === false && item.superusuario === false;
   process.stdout.write(`Conexão privada: ${seguro ? "APROVADA" : "REPROVADA"}\n`);
   process.stdout.write(`Role: ${item?.usuario === "gestao_app" ? "gestao_app" : "inesperada"}\n`);
   process.stdout.write(`Banco: ${item?.banco === "railway" ? "railway" : "outro"}\n`);
-  process.stdout.write(`Acesso clientes/sessões: ${item?.clientes && item?.sessoes ? "sim" : "não"}\n`);
+  process.stdout.write(`Acesso clientes: ${item?.clientes ? "sim" : "não"}; escrita direta de sessões: ${item?.sessoes ? "PERMITIDA (RISCO)" : "negada"}\n`);
   process.stdout.write(`Escrita financeira: ${item?.financeiro ? "PERMITIDA (RISCO)" : "negada"}\n`);
   if (!seguro) process.exitCode = 1;
 } catch (error) {

@@ -36,6 +36,11 @@ export default async function Gestao({
           Acesso negado: seu perfil não possui permissão para essa área.
         </p>
       )}
+      {process.env.GESTAO_CONVITES_HABILITADOS === "true" && usuario.papeis.includes("admin") && (
+        <a href="/gestao/convites" className="mt-6 block rounded-xl border border-white/15 bg-white/5 p-6 font-bold hover:border-amber-400">
+          Convidar integrante da equipe →
+        </a>
+      )}
       {temPermissao(usuario.papeis, "leads:ler") ? (
         <a href="/gestao/leads" className="mt-10 block rounded-xl border border-white/15 bg-white/5 p-6 font-bold hover:border-amber-400">
           Clientes e solicitações →
