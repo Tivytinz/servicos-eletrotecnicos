@@ -1,5 +1,14 @@
 # MEMORIA — Eletrotécnico GO
 
+## Correção de mínimo privilégio (desenvolvimento) — 05/11/2026
+
+- Branch de correção derivada da PR #46: `fix/gestao-minimo-privilegio-pr46-2026-11-05`. Não é a `main` nem está implantada.
+- Preparado: SQL protegido `confirmar_senha_admin` (sessão admin + bcrypt privado + limite por sessão), revogação de `SELECT` direto de `gestao.usuarios` e `gestao.usuarios_papeis` para `gestao_app`, Server Actions sem leitura do hash, preflight e testes negativos. Migration `008` ainda **não aplicada** em produção; alterações só valem com corte coordenado.
+- Dependências alinhadas à `main` (`next`/`eslint-config-next` 16.4.5) para restaurar validação de vulnerabilidades nessa branch antiga.
+- Pendente: CI/QA no HEAD corrigido, reconciliação com `main`, revisão do verificador scrypt/bcrypt na criação de convites, backup/restauração real e aprovação operacional. PR #46 permanece rascunho.
+- GitHub `main` protegida e Railway `Wait for CI` ativado (04/11), ensaio negativo PR #50 comprovou bloqueio e foi encerrado sem merge.
+
+
 **Checkpoint:** 17/10/2026. Fonte persistente de continuidade para agentes. Verificar a `main`, PRs e Railway antes de assumir que este registro permanece atual.
 
 ## Convites de acesso — 17/10/2026
