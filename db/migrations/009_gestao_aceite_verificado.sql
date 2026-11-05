@@ -1,8 +1,16 @@
--- Novos convites passam a cadastrar credencial SQL bcrypt junto com scrypt.
--- Compatibilidade de hashes scrypt para contas legadas preservada; login seguro
--- requer verificador DB preenchido separadamente para contas antigas.
+-- Uma única senha de entrada: o PostgreSQL deriva o verificador bcrypt privado.
+-- Contas legadas conservam senha_hash scrypt até migração operacional.
+-- Contas novas passam a autenticar EXCLUSIVAMENTE via gestao.verificadores_senha;
+-- senha_hash é NULL para não manter duas representações independentes da senha.
+-- A alteração de schema NÃO preenche verificadores de contas legadas.
+ALTER TABLE gestao.usuarios ALTER COLUMN senha_hash DROP NOT NULL;
+
+-- Migration 006 criou a assinatura (text,text,text) que aceitava hash externo.
+-- Removê-la antes de definir nova função com os mesmos tipos e nova semântica.
+DROP FUNCTION gestao.aceitar_convite(text,text,text);
+
 CREATE FUNCTION gestao.aceitar_convite(
-  p_token_hash text, p_nome text, p_scrypt_hash text, p_senha text
+  p_token_hash text, p_nome text, p_senha text
 ) RETURNS uuid
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
 AS $$
@@ -12,7 +20,6 @@ DECLARE
 BEGIN
   IF p_token_hash IS NULL OR p_token_hash !~ '^[a-f0-9]{64}$'
     OR p_nome IS NULL OR char_length(trim(p_nome)) NOT BETWEEN 2 AND 160
-    OR p_scrypt_hash IS NULL OR p_scrypt_hash !~ '^scrypt[$]16384[$]8[$]1[$][a-f0-9]{32}[$][a-f0-9]{128}$'
     OR p_senha IS NULL OR char_length(p_senha) NOT BETWEEN 12 AND 1024
   THEN
     RETURN NULL;
@@ -30,8 +37,10 @@ BEGIN
     RETURN NULL;
   END IF;
 
-  INSERT INTO gestao.usuarios (nome, usuario, senha_hash)
-  VALUES (trim(p_nome), v_convite.usuario, p_scrypt_hash)
+  -- Não preencher hash scrypt redundante: somente a senha recebida nesta
+  -- função determina o verificador autoritativo no banco.
+  INSERT INTO gestao.usuarios (nome, usuario)
+  VALUES (trim(p_nome), v_convite.usuario)
   RETURNING id INTO v_novo_usuario;
 
   INSERT INTO gestao.verificadores_senha (usuario_id, bcrypt_hash)
@@ -59,8 +68,5 @@ EXCEPTION WHEN unique_violation THEN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION gestao.aceitar_convite(text,text,text,text) FROM PUBLIC;
-
--- Remover definitivamente o fluxo antigo que aceitava somente hash fornecido
--- pela aplicação, sem criar um verificador seguro para login.
-DROP FUNCTION gestao.aceitar_convite(text,text,text);
+-- Funções PostgreSQL têm EXECUTE para PUBLIC por padrão.
+REVOKE ALL ON FUNCTION gestao.aceitar_convite(text,text,text) FROM PUBLIC;
