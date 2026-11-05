@@ -29,7 +29,7 @@ try {
     "SELECT id, senha_hash FROM gestao.usuarios WHERE (usuario = $1 OR email = $1) AND ativo = true FOR UPDATE",
     [identificador],
   );
-  if (!conta || !verificarSenha(senha, conta.senha_hash)) {
+  if (!conta || typeof conta.senha_hash !== "string" || !verificarSenha(senha, conta.senha_hash)) {
     throw new Error("Senha atual inválida, conta inativa ou usuário inexistente");
   }
   const result = await client.query(
