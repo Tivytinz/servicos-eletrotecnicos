@@ -1,5 +1,13 @@
 # MEMORIA — Eletrotécnico GO
 
+## Primeiro acesso por convite — 05/11/2026
+
+- Responsável informou que **não definiu senhas** das duas contas admin existentes em produção; pretende que cada titular as configure individualmente via link. Não solicitar senha legada nem provisionar contas duplicadas.
+- Branch `fix/gestao-primeiro-convite-2026-11-05`: mudanças **somente em desenvolvimento** nas migrations 005/009, emissor privado `scripts/gestao-emitir-convite-inicial.mjs` e testes de primeiro acesso com conta existente. Tokens aleatórios de 24h, vínculo a admin ativo sem bcrypt, proteção contra segundo bootstrap e replay.
+- Produção ainda em migrations 001–004; `gestao_convites` e `verificadores_senha` inexistentes. Não houve envio de convite real, SQL de escrita, deploy, alteração de grants, flags ou backup.
+- Usuário autorizou prosseguir **sem contratar backup**; isso não elimina o risco de perda irreversível. Requer pré-diagnóstico e operação coordenada, sem publicar links reais nesta conversa.
+
+
 ## Desenvolvimento de gestão — checkpoint 05/11/2026 (sem deploy)
 
 - **PR #46 segue em rascunho**, isolada da `main` e da produção: código de convites, sessões e migrations 005–009 ainda não implantados.
