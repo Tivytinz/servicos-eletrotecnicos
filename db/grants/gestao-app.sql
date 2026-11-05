@@ -6,11 +6,12 @@ BEGIN;
 REVOKE ALL ON SCHEMA gestao FROM PUBLIC;
 REVOKE ALL ON ALL TABLES IN SCHEMA gestao FROM PUBLIC;
 GRANT USAGE ON SCHEMA gestao TO :"app_role";
-GRANT SELECT ON gestao.usuarios, gestao.usuarios_papeis TO :"app_role";
+REVOKE SELECT ON gestao.usuarios, gestao.usuarios_papeis FROM :"app_role";
 REVOKE SELECT, INSERT, UPDATE, DELETE ON gestao.sessoes FROM :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.emitir_sessao_segura(text,text,text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.buscar_sessao_segura(text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.revogar_sessao_segura(text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.confirmar_senha_admin(text,text) TO :"app_role";
 GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO :"app_role";
 GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO :"app_role";
 -- A role comum só aceita links válidos, nunca administra convites.

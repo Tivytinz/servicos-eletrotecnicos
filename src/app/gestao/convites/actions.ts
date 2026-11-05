@@ -4,7 +4,6 @@ import { cookies, headers } from "next/headers";
 import { usuarioAtual } from "@/lib/gestao/acesso";
 import { consultar } from "@/lib/gestao/db";
 import { consultarConvitesAdmin } from "@/lib/gestao/db-convites";
-import { verificarSenha } from "@/lib/gestao/sessao";
 import { criarTokenConvite, hashTokenConvite, validarUsuarioConvite } from "@/lib/gestao/convites";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
 import { origemConvitePermitida } from "@/lib/gestao/origem-convite";
@@ -50,11 +49,11 @@ export async function emitirConvite(_prev: EstadoEmissao, formData: FormData): P
   if (senhaAdministrador.length < 12 || senhaAdministrador.length > 1024) {
     return { erro: "Confirme sua senha de administrador.", link: null };
   }
-  const [credencial] = await consultar<{ senha_hash: string }>(
-    "SELECT senha_hash FROM gestao.usuarios WHERE id=$1 AND ativo=true",
-    [usuarioAtualLogado.id],
+  const [validacao] = await consultar<{ permitido: boolean }>(
+    "SELECT gestao.confirmar_senha_admin($1,$2) AS permitido",
+    [cookie, senhaAdministrador],
   );
-  if (!credencial || !verificarSenha(senhaAdministrador, credencial.senha_hash)) {
+  if (!validacao?.permitido) {
     return { erro: "Não foi possível confirmar sua senha.", link: null };
   }
 

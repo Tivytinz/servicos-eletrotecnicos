@@ -6,7 +6,7 @@
 - `005_gestao_convites.sql`: tabela de convites, token só em hash e índice de pendentes.
 - `006_gestao_convites_funcoes.sql`: emissão/revogação (SECURITY DEFINER).
 - `007_gestao_listar_convites.sql`: consulta administrativa sem token.
-- `008_gestao_sessoes_protegidas.sql`: pgcrypto, verificador privado de senha (bcrypt sobre SHA-256), limites internos de login, emissão/consulta/revogação de sessões via funções protegidas, e **invalidação deliberada de sessões legadas**.
+- `008_gestao_sessoes_protegidas.sql`: pgcrypto, verificador privado de senha (bcrypt sobre SHA-256), limites internos de login, emissão/consulta/revogação de sessões via funções protegidas, confirmação de senha administrativa sem expor hash à aplicação e **invalidação deliberada de sessões legadas**.
 - `009_gestao_aceite_verificado.sql`: aceite atômico já cadastrando os dois verificadores (scrypt legado e bcrypt privado); substitui a versão de três argumentos.
 
 **Compatibilidade:** após o corte para o novo código, contas existentes (`victor`, `admin`) que não tiverem `gestao.verificadores_senha` **não conseguirão efetuar login**. É obrigatório planejar o registro privado dos verificadores antes de reativar o painel.
@@ -28,7 +28,7 @@ Foi adicionado `scripts/gestao-preflight.mjs --check`, que examina checksums de 
 1. Confirmar no banco somente leitura as migrations 001–004, roles existentes, cobertura de verificadores (quando aplicável) e estado atual dos serviços, preferindo o inventário `scripts/gestao-preflight.mjs --check` em terminal operacional privado. Esse comando não é executado em produção nesta PR. Confirmar também qual commit está realmente rodando no Railway.
 2. Preparar mecanismo de recuperação testado, janela de migração e rollback do código. Não alterar a `main` enquanto não houver decisão de merge.
 3. Em execução isolada com credenciais administrativas, aplicar migrations **005–009** com `scripts/gestao-migrate.mjs`, confirmação operacional e análise de checksums. A 008 **revoga sessões existentes**.
-4. A role `gestao_app` já existe: **não** recriá-la. Aplicar `db/grants/gestao-app.sql` como proprietário do schema. Isso retira `SELECT/INSERT/UPDATE/DELETE` de `gestao.sessoes` e concede exclusivamente EXECUTE nas funções de login/consulta/logout e aceite de convite.
+4. A role `gestao_app` já existe: **não** recriá-la. Aplicar `db/grants/gestao-app.sql` como proprietário do schema. Isso retira `SELECT/INSERT/UPDATE/DELETE` de `gestao.sessoes`, retira `SELECT` de `gestao.usuarios` e `gestao.usuarios_papeis` e concede somente as funções protegidas de login/consulta/logout, confirmação de senha administrativa e aceite de convite.
 5. Criar a role distinta `gestao_convites` pelo processo controlado `scripts/gestao-provision-convites-role.mjs`, com senha forte privada e confirmação; essa role executa apenas emissão/listagem/revogação. Se a role já existir, revisar os grants em `db/grants/gestao-convites.sql` em vez de recriá-la.
 6. Cadastrar verificadores SQL para contas legadas indispensáveis (`victor` e `admin`) através de `scripts/gestao-registrar-verificador.mjs --apply` em terminal operacional seguro, somente **depois de validar a senha atual scrypt** e sem transferir a senha para a conversa. Contas sem verificador são deliberadamente bloqueadas.
 7. Conferir grants, ausência de escrita/leitura de sessões pela role comum, negação de leitura da tabela de verificadores, validade das funções, revogação de sessões anteriores e ausência de privilégios financeiros.
@@ -43,14 +43,19 @@ SELECT
   has_table_privilege('gestao_app','gestao.sessoes','SELECT') AS app_le_sessoes,
   has_table_privilege('gestao_app','gestao.sessoes','INSERT') AS app_insere_sessoes,
   has_table_privilege('gestao_app','gestao.verificadores_senha','SELECT') AS app_le_verificador,
+  has_table_privilege('gestao_app','gestao.usuarios','SELECT') AS app_le_usuarios,
+  has_table_privilege('gestao_app','gestao.usuarios_papeis','SELECT') AS app_le_papeis,
   has_function_privilege('gestao_app','gestao.emitir_sessao_segura(text,text,text)','EXECUTE') AS app_login,
   has_function_privilege('gestao_app','gestao.buscar_sessao_segura(text)','EXECUTE') AS app_consulta,
   has_function_privilege('gestao_app','gestao.revogar_sessao_segura(text)','EXECUTE') AS app_logout,
+  has_function_privilege('gestao_app','gestao.confirmar_senha_admin(text,text)','EXECUTE') AS app_confirma_admin,
   has_function_privilege('gestao_app','gestao.aceitar_convite(text,text,text,text)','EXECUTE') AS app_aceita,
   has_function_privilege('gestao_convites','gestao.emitir_convite(text,text,text,text)','EXECUTE') AS convites_emite,
   has_table_privilege('gestao_convites','gestao.sessoes','INSERT') AS convites_insere_sessoes;
 ```
-Esperado: `app_le_sessoes`, `app_insere_sessoes`, `app_le_verificador`, `convites_insere_sessoes` **false**; os demais acima **true**.
+Esperado: `app_le_sessoes`, `app_insere_sessoes`, `app_le_verificador`, `app_le_usuarios`, `app_le_papeis`, `convites_insere_sessoes` **false**; os demais acima **true**.
+
+**Bloqueador ainda aberto:** o aceite de convite ainda recebe o scrypt produzido pelo Next.js e a senha bruta como parâmetros separados. O PostgreSQL não verifica a correspondência criptográfica entre eles; revisar a estratégia de fonte única de credencial antes de qualquer implantação. Este ajuste de grants não equivale à revisão final de toda a migração.
 
 ## Contingência
 - Em falha de validação ou configuração: manter flags desativadas, não tentar bypass de permissões, corrigir e reexecutar em homologação.

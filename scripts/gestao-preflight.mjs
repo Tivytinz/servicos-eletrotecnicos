@@ -78,10 +78,10 @@ try {
 
   if (app && applied.has("008_gestao_sessoes_protegidas.sql")) {
     const { rows: [access] } = await client.query(
-      "SELECT has_table_privilege('gestao_app','gestao.sessoes','SELECT') AS ler, has_table_privilege('gestao_app','gestao.sessoes','INSERT') AS criar, has_table_privilege('gestao_app','gestao.sessoes','UPDATE') AS alterar, has_table_privilege('gestao_app','gestao.verificadores_senha','SELECT') AS verificador",
+      "SELECT has_table_privilege('gestao_app','gestao.sessoes','SELECT') AS ler, has_table_privilege('gestao_app','gestao.sessoes','INSERT') AS criar, has_table_privilege('gestao_app','gestao.sessoes','UPDATE') AS alterar, has_table_privilege('gestao_app','gestao.verificadores_senha','SELECT') AS verificador, has_table_privilege('gestao_app','gestao.usuarios','SELECT') AS usuarios, has_table_privilege('gestao_app','gestao.usuarios_papeis','SELECT') AS papeis, has_function_privilege('gestao_app','gestao.confirmar_senha_admin(text,text)','EXECUTE') AS confirmar",
     );
-    check(!access.ler && !access.criar && !access.alterar && !access.verificador,
-      "gestao_app sem leitura/gravação direta de sessões ou verificadores");
+    check(!access.ler && !access.criar && !access.alterar && !access.verificador && !access.usuarios && !access.papeis && access.confirmar,
+      "gestao_app sem leitura direta de identidades/sessões e com confirmação de senha restrita");
   } else {
     console.log("ESTADO isolamento de sessões: verificar após migration 008/grants");
   }

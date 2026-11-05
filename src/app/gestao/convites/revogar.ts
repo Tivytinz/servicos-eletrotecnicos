@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { usuarioAtual } from "@/lib/gestao/acesso";
 import { consultar } from "@/lib/gestao/db";
 import { consultarConvitesAdmin } from "@/lib/gestao/db-convites";
-import { verificarSenha } from "@/lib/gestao/sessao";
 import { permitirTentativaLogin } from "@/lib/gestao/limite-login";
 import { origemConvitePermitida } from "@/lib/gestao/origem-convite";
 import { COOKIE_SESSAO, hashTokenSessao } from "@/lib/gestao/sessao";
@@ -30,20 +29,20 @@ export async function revogarConvite(formData: FormData): Promise<void> {
   }
   const senha = String(formData.get("senhaAdministrador") ?? "");
   if (senha.length < 12 || senha.length > 1024) throw new Error("Confirme sua senha");
-  const [credencial] = await consultar<{ senha_hash: string }>(
-    "SELECT senha_hash FROM gestao.usuarios WHERE id=$1 AND ativo=true", [ator.id],
+  const cookie = (await cookies()).get(COOKIE_SESSAO)?.value;
+  if (!cookie || !/^[A-Za-z0-9_-]{43}$/.test(cookie)) {
+    throw new Error("Sessão inválida");
+  }
+  const [validacao] = await consultar<{ permitido: boolean }>(
+    "SELECT gestao.confirmar_senha_admin($1,$2) AS permitido", [cookie, senha],
   );
-  if (!credencial || !verificarSenha(senha, credencial.senha_hash)) {
+  if (!validacao?.permitido) {
     throw new Error("Senha de administrador incorreta");
   }
 
   const id = String(formData.get("id") ?? "");
   if (!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(id)) {
     throw new Error("Convite inválido");
-  }
-  const cookie = (await cookies()).get(COOKIE_SESSAO)?.value;
-  if (!cookie || !/^[A-Za-z0-9_-]{43}$/.test(cookie)) {
-    throw new Error("Sessão inválida");
   }
   // A função no PostgreSQL revalida a sessão admin e bloqueia a linha até concluir.
   await consultarConvitesAdmin<{ revogado: boolean }>(

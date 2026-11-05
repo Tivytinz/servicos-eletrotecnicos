@@ -46,11 +46,12 @@ try {
   const literal = await admin.query("SELECT quote_literal($1) AS quoted", [password]);
   await admin.query(`CREATE ROLE gestao_app LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD ${literal.rows[0].quoted}`);
   await admin.query("GRANT USAGE ON SCHEMA gestao TO gestao_app");
-  await admin.query("GRANT SELECT ON gestao.usuarios, gestao.usuarios_papeis TO gestao_app");
+  await admin.query("REVOKE SELECT ON gestao.usuarios, gestao.usuarios_papeis FROM gestao_app");
   // Sessões acessíveis exclusivamente por funções que verificam token bruto.
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.emitir_sessao_segura(text,text,text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.buscar_sessao_segura(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.revogar_sessao_segura(text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.confirmar_senha_admin(text,text) TO gestao_app");
   await admin.query("GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO gestao_app");
   await admin.query("GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO gestao_app");
   // Role comum não pode emitir, listar ou revogar convites.

@@ -123,6 +123,52 @@ BEGIN
 END;
 $$;
 
+-- A aplicação não lê hashes de senha. A função exige sessão administrativa
+-- ativa, verifica o segredo no banco e retorna apenas booleano.
+CREATE FUNCTION gestao.confirmar_senha_admin(p_token text, p_senha text)
+RETURNS boolean
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
+AS $$
+DECLARE
+  v_verificador text;
+  v_tentativas integer;
+BEGIN
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}$'
+    OR p_senha IS NULL OR char_length(p_senha) NOT BETWEEN 12 AND 1024 THEN
+    RETURN false;
+  END IF;
+
+  -- A própria role SQL não pode zerar esse contador.
+  INSERT INTO gestao.limites_sessoes AS t (chave, inicio_janela, tentativas)
+  VALUES ('admin:' || md5(p_token), clock_timestamp(), 1)
+  ON CONFLICT (chave) DO UPDATE SET
+    inicio_janela = CASE WHEN t.inicio_janela < clock_timestamp() - interval '15 minutes'
+      THEN clock_timestamp() ELSE t.inicio_janela END,
+    tentativas = CASE WHEN t.inicio_janela < clock_timestamp() - interval '15 minutes'
+      THEN 1 ELSE t.tentativas + 1 END
+  RETURNING tentativas INTO v_tentativas;
+  IF v_tentativas > 5 THEN RETURN false; END IF;
+
+  SELECT v.bcrypt_hash INTO v_verificador
+  FROM gestao.sessoes s
+  JOIN gestao.usuarios u ON u.id = s.usuario_id
+  JOIN gestao.usuarios_papeis up ON up.usuario_id = u.id
+  JOIN gestao.verificadores_senha v ON v.usuario_id = u.id
+  WHERE s.token_hash = encode(public.digest(p_token, 'sha256'), 'hex')
+    AND s.revogada_em IS NULL AND s.expira_em > clock_timestamp()
+    AND u.ativo = true AND up.papel_codigo = 'admin'
+  LIMIT 1;
+
+  IF v_verificador IS NULL THEN RETURN false; END IF;
+  RETURN public.crypt(
+    encode(public.digest(convert_to(p_senha, 'UTF8'), 'sha256'), 'hex'),
+    v_verificador
+  ) = v_verificador;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION gestao.confirmar_senha_admin(text,text) FROM PUBLIC;
+
 REVOKE ALL ON FUNCTION gestao.emitir_sessao_segura(text,text,text) FROM PUBLIC;
 REVOKE ALL ON FUNCTION gestao.buscar_sessao_segura(text) FROM PUBLIC;
 REVOKE ALL ON FUNCTION gestao.revogar_sessao_segura(text) FROM PUBLIC;
