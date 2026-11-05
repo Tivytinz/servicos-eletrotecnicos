@@ -1,3 +1,4 @@
+import { criarLinkWhatsApp, WHATSAPP_FORMATADO, WHATSAPP_TEL_HREF, WHATSAPP_TELEFONE } from "@/lib/contato";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -147,11 +148,9 @@ const faq = [
   },
 ];
 
-const whatsappNumero = "5562993265087";
 const whatsappMensagem =
   "Olá, vi a página de serviços elétricos do Eletrotécnico GO e gostaria de solicitar um orçamento.";
-const whatsappLink =
-  `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
+const whatsappLink = criarLinkWhatsApp(whatsappMensagem);
 
 export default function ServicosEletricos() {
   const serviceJsonLd = {
@@ -164,7 +163,7 @@ export default function ServicosEletricos() {
     provider: {
       "@type": "Electrician",
       name: "Eletrotécnico GO",
-      telephone: "+55 62 99326-5087",
+      telephone: WHATSAPP_TELEFONE,
       url: "https://eletrotecnicogo.com.br",
       areaServed: cidades.map((cidade) => ({
         "@type": "City",
@@ -402,7 +401,7 @@ export default function ServicosEletricos() {
             avaliação inicial e a confirmação da disponibilidade.
           </p>
           <p className="mt-4 text-sm leading-6 text-slate-300">
-            Contato: <a href="tel:+5562993265087" className="font-bold text-white underline decoration-amber-400 underline-offset-4">(62) 99326-5087</a>.
+            Contato: <a href={WHATSAPP_TEL_HREF} className="font-bold text-white underline decoration-amber-400 underline-offset-4">{WHATSAPP_FORMATADO}</a>.
             O orçamento é combinado após entender a necessidade do atendimento.
           </p>
           <a
