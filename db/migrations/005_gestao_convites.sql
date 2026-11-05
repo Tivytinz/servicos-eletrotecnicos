@@ -5,7 +5,14 @@ CREATE TABLE gestao.convites (
   token_hash text NOT NULL UNIQUE CHECK (token_hash ~ '^[a-f0-9]{64}$'),
   usuario text NOT NULL CHECK (usuario ~ '^[a-z][a-z0-9_.-]{2,31}$'),
   papel_codigo text NOT NULL REFERENCES gestao.papeis(codigo),
-  criado_por uuid NOT NULL REFERENCES gestao.usuarios(id),
+  -- Convite inicial gerado somente por operação DBA: sem administrador logado.
+  -- Convites normais sempre registram criado_por e não apontam conta existente.
+  criado_por uuid REFERENCES gestao.usuarios(id),
+  usuario_existente_id uuid REFERENCES gestao.usuarios(id),
+  CONSTRAINT convite_origem_coerente CHECK (
+    (criado_por IS NOT NULL AND usuario_existente_id IS NULL)
+    OR (criado_por IS NULL AND usuario_existente_id IS NOT NULL AND papel_codigo = 'admin')
+  ),
   criado_em timestamptz NOT NULL DEFAULT now(),
   expira_em timestamptz NOT NULL,
   usado_em timestamptz,

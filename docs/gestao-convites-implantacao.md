@@ -3,13 +3,13 @@
 **ESTADO: NÃO AUTORIZADO PARA PRODUÇÃO.** PR #46 permanece em rascunho. Nenhuma alteração deste plano foi executada no Railway. O banco de produção não tem backup/restauração testados.
 
 ## Escopo da migração
-- `005_gestao_convites.sql`: tabela de convites, token só em hash e índice de pendentes.
+- `005_gestao_convites.sql`: tabela de convites, token só em hash, índice de pendentes e vínculo opcional ao admin preexistente em bootstrap operacional (sem precisar de sessão já ativa).
 - `006_gestao_convites_funcoes.sql`: emissão/revogação (SECURITY DEFINER).
 - `007_gestao_listar_convites.sql`: consulta administrativa sem token.
 - `008_gestao_sessoes_protegidas.sql`: pgcrypto, verificador privado de senha (bcrypt sobre SHA-256), limites internos de login, emissão/consulta/revogação de sessões via funções protegidas, confirmação de senha administrativa sem expor hash à aplicação e **invalidação deliberada de sessões legadas**.
-- `009_gestao_aceite_verificado.sql`: remove a assinatura antiga que aceitava um hash externo e instala aceite atômico de **uma única senha**, com geração exclusiva do bcrypt no PostgreSQL. Altera `senha_hash` para aceitar NULL somente para novas contas; hashes scrypt de contas legadas são preservados.
+- `009_gestao_aceite_verificado.sql`: substitui aceite legado por senha única; convite comum cria uma conta nova e bcrypt; convite bootstrap valida vínculo a **admin existente ativo e sem verificador**, preserva identidade/papel e define bcrypt. A coluna `senha_hash` passa a aceitar NULL para contas novas e admins que ativaram acesso via convite.
 
-**Compatibilidade:** após o corte para o novo código, contas existentes (`victor`, `admin`) que não tiverem `gestao.verificadores_senha` **não conseguirão efetuar login**. É obrigatório planejar o registro privado dos verificadores antes de reativar o painel.
+**Compatibilidade / primeiro acesso:** as contas administrativas existentes sem `gestao.verificadores_senha` não conseguem login ainda. Como o responsável não criou senhas e quer que cada pessoa defina a sua, **não pedir senha antiga** nem criar contas duplicadas. O processo `scripts/gestao-emitir-convite-inicial.mjs --apply` vincula um convite temporário a uma conta admin existente via `usuario_existente_id`, depois o titular acessa `/gestao/convite` e cria sua própria senha. O banco atualiza **a mesma conta**, preserva a role admin, cadastra bcrypt canônico e inutiliza o link. `gestao.usuarios.senha_hash` legado da conta ativada passa a NULL. Este fluxo não autoriza enviar link a pessoa sem confirmação de identidade.
 
 ## Inventário somente leitura e recuperação
 
@@ -30,11 +30,11 @@ Foi adicionado `scripts/gestao-preflight.mjs --check`, que examina checksums de 
 3. Em execução isolada com credenciais administrativas, aplicar migrations **005–009** com `scripts/gestao-migrate.mjs`, confirmação operacional e análise de checksums. A 008 **revoga sessões existentes**.
 4. A role `gestao_app` já existe: **não** recriá-la. Aplicar `db/grants/gestao-app.sql` como proprietário do schema. Isso retira `SELECT/INSERT/UPDATE/DELETE` de `gestao.sessoes`, retira `SELECT` de `gestao.usuarios` e `gestao.usuarios_papeis` e concede somente as funções protegidas de login/consulta/logout, confirmação de senha administrativa e aceite de convite.
 5. Criar a role distinta `gestao_convites` pelo processo controlado `scripts/gestao-provision-convites-role.mjs`, com senha forte privada e confirmação; essa role executa apenas emissão/listagem/revogação. Se a role já existir, revisar os grants em `db/grants/gestao-convites.sql` em vez de recriá-la.
-6. Cadastrar verificadores SQL para contas legadas indispensáveis (`victor` e `admin`) através de `scripts/gestao-registrar-verificador.mjs --apply` em terminal operacional seguro, somente **depois de validar a senha atual scrypt** e sem transferir a senha para a conversa. Contas sem verificador são deliberadamente bloqueadas.
+6. Como não há senha anterior conhecida do responsável, **emitir convites iniciais** via `scripts/gestao-emitir-convite-inicial.mjs --apply`, exclusivamente no terminal operacional privado com `DATABASE_URL_ADMIN`, `GESTAO_BOOTSTRAP_USUARIO`, `GESTAO_ORIGEM_PUBLICA=https://eletrotecnicogo.com.br` e `GESTAO_BOOTSTRAP_CONFIRM=EMITIR_CONVITE_INICIAL`. O operador identifica cada admin ativo (sem divulgar credenciais), confirma a identidade do destinatário, emite um link individual de 24h e o entrega privadamente, sem copiar tokens ao GitHub ou ao chat. A pessoa define sua própria senha via HTTPS, e o banco ativa a conta legada sem duplicá-la. `scripts/gestao-registrar-verificador.mjs` permanece somente como alternativa **para contas cujo titular de fato conhece a senha antiga**; não executá-lo para estas duas contas.
 7. Conferir grants, ausência de escrita/leitura de sessões pela role comum, negação de leitura da tabela de verificadores, validade das funções, revogação de sessões anteriores e ausência de privilégios financeiros.
 8. Após revisão, disponibilizar código aprovado, registrar `DATABASE_URL_CONVITES` (role dedicada), `GESTAO_ORIGEM_PUBLICA=https://eletrotecnicogo.com.br`, e conferir o uso da `DATABASE_URL` restrita. **Nunca** definir `DATABASE_URL_ADMIN` no serviço web.
-9. Só então, mediante aprovação explícita independente, habilitar `/gestao` e convites; testar primeiro login próprio, logout, login de Victor, confirmação de senha para convite e revogação. Confirmar status do deploy.
-10. Emitir convite real de Carlos somente após validação do processo completo. Preservar `admin` genérico temporariamente até decisão de desativá-lo.
+9. Após migrações, grants, variáveis e checagens, disponibilizar temporariamente os endpoints `/gestao/convite` e `/gestao/login` conforme flags autorizadas. Emitir o convite inicial privado e validar **primeira ativação e login do titular** antes de emitir convites regulares; depois testar logout, RBAC, convites e revogação. Confirmar status do deploy.
+10. Se a segunda conta administrativa já existir, ativá-la por **convite inicial vinculado**, em vez de cadastrar um usuário duplicado. Se ainda não existir, enviar convite comum após o primeiro admin ter acesso. Não assumir o vínculo dos dois registros reais sem inventário em SQL somente leitura.
 
 ## Consultas SQL de verificação (somente leitura; depois das migrations/roles)
 ```sql

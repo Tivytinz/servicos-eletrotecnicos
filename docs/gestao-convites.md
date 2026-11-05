@@ -3,6 +3,18 @@
 ## Objetivo
 Victor e Carlos são sócios com acesso `admin`, individual. Carlos criará a própria senha quando for convidado. Futuramente o mesmo mecanismo atenderá colaboradores `comercial` e `tecnico`.
 
+## Primeiro acesso sem senha pré-cadastrada (em desenvolvimento)
+
+As duas contas de administrador existentes na produção estão com hashes scrypt de origem operacional, mas o responsável informou que **nenhuma senha pessoal foi escolhida** e deseja que cada titular defina a sua por convite. O fluxo normal exige administrador logado para emitir convites, o que cria dependência circular no primeiro acesso.
+
+Foi preparado um **bootstrap operacional**, sem criação de uma nova conta:
+- `scripts/gestao-emitir-convite-inicial.mjs --apply` exige DBA no terminal privado, confirmação expressa, login de uma conta **admin ativa que ainda não possui verificador bcrypt**, origem HTTPS e migrations 005–009 concluídas.
+- A tabela de convites distingue os emitidos por admin autenticado dos operacionais, com `usuario_existente_id` e `criado_por=NULL` apenas no bootstrap.
+- O token privado é aleatório (32 bytes), armazenado somente em SHA-256, válido por 24h e uso único. Deve ser entregue apenas ao titular previamente identificado.
+- `gestao.aceitar_convite` vincula a nova senha à **mesma conta existente**, sem duplicar administrador e sem alterar seu papel. O scrypt operacional antigo é descontinuado para aquela conta. Após ativação, um segundo convite inicial não redefine a senha.
+- Contas inativas, usuários sem perfil admin ou com senha já inicializada são recusados. A interface pública **nunca** emite bootstrap automaticamente.
+- Nenhum convite ou senha real foi enviado/registrado pelo assistente. A operação aguarda permissões e disponibilização controlada do painel.
+
 ## Fluxo desenvolvido na PR #46 (ainda NÃO liberado)
 1. Usuário autenticado com perfil `admin` acessa `/gestao/convites` e escolhe nome de usuário e papel.
 2. Server Action exige origem HTTPS fixa por `GESTAO_ORIGEM_PUBLICA` (além de Origin/Host), cookie de sessão, RBAC, limite de tentativas e confirmação da senha pessoal para emitir ou revogar; sem origem configurada falha fechada.

@@ -16,10 +16,14 @@ A role `gestao_app` tinha `SELECT/INSERT/UPDATE` na tabela `gestao.sessoes`. Cre
 - Migration **009** substitui a assinatura antiga de `aceitar_convite(text,text,text)` que aceitava um hash pela versão de **senha única**. O PostgreSQL deriva o bcrypt privado a partir da senha e o armazena como único verificador de novas contas, na mesma transação do aceite.
 - **Fonte canônica das credenciais novas:** para convites, `gestao.usuarios.senha_hash` fica NULL; apenas `gestao.verificadores_senha` autentica no PostgreSQL. Contas antigas preservam scrypt até migração separada, sem perda automática dos verificadores existentes. Esta mudança ainda depende de testes em banco descartável e backup real antes de produção.
 
+## Primeiro acesso por convite — admins sem senha pessoal
+
+Quando as contas administrativas já existem no banco, mas os titulares **não receberam nem escolheram senha**, não é viável exigir a senha scrypt legada. Um operador DBA pode emitir um convite inicial individual de 24h com `scripts/gestao-emitir-convite-inicial.mjs` após migrations 005–009. Ao aceitar pelo navegador, o titular define a senha e o PostgreSQL atualiza a mesma conta, cadastra bcrypt privado e marca o convite como consumido. Não cria administrador duplicado e não reativa usuário inativo. Não divulgar link/token em logs, prints, chat ou serviço web.
+
 ## Contas existentes: migração obrigatória
 Usuários existentes têm senha scrypt mas **não têm** `verificadores_senha`. Após aplicar a migration 008 e trocar o código, o login desses usuários falhará até o cadastro seguro do verificador. Isso é intencional (*fail closed*), não uma autorização para gerar senhas automaticamente.
 
-Fluxo de migração planejado para `victor` e `admin`:
+Fluxo alternativo **somente para contas cujo titular realmente conhece a senha scrypt antiga**:
 1. Confirmar as contas e verificar senhas pessoais existentes por um processo operacional isolado, com autorização explícita e sem expor senhas no chat ou logs.
 2. Executar `scripts/gestao-registrar-verificador.mjs --apply` com `DATABASE_URL_ADMIN`, `ADMIN_USUARIO`, `ADMIN_PASSWORD` e `GESTAO_VERIFICADOR_CONFIRM=VALIDAR_CREDENCIAL` somente no terminal operacional seguro. O script valida a senha contra o hash scrypt existente e acrescenta o verificador bcrypt. Recusa contas inexistentes/inativas e não sobrescreve um verificador já cadastrado.
 3. Confirmar que há verificador para cada conta ativa necessária antes de ativar o login novo, e testar login, logout e expiração em homologação. **Nunca** colocar `DATABASE_URL_ADMIN` no web service ou expor senhas em SQL, prints, GitHub Actions de produção ou chat.
