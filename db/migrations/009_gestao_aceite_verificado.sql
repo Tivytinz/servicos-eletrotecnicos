@@ -33,6 +33,45 @@ BEGIN
     RETURN NULL;
   END IF;
 
+  IF v_convite.usuario_existente_id IS NOT NULL THEN
+    -- Primeiro acesso: o convite foi emitido por processo DBA controlado,
+    -- associado a uma conta admin já existente, ainda sem verificador.
+    -- Nunca permitir reativar conta inativa ou redefinir senha já inicializada.
+    SELECT u.id INTO v_novo_usuario
+    FROM gestao.usuarios u
+    JOIN gestao.usuarios_papeis up ON up.usuario_id = u.id
+    WHERE u.id = v_convite.usuario_existente_id
+      AND u.usuario = v_convite.usuario AND u.ativo = true
+      AND up.papel_codigo = 'admin' AND v_convite.papel_codigo = 'admin'
+    FOR UPDATE OF u;
+    IF v_novo_usuario IS NULL OR EXISTS (
+      SELECT 1 FROM gestao.verificadores_senha v
+      WHERE v.usuario_id = v_novo_usuario
+    ) THEN
+      RETURN NULL;
+    END IF;
+
+    UPDATE gestao.usuarios
+    SET nome = trim(p_nome), senha_hash = NULL
+    WHERE id = v_novo_usuario;
+    INSERT INTO gestao.verificadores_senha (usuario_id, bcrypt_hash)
+    VALUES (
+      v_novo_usuario,
+      public.crypt(
+        encode(public.digest(convert_to(p_senha, 'UTF8'), 'sha256'), 'hex'),
+        public.gen_salt('bf', 12)
+      )
+    );
+    UPDATE gestao.convites c
+    SET usado_em = clock_timestamp(), usuario_criado_id = v_novo_usuario
+    WHERE c.id = v_convite.id;
+    INSERT INTO gestao.auditoria (ator_id, entidade, entidade_id, acao, detalhes)
+    VALUES (v_novo_usuario, 'convite', v_convite.id, 'ativar_admin',
+      jsonb_build_object('usuario', v_convite.usuario, 'inicial', true));
+    RETURN v_novo_usuario;
+  END IF;
+
+  -- Convite padrão: criação exclusiva de uma conta ainda inexistente.
   IF EXISTS (SELECT 1 FROM gestao.usuarios u WHERE u.usuario = v_convite.usuario) THEN
     RETURN NULL;
   END IF;
