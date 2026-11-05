@@ -2,7 +2,7 @@ name: QA Convites — navegador HTTPS
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/gestao-convites-fundacao-2026-10-17]
     paths:
       - "src/app/gestao/**"
       - "src/lib/gestao/**"
