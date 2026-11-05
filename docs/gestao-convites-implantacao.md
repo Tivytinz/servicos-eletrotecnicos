@@ -49,7 +49,7 @@ SELECT
   has_function_privilege('gestao_app','gestao.buscar_sessao_segura(text)','EXECUTE') AS app_consulta,
   has_function_privilege('gestao_app','gestao.revogar_sessao_segura(text)','EXECUTE') AS app_logout,
   has_function_privilege('gestao_app','gestao.confirmar_senha_admin(text,text)','EXECUTE') AS app_confirma_admin,
-  has_function_privilege('gestao_app','gestao.aceitar_convite(text,text,text,text)','EXECUTE') AS app_aceita,
+  has_function_privilege('gestao_app','gestao.aceitar_convite(text,text,text)','EXECUTE') AS app_aceita,
   has_function_privilege('gestao_convites','gestao.emitir_convite(text,text,text,text)','EXECUTE') AS convites_emite,
   has_table_privilege('gestao_convites','gestao.sessoes','INSERT') AS convites_insere_sessoes;
 ```
