@@ -18,5 +18,5 @@ GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO :"app_role";
 REVOKE EXECUTE ON FUNCTION gestao.emitir_convite(text,text,text,text) FROM :"app_role";
 REVOKE EXECUTE ON FUNCTION gestao.revogar_convite(text,uuid) FROM :"app_role";
 REVOKE EXECUTE ON FUNCTION gestao.listar_convites(text) FROM :"app_role";
-GRANT EXECUTE ON FUNCTION gestao.aceitar_convite(text,text,text,text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.aceitar_convite(text,text,text) TO :"app_role";
 COMMIT;
