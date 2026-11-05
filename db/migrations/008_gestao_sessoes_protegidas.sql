@@ -123,27 +123,22 @@ BEGIN
 END;
 $$;
 
--- A aplicação nunca recebe o hash de senha dos usuários. A confirmação
--- sensível usa a sessão original, exige papel admin e retorna só booleano.
--- Rate limit no próprio banco impede tentativas ilimitadas via credencial SQL.
+-- A aplicação não lê hashes de senha. A função exige sessão administrativa
+-- ativa, verifica o segredo no banco e retorna apenas booleano.
 CREATE FUNCTION gestao.confirmar_senha_admin(p_token text, p_senha text)
 RETURNS boolean
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
-AS $
+AS $$
 DECLARE
   v_verificador text;
   v_tentativas integer;
 BEGIN
-  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}
-REVOKE ALL ON FUNCTION gestao.buscar_sessao_segura(text) FROM PUBLIC;
-REVOKE ALL ON FUNCTION gestao.revogar_sessao_segura(text) FROM PUBLIC;
--- Os GRANT/REVOKE de gestao_app ficam em db/grants e no provisionamento inicial,
--- porque migrações rodam antes da criação da role no CI.
-
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}$'
     OR p_senha IS NULL OR char_length(p_senha) NOT BETWEEN 12 AND 1024 THEN
     RETURN false;
   END IF;
 
+  -- A própria role SQL não pode zerar esse contador.
   INSERT INTO gestao.limites_sessoes AS t (chave, inicio_janela, tentativas)
   VALUES ('admin:' || md5(p_token), clock_timestamp(), 1)
   ON CONFLICT (chave) DO UPDATE SET
@@ -170,7 +165,7 @@ REVOKE ALL ON FUNCTION gestao.revogar_sessao_segura(text) FROM PUBLIC;
     v_verificador
   ) = v_verificador;
 END;
-$;
+$$;
 
 REVOKE ALL ON FUNCTION gestao.confirmar_senha_admin(text,text) FROM PUBLIC;
 
