@@ -10,9 +10,11 @@ A role `gestao_app` tinha `SELECT/INSERT/UPDATE` na tabela `gestao.sessoes`. Cre
 - Função `gestao.emitir_sessao_segura(identificador,senha,token_hash)`: consulta o verificador privado; valida a senha e aplica limite global/individual **no banco** antes de inserir uma sessão. Retorna só um UUID de sessão, nunca um segredo.
 - Função `gestao.buscar_sessao_segura(token_puro)`: verifica o SHA-256 do token internamente e devolve somente identidade e papéis, sem revelar os hashes armazenados.
 - Função `gestao.revogar_sessao_segura(token_puro)`: revoga somente com a posse do token secreto original, e não com o hash lido do banco.
-- `gestao_app`: nenhum `SELECT/INSERT/UPDATE/DELETE` em `gestao.sessoes` nem acesso a `gestao.verificadores_senha`; recebe apenas `EXECUTE` nas três funções.
+- `gestao_app`: nenhum `SELECT/INSERT/UPDATE/DELETE` em `gestao.sessoes`, nenhum `SELECT` em `gestao.usuarios`, `gestao.usuarios_papeis` ou `gestao.verificadores_senha`; recebe somente EXECUTE das funções restritas de sessão, aceite e confirmação de senha administrativa.
+- `gestao.confirmar_senha_admin(token_puro, senha)`: exige sessão ativa vinculada a administrador, usa o verificador bcrypt privado, limita tentativas por sessão a 5/15 minutos no PostgreSQL e retorna apenas booleano. As Server Actions de emitir/revogar convites não consultam mais `senha_hash`.
 - Login e logout no Next.js passam a invocar as funções protegidas; cookies continuam `__Host-`, `HttpOnly`, `Secure`, `SameSite=Strict`.
 - Migration **009** substitui `aceitar_convite` de três por quatro argumentos, cadastrando scrypt legado e bcrypt privado **na mesma transação** antes de marcar o convite como utilizado.
+- **Pendência de integridade:** a função SQL recebe o hash scrypt gerado na aplicação e a senha para gerar bcrypt, sem conseguir atestar dentro do PostgreSQL que ambos correspondem ao mesmo segredo. O fluxo atual os deriva da mesma senha na Server Action e os testes de navegador verificam login com bcrypt, mas isso ainda exige decisão sobre uma única fonte canônica antes de liberar o painel.
 
 ## Contas existentes: migração obrigatória
 Usuários existentes têm senha scrypt mas **não têm** `verificadores_senha`. Após aplicar a migration 008 e trocar o código, o login desses usuários falhará até o cadastro seguro do verificador. Isso é intencional (*fail closed*), não uma autorização para gerar senhas automaticamente.
@@ -32,6 +34,6 @@ Fluxo de migração planejado para `victor` e `admin`:
 - Tokens e hashes de sessão legados eventualmente presentes exigem análise de revogação durante a migração. Sem verificação de confiança histórica, não considerar sessões antigas seguras.
 
 ## Validação
-- `tests/gestao-sessoes-protegidas-db.test.mjs`: role SQL não lê/grava sessões, login sem senha negado, conta legada sem verificador negada, senha correta cria sessão, hash não serve como cookie e logout revoga.
+- `tests/gestao-sessoes-protegidas-db.test.mjs`: role SQL não lê/grava sessões ou identidades, não extrai hashes de senha; somente sessão administrativa ativa e senha correta permitem confirmação, inclusive com revogação e tentativas negadas. Login sem senha e conta legada sem verificador continuam negados.
 - QA Playwright HTTPS usa conta `qa-admin@example.test` cadastrada e migrada **somente em PostgreSQL descartável**, depois cria o convidado e testa novo login com o bcrypt emitido na aceitação.
 - Revalidar resultados do **último HEAD** da PR #46 antes de considerar a correção aprovada. **Não fazer merge nem aplicar migrations em produção nesta etapa.**
