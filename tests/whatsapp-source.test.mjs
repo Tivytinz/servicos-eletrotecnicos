@@ -36,16 +36,16 @@ test("nova origem não-Ads explicitamente informada encerra a classificação", 
 
 test("mensagem de anúncio preserva contexto e não inclui identificador de clique", () => {
   const generic = "Olá, vi a página de serviços elétricos e quero orçamento.";
-  const url = "https://wa.me/5562993265087?text=" + encodeURIComponent(generic);
+  const url = "https://wa.me/5562996105841?text=" + encodeURIComponent(generic);
   const tagged = withWhatsAppSource(url, true);
   const message = new URL(tagged).searchParams.get("text");
   assert.equal(message, "[Origem: anúncio do Google]\n" + generic);
-  assert.equal(new URL(tagged).pathname, "/5562993265087");
+  assert.equal(new URL(tagged).pathname, "/5562996105841");
   assert.equal(tagged.includes("gclid"), false);
 });
 
 test("tagueamento repetido não duplica e pode voltar a mensagem genérica", () => {
-  const url = "https://wa.me/5562993265087?text=Quero%20or%C3%A7amento";
+  const url = "https://wa.me/5562996105841?text=Quero%20or%C3%A7amento";
   const first = withWhatsAppSource(url, true);
   assert.equal(withWhatsAppSource(first, true), first);
   assert.equal(new URL(withWhatsAppSource(first, false)).searchParams.get("text"), "Quero orçamento");
