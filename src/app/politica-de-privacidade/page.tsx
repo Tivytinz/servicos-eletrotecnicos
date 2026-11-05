@@ -1,3 +1,4 @@
+import { WHATSAPP_FORMATADO } from "@/lib/contato";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -138,7 +139,7 @@ export default function PoliticaDePrivacidade() {
             <p className="mt-3">
               Para dúvidas sobre esta política ou sobre informações fornecidas
               durante um atendimento, entre em contato pelo WhatsApp
-              <strong className="text-white"> (62) 99326-5087</strong>.
+              <strong className="text-white"> {WHATSAPP_FORMATADO}</strong>.
             </p>
           </section>
         </div>
