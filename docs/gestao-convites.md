@@ -23,7 +23,7 @@ O desenho anterior permitia que `gestao_app` fabricasse sessões. A branch agora
 - Funções `SECURITY DEFINER` têm `search_path` limitado, SQL estático e `REVOKE EXECUTE FROM PUBLIC`. `gestao_app` pode executar **somente** `aceitar_convite`; `gestao_convites`, com credencial separada em `DATABASE_URL_CONVITES`, pode executar **somente** `emitir_convite`, `listar_convites` e `revogar_convite`. Operações administrativas usam pool SQL distinto.
 - O token completo nunca é salvo em tabelas, registrado em auditoria, incluído em query string ou em analytics. Rotas `/gestao` não iniciam medição de marketing. Links não devem ser publicados.
 - A funcionalidade está fechada por `GESTAO_HABILITADA=true`, `GESTAO_CONVITES_HABILITADOS=true` e a configuração de `GESTAO_ORIGEM_PUBLICA` para ações. Não definir flags em produção antes da revisão. A origem de produção esperada é `https://eletrotecnicogo.com.br`.
-- O banco verifica identidade do emissor pelo hash de uma sessão válida, e não por `ator_id` arbitrário vindo do cliente.
+- O banco verifica identidade do emissor pelo hash de uma sessão válida, e não por `ator_id` arbitrário vindo do cliente. No aceite de convite, somente a senha em texto recebida como parâmetro transitório determina o bcrypt armazenado; não existe segundo hash scrypt derivado pela aplicação.
 - Contas existentes não são alteradas. A conta genérica `admin` permanece temporariamente ativa.
 
 ## Validação automatizada
