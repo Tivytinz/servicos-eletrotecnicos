@@ -36,6 +36,14 @@ test("sessão SQL exige senha, não expõe hash e não pode ser fabricada por ro
 
     await assert.rejects(app.query("SELECT token_hash FROM gestao.sessoes"), e => e.code === "42501");
     await assert.rejects(app.query("SELECT bcrypt_hash FROM gestao.verificadores_senha"), e => e.code === "42501");
+    await assert.rejects(app.query("SELECT senha_hash FROM gestao.usuarios LIMIT 1"), e => e.code === "42501");
+    await assert.rejects(app.query("SELECT id FROM gestao.usuarios LIMIT 1"), e => e.code === "42501");
+    await assert.rejects(app.query("SELECT * FROM gestao.usuarios_papeis LIMIT 1"), e => e.code === "42501");
+    await assert.rejects(
+      convites.query("SELECT gestao.confirmar_senha_admin($1,$2)", [criarTokenSessao(), senha]),
+      e => e.code === "42501",
+      "role de convites não pode testar senhas de administradores",
+    );
     await assert.rejects(
       app.query("INSERT INTO gestao.sessoes(usuario_id,token_hash,expira_em) VALUES($1,$2,now()+interval '1 hour')", [contaId,"c".repeat(64)]),
       e => e.code === "42501",
@@ -65,6 +73,20 @@ test("sessão SQL exige senha, não expõe hash e não pode ser fabricada por ro
     const { rows: [sessao] } = await admin.query("SELECT usuario_id,token_hash FROM gestao.sessoes WHERE id=$1", [id]);
     assert.equal(sessao.usuario_id, contaId);
     assert.equal(sessao.token_hash, hashTokenSessao(token));
+    assert.equal(
+      (await app.query("SELECT gestao.confirmar_senha_admin($1,$2) AS permitido",
+        [token, senha])).rows[0].permitido, true,
+      "somente sessão admin e senha correta autorizam operação privilegiada",
+    );
+    assert.equal(
+      (await app.query("SELECT gestao.confirmar_senha_admin($1,$2) AS permitido",
+        [token, "senha-errada-para-admin-descartavel"])).rows[0].permitido, false,
+    );
+    assert.equal(
+      (await app.query("SELECT gestao.confirmar_senha_admin($1,$2) AS permitido",
+        [criarTokenSessao(), senha])).rows[0].permitido, false,
+      "token de sessão não reconhecido deve ser negado",
+    );
 
     const { rows: [identidade] } = await app.query(
       "SELECT * FROM gestao.buscar_sessao_segura($1)", [token]);
@@ -78,6 +100,11 @@ test("sessão SQL exige senha, não expõe hash e não pode ser fabricada por ro
       "SELECT gestao.revogar_sessao_segura($1) AS ok", [token])).rows[0].ok, true);
     assert.equal((await app.query(
       "SELECT * FROM gestao.buscar_sessao_segura($1)", [token])).rowCount, 0);
+    assert.equal(
+      (await app.query("SELECT gestao.confirmar_senha_admin($1,$2) AS permitido",
+        [token, senha])).rows[0].permitido, false,
+      "sessão revogada nunca confirma senha administrativa",
+    );
   } finally {
     if (contaId) {
       await admin.query("DELETE FROM gestao.sessoes WHERE usuario_id=$1", [contaId]).catch(() => {});
