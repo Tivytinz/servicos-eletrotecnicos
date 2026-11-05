@@ -179,6 +179,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       await admin.query("DELETE FROM gestao.convites WHERE id = ANY($1::uuid[])", [idsConvites]).catch(() => {});
     }
     if (contaId) {
+      await admin.query("DELETE FROM gestao.sessoes WHERE usuario_id=$1", [contaId]).catch(() => {});
       await admin.query("DELETE FROM gestao.usuarios_papeis WHERE usuario_id=$1", [contaId]).catch(() => {});
       await admin.query("DELETE FROM gestao.usuarios WHERE id=$1", [contaId]).catch(() => {});
     }
