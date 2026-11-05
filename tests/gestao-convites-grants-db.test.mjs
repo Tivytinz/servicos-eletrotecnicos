@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
 import pg from "pg";
-import { criarHashSenha } from "../src/lib/gestao/sessao.ts";
 
 const adminUrl = process.env.GESTAO_TEST_DATABASE_URL;
 const appUrl = process.env.GESTAO_TEST_APP_DATABASE_URL;
@@ -75,7 +74,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       "role de convites não pode forjar sessões",
     );
     await assert.rejects(
-      convites.query("SELECT gestao.aceitar_convite($1,$2,$3,$4)", ["a".repeat(64), "Teste", criarHashSenha("senha-descartavel-testes-2026"), "senha-descartavel-testes-2026"]),
+      convites.query("SELECT gestao.aceitar_convite($1,$2,$3)", ["a".repeat(64), "Teste", "senha-descartavel-testes-2026"]),
       e => e.code === "42501",
     );
     const emitidoSemSessao = await convites.query(
@@ -96,14 +95,30 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     assert.equal(duplicado.rows[0].id, null, "dois convites ativos para o mesmo login são proibidos");
 
     const aceito = await app.query(
-      "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
-      [hashConvite, "Convidado Teste", criarHashSenha("senha-segura-descartavel-2026"), "senha-segura-descartavel-2026"],
+      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      [hashConvite, "Convidado Teste", "senha-segura-descartavel-2026"],
     );
     contaId = aceito.rows[0].id;
     assert.ok(contaId);
+    const { rows: [credencial] } = await admin.query(
+      "SELECT u.senha_hash, v.bcrypt_hash FROM gestao.usuarios u JOIN gestao.verificadores_senha v ON v.usuario_id=u.id WHERE u.id=$1",
+      [contaId],
+    );
+    assert.equal(credencial.senha_hash, null, "contas novas não mantêm hash scrypt paralelo");
+    assert.match(credencial.bcrypt_hash, /^\$2[aby]\$12\$/);
+    const senhaAceita = await app.query(
+      "SELECT gestao.emitir_sessao_segura($1,$2,$3) AS id",
+      [nomeConvite, "senha-segura-descartavel-2026", "e".repeat(64)],
+    );
+    assert.ok(senhaAceita.rows[0].id, "conta convidada autentica com verificador canônico");
+    const senhaIncorreta = await app.query(
+      "SELECT gestao.emitir_sessao_segura($1,$2,$3) AS id",
+      [nomeConvite, "senha-divergente-descartavel-2026", "f".repeat(64)],
+    );
+    assert.equal(senhaIncorreta.rows[0].id, null, "senha diferente não autentica");
     const repetido = await app.query(
-      "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
-      [hashConvite, "Outro Nome", criarHashSenha("outra-senha-descartavel-2026"), "outra-senha-descartavel-2026"],
+      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      [hashConvite, "Outro Nome", "outra-senha-descartavel-2026"],
     );
     assert.equal(repetido.rows[0].id, null);
     const { rows: papeis } = await admin.query(
@@ -128,8 +143,8 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
     );
     assert.equal(revogado.rows[0].revogado, true);
     const revogadoAceito = await app.query(
-      "SELECT gestao.aceitar_convite($1,$2,$3,$4) AS id",
-      [hashRevogado, "Não deveria criar", criarHashSenha("terceira-senha-descartavel-2026"), "terceira-senha-descartavel-2026"],
+      "SELECT gestao.aceitar_convite($1,$2,$3) AS id",
+      [hashRevogado, "Não deveria criar", "terceira-senha-descartavel-2026"],
     );
     assert.equal(revogadoAceito.rows[0].id, null);
 
@@ -164,6 +179,7 @@ test("gestao_app emite/aceita/revoga apenas por funções protegidas, sem INSERT
       await admin.query("DELETE FROM gestao.convites WHERE id = ANY($1::uuid[])", [idsConvites]).catch(() => {});
     }
     if (contaId) {
+      await admin.query("DELETE FROM gestao.sessoes WHERE usuario_id=$1", [contaId]).catch(() => {});
       await admin.query("DELETE FROM gestao.usuarios_papeis WHERE usuario_id=$1", [contaId]).catch(() => {});
       await admin.query("DELETE FROM gestao.usuarios WHERE id=$1", [contaId]).catch(() => {});
     }

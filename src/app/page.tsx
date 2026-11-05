@@ -1,3 +1,4 @@
+import { criarLinkWhatsApp, WHATSAPP_FORMATADO, WHATSAPP_TELEFONE } from "@/lib/contato";
 import Image from "next/image";
 
 const cidades = [
@@ -55,11 +56,9 @@ const diferenciais = [
   "Foco em segurança e organização",
 ];
 
-const whatsappNumero = "5562993265087";
 const whatsappMensagem =
   "Olá, vi o site Eletrotécnico GO e gostaria de solicitar um orçamento.";
-const whatsappLink =
-  `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
+const whatsappLink = criarLinkWhatsApp(whatsappMensagem);
 
 export default function Home() {
   const jsonLd = {
@@ -67,7 +66,7 @@ export default function Home() {
     "@type": "Electrician",
     name: "Eletrotécnico GO",
     url: "https://eletrotecnicogo.com.br",
-    telephone: "+55 62 99326-5087",
+    telephone: WHATSAPP_TELEFONE,
     areaServed: cidades.map((cidade) => ({
       "@type": "City",
       name: cidade,
@@ -415,7 +414,7 @@ export default function Home() {
             </a>
 
             <p className="mt-4 text-sm text-slate-400">
-              WhatsApp: (62) 99326-5087
+              WhatsApp: {WHATSAPP_FORMATADO}
             </p>
           </div>
         </div>

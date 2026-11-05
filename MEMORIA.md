@@ -1,36 +1,32 @@
 # MEMORIA — Eletrotécnico GO
 
-## Correção de mínimo privilégio (desenvolvimento) — 05/11/2026
+## Desenvolvimento de gestão — checkpoint 05/11/2026 (sem deploy)
 
-- Branch de correção derivada da PR #46: `fix/gestao-minimo-privilegio-pr46-2026-11-05`. Não é a `main` nem está implantada.
-- Preparado: SQL protegido `confirmar_senha_admin` (sessão admin + bcrypt privado + limite por sessão), revogação de `SELECT` direto de `gestao.usuarios` e `gestao.usuarios_papeis` para `gestao_app`, Server Actions sem leitura do hash, preflight e testes negativos. Migration `008` ainda **não aplicada** em produção; alterações só valem com corte coordenado.
-- Dependências alinhadas à `main` (`next`/`eslint-config-next` 16.4.5) para restaurar validação de vulnerabilidades nessa branch antiga.
-- Pendente: CI/QA no HEAD corrigido, reconciliação com `main`, revisão do verificador scrypt/bcrypt na criação de convites, backup/restauração real e aprovação operacional. PR #46 permanece rascunho.
-- GitHub `main` protegida e Railway `Wait for CI` ativado (04/11), ensaio negativo PR #50 comprovou bloqueio e foi encerrado sem merge.
+- **PR #46 segue em rascunho**, isolada da `main` e da produção: código de convites, sessões e migrations 005–009 ainda não implantados.
+- A PR #51 já entrou somente na branch da PR #46, fechando leitura de hashes pela role `gestao_app`, exigindo `confirmar_senha_admin` protegida, com CI e QA HTTPS aprovados.
+- Branch de trabalho `fix/gestao-credencial-unica-reconciliacao-2026-11-05`: migration 009 alterada para receber somente uma senha e derivar bcrypt privado no PostgreSQL; novas contas convidadas têm `senha_hash=NULL` e contas legadas preservam scrypt até migração controlada. Testes e sincronização das páginas públicas com a `main` em validação.
+- **Não publicar antes** de revisão de CI/QA do HEAD, reconciliação com a `main`, confirmação de backup **real** e restauração isolada, preflight de checksums/roles, cadastro seguro dos verificadores das contas antigas, janela de manutenção e aprovação separada de migrations/grants/deploy/flags.
+- `main` protegida e Railway `Wait for CI=true` (confirmado); o teste negativo da PR #50 comprovou bloqueio de CI e foi encerrado sem merge.
+- O histórico detalhado de convites, sessões, flags, QA, RBAC e plano de recuperação fica em `docs/gestao-convites-implantacao.md`, `docs/gestao-sessoes-autenticadas.md` e `docs/gestao-preflight-e-recuperacao.md`.
+
+## Checkpoint de auditoria e correções — 04/11/2026
+
+- Publicação confirmada: `main` commit `5939646`, GitHub Actions `Check` aprovado e Railway web `SUCCESS`; web e PostgreSQL `online` na última verificação operacional.
+- Nova preparação **sem merge/deploy** na branch `fix/auditoria-contato-smoke-2026-11-04`: contato centralizado, testes unitários, smoke para todos os CTAs/home/healthcheck e agendamento diário após merge.
+- Plano e critérios de aceite: [docs/plano-correcoes-pos-auditoria-2026-11-04.md](docs/plano-correcoes-pos-auditoria-2026-11-04.md).
+- Pendências **não executadas**: backup/restauração real, revisão da PR #46 e das migrações de gestão, proteção da `main` (observada desprotegida) e condicionamento de deploy no Railway por CI.
+- Não declarar a checagem diária ativa nem os fluxos de `/gestao` protegidos pela PR #46 até integração/validação e autorização específica.
+
+
+## Atualização de contato — 04/11/2026
+
+- Solicitada a atualização do destino dos CTAs do WhatsApp em todas as páginas públicas para o número empresarial `(62) 99610-5841` (`wa.me/5562996105841`), mantendo as mensagens e a identificação da origem de campanhas.
+- Atualizados também os telefones visíveis, dados estruturados e política de privacidade; testes com destino do WhatsApp ajustados para o novo número.
+- CI da mudança identificou vulnerabilidade crítica em `next@16.3.8`; `next` e `eslint-config-next` foram atualizados para `16.4.5`, com auditoria de produção, testes e build aprovados no último HEAD da PR #47.
+- PR #47 foi integrada e publicada em 04/11/2026. O teste de navegador na branch passou; a execução pós-deploy contra produção ainda necessita de evidência própria.
 
 
 **Checkpoint:** 17/10/2026. Fonte persistente de continuidade para agentes. Verificar a `main`, PRs e Railway antes de assumir que este registro permanece atual.
-
-## Convites de acesso — 17/10/2026
-
-- **PR #46 aberta como rascunho**, branch `feat/gestao-convites-fundacao-2026-10-17`. O recurso está desenvolvido mas **ainda não implantado**: migrations `005`–`007` não aplicadas em produção e `GESTAO_CONVITES_HABILITADOS` não habilitada. Ver [docs/gestao-convites.md](docs/gestao-convites.md).
-- Fluxo pronto na branch: administrador autenticado emite um link individual (token aleatório 32 bytes, fragmento da URL, validade 24h), destinatário define senha com confirmação, PostgreSQL registra usuário e perfil em operação atômica, impede reutilização e audita os eventos.
-- Gestão administrativa: listagem de até 100 convites (sem token/hash), estados `pendente`, `utilizado`, `revogado`, `expirado` e revogação de convite pendente. Reenvio exige revogar o anterior e criar outro link; não há recuperação de segredo.
-- Segurança atual na PR: Server Actions exigem HTTPS/Origin, sessão e senha atual para emitir/revogar; funções `SECURITY DEFINER` verificam RBAC. Após correção, `gestao_app` mantém apenas EXECUTE de aceite; role SQL separada `gestao_convites` (via `DATABASE_URL_CONVITES`) recebe emitir/listar/revogar e não pode gravar sessões. Testes de PostgreSQL descartável abrangem grants, concorrência, expiração e RBAC.
-- **CI principal e QA Playwright HTTPS aprovados** no commit `9af141a` (runs Check `39055453949` e QA `39055453939`): login admin, emissão, criação de senha, aceite único, login do convidado e revogação. Testes usam banco efêmero e contas fictícias, sem modificar Railway.
-- Situação dos sócios: `victor` foi informado como provisionado manualmente pelo responsável e `carlos` **ainda não foi convidado**. Conta genérica `admin` permanece ativa temporariamente.
-- Revisão pré-implantação da PR #46: passou a exigir `GESTAO_ORIGEM_PUBLICA` com origem HTTPS fixa no servidor, introduziu índice único para um convite pendente por login, revogação automática de links vencidos ao reemitir e testes extras de técnico sem permissão/token ausente. Runbook operacional em [docs/gestao-convites-implantacao.md](docs/gestao-convites-implantacao.md); **CI do novo commit precisa ser verificado novamente**.
-- **Bloqueadores antes de produção:** revisão final de segurança e ambiente operacional, migrações/grants controlados, plano de rollback/recuperação, conferência da main, decisão explícita do responsável para habilitar `/gestao` e convites, e verificação de login pessoal. Não fazer merge ou aplicar migrations apenas por CI verde.
-
-- Mitigação de 17/10/2026 na PR #46: role `gestao_convites` isolada, pool separado e senha de admin exigida para emitir/revogar. Teste de sessão forjada com `gestao_app` deve receber erro 42501. CI de implementação passou no commit `1dc78ab`, aguardando validação da documentação posterior. **Risco residual de comprometimento conjunto do runtime permanece; PR ainda bloqueada e sem merge.**
-
-- **Correção da integridade das sessões na PR #46 (código, não produção):** migrations 008–009 adicionam verificadores bcrypt privados no PostgreSQL, `gestao.emitir_sessao_segura` com senha e limite de tentativas, `gestao.buscar_sessao_segura` via token puro, revogação protegida e invalidam sessões legadas na futura aplicação da migration. `gestao_app` deixa de ter leitura e escrita de `gestao.sessoes`; `gestao_convites` continua sem escrita de sessões. Novos convites passam a registrar os verificadores na aceitação.
-- Para contas antigas `victor` e `admin`, **registro privado do verificador após validação da senha atual é obrigatório** antes de habilitar o login novo. Sem esse passo, contas legadas não entram. Não transmitir senhas em chat, logs ou SQL do navegador. Consulte [docs/gestao-sessoes-autenticadas.md](docs/gestao-sessoes-autenticadas.md) e [docs/gestao-convites-implantacao.md](docs/gestao-convites-implantacao.md).
-- CI `Check` e QA HTTPS passaram no commit `6639469` da PR #46 após a mudança das sessões; verificar novamente o CI do último HEAD após esta documentação. **Sem merge, sem deploy, sem migrations ou grants em produção.** Risco residual de captura de cookies/senhas sob comprometimento do runtime web permanece; necessita avaliação antes de produção.
-
-- **Pré-implantação 17/10/2026:** criado `scripts/gestao-preflight.mjs --check` (somente leitura; verifica migrations e checksums, roles, privilégio de sessões e contagem agregada de verificadores), integrado ao CI em PostgreSQL descartável. Roteiro de backup lógico com `pg_dump` e restauração obrigatoriamente testada em ambiente isolado em [docs/gestao-preflight-e-recuperacao.md](docs/gestao-preflight-e-recuperacao.md). Nenhum backup, comando DBA ou migration foi executado na produção por essa etapa. `gestao.buscar_sessao_segura(text)` agora possui `REVOKE EXECUTE FROM PUBLIC` explícito com teste de negação na role de convites. Necessária revisão do CI no último HEAD e autorização independente para cada passo operacional.
-
-- **Teste de backup e restore — PR #46:** `scripts/gestao-backup-restore-ci.sh` faz `pg_dump` + `pg_restore` em bancos PostgreSQL exclusivamente descartáveis no GitHub Actions, exige variáveis QA/CI e conexões de loopback, compara migrations/checksums/papéis/contagens e apaga dump e banco de restauração ao final. CI confirmou a etapa de restauração aprovada no commit `06aa2af`. Nenhum dado de produção foi exportado; `postgres-volume` do Railway é volume persistente, não backup. Documentação: [docs/gestao-preflight-e-recuperacao.md](docs/gestao-preflight-e-recuperacao.md). Continua pendente backup real e restauração testada com autorização operacional, sem contratar serviço pago automaticamente.
 
 ## Projeto e arquitetura
 
@@ -60,7 +56,7 @@
 | #41 | Testes de revogação/expiração/inativação de sessão e Origin/Host | Integrada, deploy SUCCESS no commit `b5ab3b1` |
 | #42 | Auditoria RBAC documentada, com pendências de testes HTTP/Server Actions | CI aprovado, mas branch incompatível após atualização da main; substituída por PR nova, conferir encerramento |\n| #43 | AGENTS.md, MEMORIA.md e atualização do README | Integrada na main, CI aprovado; deploy documental SKIPPED |
 
-A última implantação **confirmada nesta conversa** para o web service foi a PR #41 (`b5ab3b1`, Railway SUCCESS). Consultar Railway novamente para estado atual.
+A última implantação web confirmada na auditoria de 04/11/2026 é a PR #47, commit `5939646`, Railway `SUCCESS`. O registro anterior da PR #41 permanece como histórico.
 
 ## Segurança já implementada
 

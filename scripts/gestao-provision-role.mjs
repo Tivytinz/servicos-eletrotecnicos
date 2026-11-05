@@ -55,7 +55,7 @@ try {
   await admin.query("GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO gestao_app");
   await admin.query("GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO gestao_app");
   // Role comum não pode emitir, listar ou revogar convites.
-  await admin.query("GRANT EXECUTE ON FUNCTION gestao.aceitar_convite(text,text,text,text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.aceitar_convite(text,text,text) TO gestao_app");
   await admin.query("COMMIT");
   console.log("Role gestao_app criada com privilégios limitados.");
 } catch (error) {

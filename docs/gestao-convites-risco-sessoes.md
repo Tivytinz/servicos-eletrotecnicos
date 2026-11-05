@@ -34,7 +34,7 @@
 - A `gestao_app` não recebe mais EXECUTE para `emitir_convite`, `listar_convites` ou `revogar_convite` e continua somente com `aceitar_convite`. O arquivo `db/grants/gestao-app.sql` agora revoga explicitamente privilégios administrativos anteriores.
 - Nova role `gestao_convites`, sem privilégios de escrita em `gestao.sessoes` ou tabelas de usuários, recebe exclusivamente EXECUTE das três operações administrativas. Provisionamento isolado: `scripts/gestao-provision-convites-role.mjs`; grants para role existente: `db/grants/gestao-convites.sql`.
 - O backend usa `DATABASE_URL_CONVITES` em pool separado; o pool recusa usar a URL comum e recusa uma role SQL diferente de `gestao_convites`. A ausência dessa conexão bloqueia as operações.
-- Emissão e revogação exigem nova digitação da senha pessoal, verificada no servidor via scrypt, além de sessão, RBAC e limite de tentativas.
+- Emissão e revogação exigem senha atual novamente, verificada dentro do PostgreSQL pela função protegida `gestao.confirmar_senha_admin`, além de sessão, RBAC e limite de tentativas.
 - O teste adversarial grava uma sessão administrativa forjada com credenciais `gestao_app` e exige `42501` nas funções de emissão e listagem; verifica também que `gestao_convites` não escreve sessões nem executa a função pública de aceite.
 - Testes funcionais HTTPS usam duas credenciais SQL fictícias **somente em banco descartável**.
 
@@ -51,7 +51,7 @@ Após a primeira mitigação com duas roles, foi implementada uma fronteira de a
 1. A role `gestao_app` deixa de poder **ler ou escrever** a tabela `gestao.sessoes`; a role `gestao_convites` permanece sem qualquer permissão de sessão.
 2. A emissão de sessão exige a **senha real** validada por bcrypt privado no banco, através de `gestao.emitir_sessao_segura`, com limites de tentativas controlados em tabela não legível pela aplicação.
 3. A consulta de identidade usa o token secreto completo (`gestao.buscar_sessao_segura`) e **não revela** `token_hash`; o logout também exige token original.
-4. A migration 008 revoga sessões emitidas antes da nova fronteira de segurança. O aceite de convite (migration 009) grava verificador scrypt e bcrypt na mesma operação.
+4. A migration 008 revoga sessões emitidas antes da nova fronteira de segurança. O aceite de convite (migration 009) grava apenas o verificador bcrypt derivado da única senha recebida pelo PostgreSQL; o campo scrypt legado fica NULL em novas contas.
 5. Senhas de contas existentes precisam ser verificadas e seus verificadores SQL registrados **em terminal operacional isolado** antes do corte; não é possível converter um hash scrypt para bcrypt sem conhecer a senha.
 6. Testes negativos simulam tentativas de INSERT/SELECT/UPDATE pela role comum, leitura de verificador, login errado e reaproveitamento de hashes como bearer token. O QA HTTPS executa login real e convite com contas apenas de teste.
 

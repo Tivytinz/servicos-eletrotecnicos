@@ -7,7 +7,7 @@
 - `006_gestao_convites_funcoes.sql`: emissão/revogação (SECURITY DEFINER).
 - `007_gestao_listar_convites.sql`: consulta administrativa sem token.
 - `008_gestao_sessoes_protegidas.sql`: pgcrypto, verificador privado de senha (bcrypt sobre SHA-256), limites internos de login, emissão/consulta/revogação de sessões via funções protegidas, confirmação de senha administrativa sem expor hash à aplicação e **invalidação deliberada de sessões legadas**.
-- `009_gestao_aceite_verificado.sql`: aceite atômico já cadastrando os dois verificadores (scrypt legado e bcrypt privado); substitui a versão de três argumentos.
+- `009_gestao_aceite_verificado.sql`: remove a assinatura antiga que aceitava um hash externo e instala aceite atômico de **uma única senha**, com geração exclusiva do bcrypt no PostgreSQL. Altera `senha_hash` para aceitar NULL somente para novas contas; hashes scrypt de contas legadas são preservados.
 
 **Compatibilidade:** após o corte para o novo código, contas existentes (`victor`, `admin`) que não tiverem `gestao.verificadores_senha` **não conseguirão efetuar login**. É obrigatório planejar o registro privado dos verificadores antes de reativar o painel.
 
@@ -49,13 +49,13 @@ SELECT
   has_function_privilege('gestao_app','gestao.buscar_sessao_segura(text)','EXECUTE') AS app_consulta,
   has_function_privilege('gestao_app','gestao.revogar_sessao_segura(text)','EXECUTE') AS app_logout,
   has_function_privilege('gestao_app','gestao.confirmar_senha_admin(text,text)','EXECUTE') AS app_confirma_admin,
-  has_function_privilege('gestao_app','gestao.aceitar_convite(text,text,text,text)','EXECUTE') AS app_aceita,
+  has_function_privilege('gestao_app','gestao.aceitar_convite(text,text,text)','EXECUTE') AS app_aceita,
   has_function_privilege('gestao_convites','gestao.emitir_convite(text,text,text,text)','EXECUTE') AS convites_emite,
   has_table_privilege('gestao_convites','gestao.sessoes','INSERT') AS convites_insere_sessoes;
 ```
 Esperado: `app_le_sessoes`, `app_insere_sessoes`, `app_le_verificador`, `app_le_usuarios`, `app_le_papeis`, `convites_insere_sessoes` **false**; os demais acima **true**.
 
-**Bloqueador ainda aberto:** o aceite de convite ainda recebe o scrypt produzido pelo Next.js e a senha bruta como parâmetros separados. O PostgreSQL não verifica a correspondência criptográfica entre eles; revisar a estratégia de fonte única de credencial antes de qualquer implantação. Este ajuste de grants não equivale à revisão final de toda a migração.
+**Integridade do aceite preparada (não implantada):** a função recebe apenas token, nome e senha. Para usuários convidados, o único verificador é `gestao.verificadores_senha` (bcrypt privado). O campo legado `gestao.usuarios.senha_hash` fica NULL para novos convites. A compatibilidade de contas existentes depende do procedimento de migração dos verificadores; segurança do processo e backup real permanecem bloqueadores.
 
 ## Contingência
 - Em falha de validação ou configuração: manter flags desativadas, não tentar bypass de permissões, corrigir e reexecutar em homologação.

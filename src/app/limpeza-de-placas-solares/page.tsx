@@ -1,3 +1,4 @@
+import { criarLinkWhatsApp, WHATSAPP_FORMATADO, WHATSAPP_TELEFONE } from "@/lib/contato";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -118,11 +119,9 @@ const resultados = [
   },
 ];
 
-const whatsappNumero = "5562993265087";
 const whatsappMensagem =
   "Olá, vi a página de limpeza de placas solares e gostaria de solicitar um orçamento.";
-const whatsappLink =
-  `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(whatsappMensagem)}`;
+const whatsappLink = criarLinkWhatsApp(whatsappMensagem);
 
 export default function LimpezaDePlacasSolares() {
   const faqJsonLd = {
@@ -149,7 +148,7 @@ export default function LimpezaDePlacasSolares() {
         "@type": "City",
         name: cidade,
       })),
-      telephone: "+55 62 99326-5087",
+      telephone: WHATSAPP_TELEFONE,
       url: "https://eletrotecnicogo.com.br",
     },
     areaServed: cidades.map((cidade) => ({
@@ -531,7 +530,7 @@ export default function LimpezaDePlacasSolares() {
               💬 Enviar fotos e pedir orçamento
             </a>
             <p className="mt-4 text-sm text-slate-400">
-              WhatsApp: (62) 99326-5087
+              WhatsApp: {WHATSAPP_FORMATADO}
             </p>
           </div>
         </div>
