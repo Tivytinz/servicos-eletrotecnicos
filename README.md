@@ -20,9 +20,11 @@ Acesse `http://localhost:3000`.
 
 ## Produção
 
-O projeto será publicado no Railway e conectado ao domínio:
+O projeto público está implantado no Railway e conectado ao domínio:
 
-`eletrotecnicogo.com.br`
+`https://eletrotecnicogo.com.br`
+
+O contato comercial é definido em `src/lib/contato.ts`. Todas as páginas comerciais devem reutilizar essa fonte, evitando números divergentes.
 
 ## Gestão interna de serviços
 
@@ -36,3 +38,10 @@ O modelo de negócio, fluxo operacional, regras financeiras e intenção de titu
 - [MEMORIA.md](MEMORIA.md): checkpoint operacional, PRs, decisões e pendências.
 
 Agentes devem ler esses arquivos antes de propor ou executar mudanças.
+
+## Qualidade e operação
+
+- `npm run check`: lint, testes unitários e compilação.
+- `.github/workflows/check.yml`: validação de PR/main com PostgreSQL descartável e auditoria de dependências de produção.
+- `.github/workflows/smoke-whatsapp-production.yml`: teste de links/healthcheck em PR local; a versão **proposta nesta PR** também agenda a validação diária do site após merge e permite disparo manual em produção.
+- [Plano de correções pós-auditoria](docs/plano-correcoes-pos-auditoria-2026-11-04.md): segurança da gestão, backup, proteção da branch principal e verificação pós-deploy. **Não habilitar o painel interno como efeito desse plano.**
