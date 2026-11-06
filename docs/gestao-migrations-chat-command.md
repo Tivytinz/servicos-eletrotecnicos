@@ -18,6 +18,7 @@ São comentários **no PR #64**. A integração GitHub publica o comentário, qu
 | Comentário exato | Ação |
 | --- | --- |
 | `/gestao verificar` | Diagnóstico **somente leitura**, sem migration, sem flags |
+| `/gestao verificar 014` | Diagnóstico **somente leitura** da 014 (hashes, funções e grants), sem migrations ou flags |
 | `/gestao aplicar 012 APLICAR_012_PRODUCAO_SEM_BACKUP` | Aplica somente 012 se catálogo atual = 11, após autorização específica |
 | `/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP` | Aplica somente 013 se catálogo atual = 12, após autorização específica |
 | `/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP` | Aplica somente 014 se catálogo atual = 13, **após nova autorização específica** |
@@ -54,7 +55,7 @@ Com autorização específica para 013 sem backup, publicou `/gestao aplicar 013
 
 ## Extensão para a preparação de OS — release 014 (06/11/2026)
 
-- O executor agora suporta a **014 exclusivamente** via `/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP`, após autorização inequívoca em conversa; uma mensagem genérica como *próximo* não representa essa autorização.
+- O executor agora suporta o diagnóstico `/gestao verificar 014` (somente leitura) e a aplicação da **014 exclusivamente** via `/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP`, após autorização inequívoca em conversa; uma mensagem genérica como *próximo* não representa essa autorização.
 - Mantém as guardas de PR #64 fechado, usuário numérico autorizado, evento `issue_comment:created`, branch `main`, secrets no ambiente `gestao-db-production`, serialização e validações exatas.
 - Antes da escrita, executa `db/operacoes/gestao-preflight-014-somente-leitura.sql` e compara SHA-256 do histórico. Exige **13** migrations existentes, pacote `gestao-os-014-atomico.sql` com preflight transacional, 14 migrations no pós-estado e bloqueio de reaplicação.
 - Após aplicar a 014, o workflow **não** ativa automaticamente `GESTAO_OS_PREPARACAO_HABILITADA`. Criar/acionar uma OS depende de operação separada; `TESTE INTERNO` fica bloqueado.
