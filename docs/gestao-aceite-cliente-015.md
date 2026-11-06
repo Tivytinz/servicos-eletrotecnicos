@@ -33,6 +33,13 @@ A release 014 já foi aplicada em produção (14/14) e a tela de OS foi ativada/
 - `tests/gestao-convites-browser.mjs` com flag 015 apenas em CI: HTTPS real com cliente fictício, visualização, confirmação, ausência de analytics, replay, estado aprovado e OS pendente.
 - `npm run check` via GitHub Actions `Check` e QA HTTPS, além de revisão manual dos limites e ameaça de vazamento de token.
 
+### Deploy da configuração 015 — 06/11/2026
+
+- Foi autorizado e executado no Railway o commit de **uma única alteração de variável** `GESTAO_ACEITE_CLIENTE_HABILITADO` no serviço web, sem mudanças em PostgreSQL ou outros recursos. Deploy ID `6688eefe-a6f1-42ef-8065-8932b954aba0` **SUCCESS**.
+- Após publicação: aplicação e Postgres online, zero alertas, nenhuma mudança pendente. CI `Check` do commit publicado [42264823654](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42264823654) **SUCCESS**.
+- O conector Railway mostra o nome mas oculta o valor da variável. A confirmação literal de `GESTAO_ACEITE_CLIENTE_HABILITADO=true` e o smoke HTTP/HTTPS da rota não puderam ser verificados nesta sessão; verificação de UI e QA com dados fictícios continuam recomendados antes de uso real.
+- O banco permanece em 15/15; o novo deploy não executou SQL e não concede execução/financeiro à OS.
+
 ## Implantação e controle operacional — registro de 06/11/2026
 
 **Migration 015 aplicada em produção, com autorização específica e sem backup**:
