@@ -22,6 +22,11 @@ GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO :"a
 GRANT EXECUTE ON FUNCTION gestao.criar_os_preparacao(text,uuid,integer) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.listar_candidatas_os_preparacao_restritas(text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.listar_os_preparacao_restritas(text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.emitir_link_aceite_cliente(text,uuid,integer,text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.revogar_link_aceite_cliente(text,uuid,integer) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.consultar_link_aceite_cliente(text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.responder_link_aceite_cliente(text,text,boolean) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.listar_links_aceite_cliente_restritos(text) TO :"app_role";
 GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO :"app_role";
 GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO :"app_role";
 -- A role comum só aceita links válidos, nunca administra convites.
