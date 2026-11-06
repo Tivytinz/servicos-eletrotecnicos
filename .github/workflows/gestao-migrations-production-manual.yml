@@ -1,0 +1,114 @@
+name: Gestão — migrations de produção (manual)
+
+# Sem push, PR, schedule ou acionamento automático após deploy.
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "Operação permitida"
+        type: choice
+        required: true
+        options:
+          - verificar
+          - aplicar
+      release:
+        description: "Migration alvo (uma por execução)"
+        type: choice
+        required: true
+        options:
+          - "012"
+          - "013"
+      confirmacao:
+        description: "Apenas aplicar: APLICAR_012_PRODUCAO_SEM_BACKUP ou APLICAR_013_PRODUCAO_SEM_BACKUP"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gestao-migrations-production
+  cancel-in-progress: false
+
+jobs:
+  executar:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment: gestao-db-production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validar escopo manual, branch e autorização
+        shell: bash
+        env:
+          MODO: ${{ inputs.modo }}
+          RELEASE: ${{ inputs.release }}
+          CONFIRMACAO: ${{ inputs.confirmacao }}
+        run: |
+          set -Eeuo pipefail
+          case "$MODO:$RELEASE" in
+            verificar:012|verificar:013|aplicar:012|aplicar:013) ;;
+            *) echo "BLOQUEIO: combinação inválida." >&2; exit 2 ;;
+          esac
+          if [[ "$MODO" == aplicar ]]; then
+            if [[ "$RELEASE" == 012 ]]; then
+              [[ "$CONFIRMACAO" == "APLICAR_012_PRODUCAO_SEM_BACKUP" ]] || exit 2
+            else
+              [[ "$CONFIRMACAO" == "APLICAR_013_PRODUCAO_SEM_BACKUP" ]] || exit 2
+            fi
+          else
+            [[ -z "$CONFIRMACAO" ]] || exit 2
+          fi
+          echo "Execução autorizada quanto aos parâmetros: $MODO release $RELEASE."
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Instalar CLI Railway
+        run: npm install --global @railway/cli@5
+      - name: Configurar SSH com host key fixada
+        shell: bash
+        env:
+          PRIVATE_KEY: ${{ secrets.RAILWAY_GESTAO_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.RAILWAY_GESTAO_KNOWN_HOSTS }}
+          WORKSPACE_TOKEN: ${{ secrets.RAILWAY_GESTAO_WORKSPACE_TOKEN }}
+        run: |
+          set -Eeuo pipefail
+          set +x
+          if [[ -z "$PRIVATE_KEY" || -z "$KNOWN_HOSTS" || -z "$WORKSPACE_TOKEN" ]]; then
+            echo "BLOQUEIO: secrets do ambiente gestao-db-production incompletos." >&2
+            exit 2
+          fi
+          mkdir -p "$HOME/.ssh" "$RUNNER_TEMP/gestao-ssh"
+          chmod 700 "$HOME/.ssh" "$RUNNER_TEMP/gestao-ssh"
+          printf '%s\n' "$PRIVATE_KEY" > "$RUNNER_TEMP/gestao-ssh/id_ed25519"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$RUNNER_TEMP/gestao-ssh/id_ed25519" "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$RUNNER_TEMP/gestao-ssh/id_ed25519" >/dev/null || {
+            echo "BLOQUEIO: chave SSH de automação inválida ou protegida por senha." >&2
+            exit 2
+          }
+          ssh-keygen -F ssh.railway.com -f "$HOME/.ssh/known_hosts" >/dev/null || {
+            echo "BLOQUEIO: host ssh.railway.com não fixado." >&2
+            exit 2
+          }
+          printf '%s\n' "Host ssh.railway.com" \
+            "  StrictHostKeyChecking yes" \
+            "  UserKnownHostsFile $HOME/.ssh/known_hosts" \
+            "  IdentitiesOnly yes" > "$HOME/.ssh/config"
+          chmod 600 "$HOME/.ssh/config"
+      - name: Inventário ou aplicação controlada de uma release
+        shell: bash
+        env:
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_GESTAO_WORKSPACE_TOKEN }}
+          RAILWAY_GESTAO_IDENTITY_FILE: ${{ runner.temp }}/gestao-ssh/id_ed25519
+          MODO: ${{ inputs.modo }}
+          RELEASE: ${{ inputs.release }}
+          CONFIRMACAO: ${{ inputs.confirmacao }}
+        run: bash scripts/gestao-migration-railway-manual.sh "$MODO" "$RELEASE" "$CONFIRMACAO"
+      - name: Remover chave privada temporária
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/gestao-ssh/id_ed25519"
