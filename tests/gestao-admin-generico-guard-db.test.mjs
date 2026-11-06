@@ -97,7 +97,7 @@ test("desativação de admin genérico: bloqueia Carlos pendente, exige verifier
       [generic.id, "a".repeat(64)],
     );
     await db.query(sql);
-    const { rows: [status] } = await db.query(
+    const { rows: status } = await db.query(
       "SELECT u.usuario,u.ativo,(SELECT COUNT(*)::int FROM gestao.verificadores_senha v WHERE v.usuario_id=u.id) AS verifiers FROM gestao.usuarios u WHERE u.usuario IN ('victor','carlos','admin') ORDER BY u.usuario",
     );
     assert.deepEqual(status.map(x => [x.usuario, x.ativo, x.verifiers]),
