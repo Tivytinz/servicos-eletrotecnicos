@@ -1,3 +1,10 @@
+## Prioridade atual — planejamento de OS 016 (06/11/2026)
+
+- A verificação por segundo código foi descartada por decisão de produto; PR #77 fechada **sem merge**. O aceite privado da release 015 permanece.
+- Nova branch `feat/gestao-os-planejamento-016-20261106` propõe a próxima migration sequencial **016_gestao_os_planejamento.sql**: admin atribui técnico ativo, data apenas prevista e observação interna à OS pendente, com CAS por revisão, grants restritos e auditoria. A OS permanece `pendente`, sem agendamento confirmado, execução ou financeiro.
+- Nova flag `GESTAO_OS_PLANEJAMENTO_HABILITADO` desativada por padrão; sem alteração Railway, banco ou flags de produção. Escopo e bloqueadores em `docs/gestao-os-planejamento-016.md`.
+- Pendente: revisão e CI da PR, QA local com dados fictícios, preflight/pacote atômico, autorização explícita antes de merge ou produção.
+
 # MEMORIA — Eletrotécnico GO
 
 ## Preparação de homologação interativa LOCAL — 06/11/2026 (branch isolada)
