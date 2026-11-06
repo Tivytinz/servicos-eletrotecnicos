@@ -1,5 +1,14 @@
 # MEMORIA — Eletrotécnico GO
 
+
+## Operação 012/013 — diagnóstico por Railway SSH, 06/11/2026
+
+- Railway `upbeat-compassion` / `production` confirma serviço web e PostgreSQL online; sem TCP Proxy público; código 012 e 013 na `main`; flags 012/013 ausentes.
+- Preparado diagnóstico **read-only** `db/operacoes/gestao-preflight-012-013-somente-leitura.sql` e instruções Windows/PowerShell via `railway ssh --service Postgres` em `docs/gestao-operacao-ssh-migrations-012-013.md`. Teste isolado `tests/gestao-preflight-ssh-db.test.mjs`.
+- **Status real das migrations em produção ainda não lido**: conector Railway não executa SQL. Operador poderá rodar inventário pelo SSH local sem expor TCP ou credenciais aqui.
+- **Decisão reafirmada:** sem backup de produção neste momento por custo, risco de perda irreversível aceito. Nenhuma migração/flag de produção autorizada nesta etapa; 012 antes de 013 somente depois do preflight e autorização de execução.
+
+
 ## Decisão operacional reafirmada — 06/11/2026
 
 - **Não contratar nem configurar backup de produção por enquanto, por motivos de custos.** Decisão expressa do responsável, que reafirma o plano anterior. Não transformar recomendação de backup em exigência de compra ou serviço adicional.
