@@ -22,8 +22,11 @@ BEGIN
   IF NOT pg_try_advisory_xact_lock(20261105, 1) THEN
     RAISE EXCEPTION 'BLOQUEIO: desativação concorrente';
   END IF;
-  IF (SELECT COUNT(*) FROM gestao.schema_migrations) <> 9 THEN
-    RAISE EXCEPTION 'BLOQUEIO: banco sem as nove migrations esperadas';
+  IF NOT EXISTS (
+    SELECT 1 FROM gestao.schema_migrations
+    WHERE versao = '009_gestao_aceite_verificado.sql'
+  ) THEN
+    RAISE EXCEPTION 'BLOQUEIO: migrations de autenticacao 001-009 incompletas';
   END IF;
 
   -- Travar contas na mesma ordem para impedir trocas simultâneas.
