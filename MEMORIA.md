@@ -1,6 +1,15 @@
 # MEMORIA — Eletrotécnico GO
 
 
+## Operação SQL 015 autorizada, executor restrito em preparação — 06/11/2026
+
+- O responsável autorizou explicitamente a aplicação da migration **015 em produção sem backup** nesta conversa, após indicação de que o SQL estava 14/14 e o código da 015 integrado. Sem cópia recuperável, permanece o risco de perda irreversível.
+- Branch `ops/gestao-migrations-015-chat-20261106`: adicionar preflight SQL **somente leitura** da 015, comando do proprietário autenticado no PR #64 com frase literal e release manual, sem expor credenciais, sem acionar por merge/deploy.
+- Preflight antes de escrita: validar 004/013/014, contagem 14, checksums de TODAS migrations existentes, papéis restritos e inexistência prévia de objetos 015. Pacote atômico 015 da PR #71 tem transação SQL, bloqueio, `ON_ERROR_STOP=1`, pós-verificação 15/15 e grants.
+- **Ainda não aplicado ao redigir este checkpoint**; registrar a URL do run de verificação, execução e evidências reais após CI. A flag `GESTAO_ACEITE_CLIENTE_HABILITADO` permanece ausente, sem autorização neste momento para ativá-la.
+
+
+
 ## 015 integrada em código, SQL/flag pendentes — 06/11/2026
 
 - Evidência de produção conferida: migration 014 aplicada com **14/14** e `COMMIT` no [run 42253223512](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42253223512); flag `GESTAO_OS_PREPARACAO_HABILITADA=true` ativada com deploy Railway `SUCCESS`. Screenshot do responsável confirma página de OS, **zero candidatas/ordens**, e Cliente Teste não elegível, pois marcado `TESTE INTERNO`.
