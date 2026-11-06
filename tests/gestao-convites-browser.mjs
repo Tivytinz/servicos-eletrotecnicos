@@ -100,7 +100,7 @@ try {
 
   // Novo fluxo financeiro apenas como rascunho: CI isolado, sem dados reais.
   await admin.goto(BASE + "/gestao/orcamentos");
-  await admin.getByLabel("Solicitação qualificada").selectOption({ label: /Cliente QA Status/ });
+  await admin.getByLabel("Solicitação qualificada").selectOption({ label: "Cliente QA Status — Teste descartável da mudança de etapa" });
   await admin.getByLabel("Valor total em reais (R$)").fill("350,50");
   await admin.getByLabel("Validade da proposta").fill(
     new Date(Date.now() + 7 * 86400000).toISOString().slice(0,10));
