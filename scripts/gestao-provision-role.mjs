@@ -61,6 +61,11 @@ try {
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.criar_os_preparacao(text,uuid,integer) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_candidatas_os_preparacao_restritas(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_os_preparacao_restritas(text) TO gestao_app");
+  // Release 016: quando a role é criada DEPOIS de aplicar a migration,
+  // os grants condicionais da migration não são suficientes.
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.planejar_os_pendente_016(text,uuid,uuid,date,text,integer) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_os_planejamento_016(text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_tecnicos_os_016(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.emitir_link_aceite_cliente(text,uuid,integer,text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.revogar_link_aceite_cliente(text,uuid,integer) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.consultar_link_aceite_cliente(text) TO gestao_app");
