@@ -183,6 +183,46 @@ $$;
 -- O CREATE OR REPLACE preserva os GRANTs da função antiga; reforça PUBLIC.
 REVOKE ALL ON FUNCTION gestao.alterar_status_lead(text,uuid,text,text) FROM PUBLIC;
 
+-- Consulta protegida do histórico dos últimos 100 orçamentos.
+CREATE FUNCTION gestao.listar_eventos_orcamento_restritos(p_token text)
+RETURNS TABLE(orcamento_id uuid,versao integer,tipo text,canal text,
+              evidencia text,criado_em timestamptz)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
+AS $
+BEGIN
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_app') THEN
+    GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO gestao_app;
+    GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO gestao_app;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_convites') THEN
+    REVOKE ALL ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) FROM gestao_convites;
+    REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM gestao_convites;
+  END IF;
+END
+$grants$;
+ THEN RETURN; END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM gestao.sessoes s
+    JOIN gestao.usuarios u ON u.id=s.usuario_id
+    JOIN gestao.usuarios_papeis p ON p.usuario_id=u.id
+    WHERE s.token_hash=encode(public.digest(p_token,'sha256'),'hex')
+      AND s.revogada_em IS NULL AND s.expira_em>clock_timestamp()
+      AND u.ativo=true AND p.papel_codigo IN ('admin','comercial')
+  ) THEN RETURN; END IF;
+
+  RETURN QUERY
+  SELECT e.orcamento_id,e.versao,e.tipo,e.canal,e.evidencia,e.criado_em
+  FROM gestao.orcamento_eventos e
+  WHERE e.orcamento_id IN (
+    SELECT o.id FROM gestao.orcamentos o
+    ORDER BY o.criado_em DESC,o.id DESC LIMIT 100
+  )
+  ORDER BY e.criado_em DESC,e.id DESC LIMIT 500;
+END;
+$;
+REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM PUBLIC;
+
 DO $grants$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_app') THEN
