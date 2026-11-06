@@ -54,6 +54,8 @@ export default async function Gestao({
   const podeCadastrar = temPermissao(usuario.papeis, "leads:criar");
   const podeOrcamentar = process.env.GESTAO_ORCAMENTOS_HABILITADOS === "true"
     && temPermissao(usuario.papeis, "orcamentos:gerir");
+  const podePrepararOS = process.env.GESTAO_OS_PREPARACAO_HABILITADA === "true"
+    && temPermissao(usuario.papeis, "os:gerir");
   const podeConvidar = process.env.GESTAO_CONVITES_HABILITADOS === "true"
     && usuario.papeis.includes("admin");
   // Consulta somente depois da validação da sessão e do RBAC; não retorna
@@ -170,6 +172,11 @@ export default async function Gestao({
                   {podeOrcamentar && (
                     <Link href="/gestao/orcamentos" className="rounded-xl border border-white/20 px-4 py-3 text-center font-semibold hover:bg-white/5">
                       Preparar orçamentos
+                    </Link>
+                  )}
+                  {podePrepararOS && (
+                    <Link href="/gestao/ordens-servico" className="rounded-xl border border-white/20 px-4 py-3 text-center font-semibold hover:bg-white/5">
+                      Ordens de Serviço — preparação
                     </Link>
                   )}
                   {podeConvidar && (
