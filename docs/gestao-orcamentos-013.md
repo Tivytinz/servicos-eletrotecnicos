@@ -39,7 +39,7 @@ SELECT
   (SELECT count(*) FROM gestao.schema_migrations) AS migracoes,
   EXISTS(SELECT 1 FROM gestao.schema_migrations
     WHERE versao='013_gestao_eventos_orcamento.sql'
-      AND checksum='82393777716103cb74da06dc316a6c9f4b501efae0007d5c83b0e17e73a5c655') AS checksum_ok,
+      AND checksum='ad80c236a30c7d86a192c6531ea9747e058a7e299f042905298d609d4c621ecb') AS checksum_ok,
   has_function_privilege('gestao_app',
     'gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text)','EXECUTE') AS app_registra,
   has_function_privilege('gestao_app',
