@@ -1,12 +1,13 @@
 # MEMORIA — Eletrotécnico GO
 
 
-## 015 em desenvolvimento: link privado de aceite por versão — 06/11/2026
+## 015 integrada em código, SQL/flag pendentes — 06/11/2026
 
 - Evidência de produção conferida: migration 014 aplicada com **14/14** e `COMMIT` no [run 42253223512](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42253223512); flag `GESTAO_OS_PREPARACAO_HABILITADA=true` ativada com deploy Railway `SUCCESS`. Screenshot do responsável confirma página de OS, **zero candidatas/ordens**, e Cliente Teste não elegível, pois marcado `TESTE INTERNO`.
 - Branch `feat/gestao-aceite-link-cliente-015-20261106`: link secreto de 256 bits, SHA-256 apenas no banco, expiração 24h ou validade, reemissão/revogação, visualização e clique explícito do detentor, status/auditoria, OS ainda **somente pendente**; nenhuma mensagem/financeiro. Flag nova `GESTAO_ACEITE_CLIENTE_HABILITADO` ausente por padrão. Browser privado sem GA/analytics.
 - **O link demonstra posse do segredo, NÃO verifica identidade ou titularidade do contato e não é assinatura digital autenticada.** Nunca permitir OS executável só com esse registro. Plano em `docs/gestao-aceite-cliente-015.md`.
-- Testes em PostgreSQL descartável e QA HTTPS com dados sintéticos, pacote manual da 015 com SHA-256 e preflight 14/14. **Nenhuma autorização para aplicar 015, ativar flag ou enviar link real em produção nesta etapa de desenvolvimento.**
+- PR [#71](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/71) integrada à `main` no commit `bce6cd42d791e4168cbcf46db52e85b822c8dcaf`. `Check` [42260251731](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42260251731), QA HTTPS [42260251668](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42260251668) e regressão de consentimento [42260251721](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42260251721) **SUCCESS**, testes de PostgreSQL descartável (incluindo pacote 015) e navegador. Smoke WhatsApp do HEAD seguia em execução na última conferência; não afirmar aprovação sem resultado.
+- **Produção:** código integrado, **SQL permanece 14/14** até autorização específica para aplicar a 015; flag `GESTAO_ACEITE_CLIENTE_HABILITADO` verificada **ausente** no Railway. Deploy de código do merge em espera pelo CI na última conferência, sem escrita SQL. Sem autorização para enviar link real ou habilitar a 015.
 - Sem backup contratado conforme decisão de custo; risco de perda irreversível conhecido. O executor de chat em produção só contempla 012/013/014, deve ser ampliado com aprovação separada quando houver implantação futura.
 
 
