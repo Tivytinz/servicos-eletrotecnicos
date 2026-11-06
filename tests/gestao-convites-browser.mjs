@@ -168,6 +168,23 @@ try {
     "estado aprovado não aceita outra decisão");
   console.log("PASS: histórico HTTPS reúne envio e decisão relatada da versão 2, sem mensagem real");
 
+  // Release 014: somente dados sintéticos do PostgreSQL descartável.
+  await admin.goto(BASE + "/gestao/ordens-servico");
+  await admin.getByRole("heading", { name: /Ordens de Serviço — preparação/ }).waitFor();
+  const candidataOS = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await candidataOS.getByText(/aceite relatado/).waitFor();
+  await candidataOS.getByRole("button", { name: "Criar OS pendente de comprovação" }).click();
+  await admin.waitForURL(BASE + "/gestao/ordens-servico?sucesso=preparacao");
+  await admin.getByRole("status").getByText(/preparação registrada/i).waitFor();
+  const pendenteOS = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await pendenteOS.getByText(/OS pendente — não autorizada para execução/).waitFor();
+  assert.equal(await admin.getByRole("button", { name: /Agendar|Iniciar execução|Registrar pagamento/ }).count(), 0,
+    "014 não deve liberar execução nem financeiro");
+  assert.equal(await admin.getByRole("button", { name: "Criar OS pendente de comprovação" }).count(), 0,
+    "criação de OS única por orçamento");
+  console.log("PASS: OS preparatória aparece como pendente, sem execução/cobrança e sem duplicidade");
+
+
 
 
 
