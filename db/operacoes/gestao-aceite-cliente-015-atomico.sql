@@ -1,7 +1,7 @@
 -- ELETROTÉCNICO GO — PACOTE ATÔMICO 015: ACEITE PRIVADO POR LINK
 -- Não executa automaticamente no deploy. Requer autorização operacional própria.
 -- Sem backup recuperável por decisão de custo do responsável, risco residual real.
--- SHA-256 da migration: b4c34535fed84c4e2e2fb383d39603a4f74bc535cbb00baa058295533e2b8601
+-- SHA-256 da migration: da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43
 BEGIN;
 SET LOCAL lock_timeout='5s';
 SET LOCAL statement_timeout='60s';
@@ -46,7 +46,37 @@ CREATE TABLE gestao.links_aceite_cliente (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   orcamento_id uuid NOT NULL,
   versao integer NOT NULL CHECK (versao > 0),
-  token_hash text NOT NULL UNIQUE CHECK (token_hash ~ '^[a-f0-9]{64}$'),
+  token_hash text NOT NULL UNIQUE CHECK (token_hash ~ '^[a-f0-9]{64}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+),
   emitido_por uuid NOT NULL REFERENCES gestao.usuarios(id),
   emitido_em timestamptz NOT NULL DEFAULT clock_timestamp(),
   expira_em timestamptz NOT NULL,
@@ -76,14 +106,74 @@ REVOKE ALL ON gestao.links_aceite_cliente FROM PUBLIC;
 CREATE FUNCTION gestao.emitir_link_aceite_cliente(
   p_sessao text,p_orcamento uuid,p_versao integer,p_hash text
 ) RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER
-SET search_path = pg_catalog, pg_temp AS $$
+SET search_path = pg_catalog, pg_temp AS $
 DECLARE
   v_ator uuid; v_atual integer; v_status text; v_lead_status text;
   v_validade timestamptz; v_id uuid; v_agora timestamptz;
 BEGIN
-  IF p_sessao IS NULL OR p_sessao !~ '^[A-Za-z0-9_-]{43}$'
+  IF p_sessao IS NULL OR p_sessao !~ '^[A-Za-z0-9_-]{43}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+
     OR p_orcamento IS NULL OR p_versao IS NULL OR p_versao<1
-    OR p_hash IS NULL OR p_hash !~ '^[a-f0-9]{64}$'
+    OR p_hash IS NULL OR p_hash !~ '^[a-f0-9]{64}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+
   THEN RETURN NULL; END IF;
   SELECT u.id INTO v_ator
   FROM gestao.sessoes s
@@ -132,16 +222,46 @@ BEGIN
                        LEAST(v_agora + interval '24 hours',v_validade)));
   RETURN v_id;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.emitir_link_aceite_cliente(text,uuid,integer,text) FROM PUBLIC;
 
 CREATE FUNCTION gestao.revogar_link_aceite_cliente(
   p_sessao text,p_orcamento uuid,p_versao integer
 ) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
-SET search_path = pg_catalog, pg_temp AS $$
+SET search_path = pg_catalog, pg_temp AS $
 DECLARE v_ator uuid; v_atual integer; v_qtd integer;
 BEGIN
-  IF p_sessao IS NULL OR p_sessao !~ '^[A-Za-z0-9_-]{43}$'
+  IF p_sessao IS NULL OR p_sessao !~ '^[A-Za-z0-9_-]{43}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+
     OR p_orcamento IS NULL OR p_versao IS NULL OR p_versao<1
   THEN RETURN false; END IF;
   SELECT u.id INTO v_ator FROM gestao.sessoes s
@@ -167,16 +287,46 @@ BEGIN
           jsonb_build_object('versao',p_versao));
   RETURN true;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.revogar_link_aceite_cliente(text,uuid,integer) FROM PUBLIC;
 
 -- Consulta pública somente a apresentação da versão vinculada ao hash secreto.
 -- Qualquer GET da página não consome o link; bots de pré-visualização não aprovam.
 CREATE FUNCTION gestao.consultar_link_aceite_cliente(p_hash text)
 RETURNS TABLE(versao integer,valor_centavos bigint,descricao text,validade_em timestamptz)
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp AS $
 BEGIN
-  IF p_hash IS NULL OR p_hash !~ '^[a-f0-9]{64}$' THEN RETURN; END IF;
+  IF p_hash IS NULL OR p_hash !~ '^[a-f0-9]{64}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+ THEN RETURN; END IF;
   RETURN QUERY
   SELECT v.versao,v.valor_centavos,v.descricao,v.validade_em
   FROM gestao.links_aceite_cliente a
@@ -191,7 +341,7 @@ BEGIN
     AND v.validade_em IS NOT NULL AND clock_timestamp()<v.validade_em
   LIMIT 1;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.consultar_link_aceite_cliente(text) FROM PUBLIC;
 
 -- A resposta é uma operação atômica e de uso único. Uma nova tentativa
@@ -199,14 +349,44 @@ REVOKE ALL ON FUNCTION gestao.consultar_link_aceite_cliente(text) FROM PUBLIC;
 CREATE FUNCTION gestao.responder_link_aceite_cliente(
   p_hash text,p_resposta text,p_leu_condicoes boolean
 ) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
-SET search_path = pg_catalog, pg_temp AS $$
+SET search_path = pg_catalog, pg_temp AS $
 DECLARE
   v_orcamento uuid; v_lead uuid; v_atual integer; v_status text;
   v_lead_status text; v_validade timestamptz;
   v_link gestao.links_aceite_cliente%ROWTYPE;
   v_agora timestamptz; v_status_novo text;
 BEGIN
-  IF p_hash IS NULL OR p_hash !~ '^[a-f0-9]{64}$'
+  IF p_hash IS NULL OR p_hash !~ '^[a-f0-9]{64}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+
     OR p_resposta IS NULL OR p_resposta NOT IN ('aprovacao','recusa')
     OR p_leu_condicoes IS DISTINCT FROM true
   THEN RETURN false; END IF;
@@ -254,16 +434,46 @@ BEGIN
       'link_id',v_link.id,'identidade_verificada',false));
   RETURN true;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.responder_link_aceite_cliente(text,text,boolean) FROM PUBLIC;
 
 CREATE FUNCTION gestao.listar_links_aceite_cliente_restritos(p_sessao text)
 RETURNS TABLE(orcamento_id uuid,versao integer,emitido_em timestamptz,
   expira_em timestamptz,revogado_em timestamptz,
   utilizado_em timestamptz,resposta text)
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp AS $
 BEGIN
-  IF p_sessao IS NULL OR p_sessao !~ '^[A-Za-z0-9_-]{43}$' THEN RETURN; END IF;
+  IF p_sessao IS NULL OR p_sessao !~ '^[A-Za-z0-9_-]{43}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+ THEN RETURN; END IF;
   IF NOT EXISTS (
     SELECT 1 FROM gestao.sessoes s JOIN gestao.usuarios u ON u.id=s.usuario_id
     JOIN gestao.usuarios_papeis p ON p.usuario_id=u.id
@@ -281,7 +491,7 @@ BEGIN
   )
   ORDER BY a.emitido_em DESC,a.id DESC LIMIT 300;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.listar_links_aceite_cliente_restritos(text) FROM PUBLIC;
 
 -- A OS 014 passa a aceitar também a decisão registrada pelo detentor do link,
@@ -290,7 +500,7 @@ CREATE OR REPLACE FUNCTION gestao.criar_os_preparacao(
   p_token text, p_orcamento_id uuid, p_versao integer
 ) RETURNS uuid
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
-AS $$
+AS $
 DECLARE
   v_ator uuid;
   v_atual integer;
@@ -298,7 +508,37 @@ DECLARE
   v_lead_status text;
   v_id uuid;
 BEGIN
-  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}$'
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+
     OR p_orcamento_id IS NULL OR p_versao IS NULL OR p_versao < 1
   THEN RETURN NULL; END IF;
   SELECT u.id INTO v_ator
@@ -347,19 +587,49 @@ BEGIN
   INSERT INTO gestao.auditoria(ator_id,entidade,entidade_id,acao,detalhes)
   VALUES (v_ator,'os',v_id,'criar_preparacao',
     jsonb_build_object('orcamento_id',p_orcamento_id,'versao',p_versao,
-                       'status','pendente','identidade_verificada',false));
+                       'status','pendente','aceite_verificado',false,'identidade_verificada',false));
   RETURN v_id;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.criar_os_preparacao(text,uuid,integer) FROM PUBLIC;
 
 CREATE OR REPLACE FUNCTION gestao.listar_candidatas_os_preparacao_restritas(p_token text)
 RETURNS TABLE(orcamento_id uuid,versao integer,cliente_nome text,
               valor_centavos bigint,descricao text,aprovado_em timestamptz)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
-AS $$
+AS $
 BEGIN
-  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}$' THEN RETURN; END IF;
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}
+INSERT INTO gestao.schema_migrations(versao,checksum)
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
+
+DO $postflight$
+BEGIN
+  IF (SELECT count(*) FROM gestao.schema_migrations)<>15
+    OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.revogar_link_aceite_cliente(text,uuid,integer)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.consultar_link_aceite_cliente(text)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR NOT has_function_privilege('gestao_app',
+      'gestao.listar_links_aceite_cliente_restritos(text)','EXECUTE')
+    OR has_function_privilege('gestao_convites',
+      'gestao.responder_link_aceite_cliente(text,text,boolean)','EXECUTE')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','SELECT')
+    OR has_table_privilege('gestao_app','gestao.links_aceite_cliente','INSERT')
+    OR has_table_privilege('gestao_app','gestao.orcamentos','UPDATE')
+    OR has_table_privilege('gestao_app','gestao.recebimentos','INSERT')
+  THEN RAISE EXCEPTION 'BLOQUEIO: validação de 015 falhou'; END IF;
+END
+$postflight$;
+COMMIT;
+-- Depois: verificar 15/15, flags desativadas e QA apenas em banco descartável.
+ THEN RETURN; END IF;
   IF NOT EXISTS (
     SELECT 1 FROM gestao.sessoes s JOIN gestao.usuarios u ON u.id=s.usuario_id
     JOIN gestao.usuarios_papeis p ON p.usuario_id=u.id
@@ -391,7 +661,7 @@ BEGIN
     AND NOT EXISTS (SELECT 1 FROM gestao.ordens_servico os WHERE os.orcamento_id=o.id)
   ORDER BY v.aprovado_em DESC,o.id DESC LIMIT 100;
 END;
-$$;
+$;
 REVOKE ALL ON FUNCTION gestao.listar_candidatas_os_preparacao_restritas(text) FROM PUBLIC;
 
 DO $grants$
@@ -415,13 +685,13 @@ $grants$;
 
 
 INSERT INTO gestao.schema_migrations(versao,checksum)
-VALUES ('015_gestao_link_aceite_cliente.sql','b4c34535fed84c4e2e2fb383d39603a4f74bc535cbb00baa058295533e2b8601');
+VALUES ('015_gestao_link_aceite_cliente.sql','da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43');
 
 DO $postflight$
 BEGIN
   IF (SELECT count(*) FROM gestao.schema_migrations)<>15
     OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
-      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='b4c34535fed84c4e2e2fb383d39603a4f74bc535cbb00baa058295533e2b8601')
+      WHERE versao='015_gestao_link_aceite_cliente.sql' AND checksum='da49d39bbc38728a1454cdb854a64e693c5042b38729a10f21d57f73589e2b43')
     OR NOT has_function_privilege('gestao_app',
       'gestao.emitir_link_aceite_cliente(text,uuid,integer,text)','EXECUTE')
     OR NOT has_function_privilege('gestao_app',
