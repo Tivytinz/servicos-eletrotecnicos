@@ -6,6 +6,7 @@ const channel=readFileSync(".github/workflows/gestao-migrations-chat-command.yml
 const executor=readFileSync(".github/workflows/gestao-migrations-production-manual.yml","utf8");
 const commands=[
   ["verificar","/gestao verificar", "verificar","012",""],
+  ["verificar_014","/gestao verificar 014","verificar","014",""],
   ["aplicar_012","/gestao aplicar 012 APLICAR_012_PRODUCAO_SEM_BACKUP","aplicar","012","APLICAR_012_PRODUCAO_SEM_BACKUP"],
   ["aplicar_013","/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP","aplicar","013","APLICAR_013_PRODUCAO_SEM_BACKUP"],
   ["aplicar_014","/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP","aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
@@ -16,8 +17,8 @@ test("canal ChatGPT: só comentários novos, do titular e no PR administrativo e
   assert.doesNotMatch(channel,/^\s+(?:push|pull_request_target|workflow_dispatch|schedule):/m);
   assert.match(channel,/^permissions:\s*\n\s+contents: read/m);
   const guards=channel.match(/github\.repository == 'Tivytinz\/servicos-eletrotecnicos' && github\.event\.issue\.number == 64 && github\.event\.issue\.pull_request != null && github\.event\.comment\.user\.id == 263981923 && github\.event\.issue\.state == 'closed'/g)||[];
-  assert.equal(guards.length,4,"cada comando precisa de autenticação e PR fixo");
-  const ids=Array.from(channel.matchAll(/^  (verificar|aplicar_012|aplicar_013|aplicar_014):$/gm),x=>x[1]);
+  assert.equal(guards.length,5,"cada comando precisa de autenticação e PR fixo");
+  const ids=Array.from(channel.matchAll(/^  (verificar|verificar_014|aplicar_012|aplicar_013|aplicar_014):$/gm),x=>x[1]);
   assert.deepEqual(ids,commands.map(x=>x[0]));
   assert.doesNotMatch(channel,/\b(?:run|checkout|eval|exec):/);
 });
@@ -26,7 +27,7 @@ test("canal ChatGPT: entradas estritamente literais, nunca interpolar conteúdo 
   for(const [id,command,mode,release,confirmacao] of commands){
     const begin=channel.indexOf("  "+id+":\n");
     assert.ok(begin>=0);
-    const following=channel.slice(begin).split(/\n  (?:verificar|aplicar_012|aplicar_013|aplicar_014):\n/,1)[0];
+    const following=channel.slice(begin).split(/\n  (?:verificar|verificar_014|aplicar_012|aplicar_013|aplicar_014):\n/,1)[0];
     assert.ok(following.includes("github.event.comment.body == '"+command+"'"));
     assert.ok(following.includes("uses: ./.github/workflows/gestao-migrations-production-manual.yml"));
     assert.ok(following.includes("modo: "+mode));
