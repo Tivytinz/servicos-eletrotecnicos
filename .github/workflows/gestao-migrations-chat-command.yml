@@ -22,6 +22,17 @@ jobs:
       release: "012"
       confirmacao: ""
     secrets: inherit
+  verificar_014:
+    # Read-only: usa preflight da 014; nunca executa SQL de escrita.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao verificar 014'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: verificar
+      release: "014"
+      confirmacao: ""
+    secrets: inherit
   aplicar_012:
     # Somente comentário do titular, no PR de controle já integrado (#64),
     # com corpo EXATAMENTE igual ao comando permitido.
