@@ -186,7 +186,7 @@ export default async function Orcamentos({
                   <strong className="text-xl text-white">{formatarValorOrcamento(o.valor_centavos)}</strong>
                   <span className="text-xs text-slate-400">Válido até {formatarValidadeOrcamento(o.validade_em)}</span>
                 </div>
-                {eventosHabilitados && (o.status === "rascunho" || o.status === "enviado") && (
+                {eventosHabilitados && (o.status === "enviado" || (o.status === "rascunho" && new Date(o.validade_em).getTime() > Date.now())) && (
                   <details className="mt-5 border-t border-white/10 pt-4">
                     <summary className="cursor-pointer font-semibold text-amber-300">
                       {o.status === "rascunho" ? "Registrar envio já realizado" : "Registrar resposta do cliente"}
@@ -236,6 +236,11 @@ export default async function Orcamentos({
                       </div>
                     </form>
                   </details>
+                )}
+                {eventosHabilitados && o.status === "rascunho" && new Date(o.validade_em).getTime() <= Date.now() && (
+                  <p className="mt-4 text-sm text-amber-200">
+                    A validade terminou. Revise o rascunho e a data antes de registrar um envio.
+                  </p>
                 )}
                 {eventosHabilitados && eventos.some(e => e.orcamento_id === o.id) && (
                   <details className="mt-5 border-t border-white/10 pt-4">
