@@ -1,6 +1,17 @@
 # MEMORIA — Eletrotécnico GO
 
 
+## Execução manual de migrations via GitHub Actions — 06/11/2026
+
+- Responsável solicitou reutilizar o mecanismo de execução de migrations em nuvem análogo ao Agenda Fashion, evitando PowerShell recorrente.
+- **Evidência nova de produção via PowerShell/Railway SSH:** banco `railway` em `postgres`, **11 migrations**; checksums 004/011 íntegros; roles `gestao_app` e `gestao_convites` restritas; tabelas/funções 012/013 ausentes. Apenas leitura, sem novas migrations executadas.
+- Branch `ops/gestao-migrations-manual-ci-20261106`: implementação do workflow `workflow_dispatch` com `gestao-db-production`, checagem de hashes de todo catálogo, pacote atômico único 012/013, logs de metadata, proteção anti-reaplicação, SSH privado e teste offline. Documentado em `docs/gestao-migrations-github-manual.md`. CI/PR/merge ainda precisam de validação nesta branch.
+- **Ainda não configurado nem usado na produção**: requer ambiente GitHub protegido e três secrets exclusivamente administrativos (token de workspace Railway, chave SSH separada e host key fixada). Conector ChatGPT Railway não disponibiliza SQL/SSH; sem essas credenciais o job falha fechado.
+- Decisão de não contratar backup de produção por custo permanece, com risco residual real. Autorização anterior do responsável para migration 012 não se estende automaticamente à 013, a flags ou à criação de credenciais administrativas; cada execução continua manual e auditável.
+- Migrations 012 e 013 devem ser aplicadas apenas em sequência, após verificação. Não adicionar credenciais SQL administrativas ao serviço web nem porta TCP pública.
+
+
+
 ## Operação 012/013 — diagnóstico por Railway SSH, 06/11/2026
 
 - Railway `upbeat-compassion` / `production` confirma serviço web e PostgreSQL online; sem TCP Proxy público; código 012 e 013 na `main`; flags 012/013 ausentes.
