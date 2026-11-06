@@ -7,10 +7,10 @@ const executor=readFileSync(".github/workflows/gestao-migrations-production-manu
 const commands=[
   ["verificar","/gestao verificar", "verificar","012",""],
   ["verificar_014","/gestao verificar 014","verificar","014",""],
-  ["verificar_015","/gestao verificar 015","verificar","015",""],
   ["aplicar_012","/gestao aplicar 012 APLICAR_012_PRODUCAO_SEM_BACKUP","aplicar","012","APLICAR_012_PRODUCAO_SEM_BACKUP"],
   ["aplicar_013","/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP","aplicar","013","APLICAR_013_PRODUCAO_SEM_BACKUP"],
   ["aplicar_014","/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP","aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
+  ["verificar_015","/gestao verificar 015","verificar","015",""],
   ["aplicar_015","/gestao aplicar 015 APLICAR_015_PRODUCAO_SEM_BACKUP","aplicar","015","APLICAR_015_PRODUCAO_SEM_BACKUP"],
 ];
 
