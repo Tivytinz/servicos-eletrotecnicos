@@ -17,7 +17,7 @@ test("preflight SSH 012/013 é read-only e confere catálogo e roles no banco si
     const results = await client.query(sql);
     const selects = results.filter(result => result.command === "SELECT");
     assert.equal(selects.length, 5);
-    const numeroDeMigrations = (await readdir("db/migrations")).filter(nome => /^\\d{3}_[a-z0-9_]+\\.sql$/.test(nome)).length;
+    const numeroDeMigrations = (await readdir("db/migrations")).filter(nome => /^\d{3}_[a-z0-9_]+\.sql$/.test(nome)).length;
     assert.equal(selects[1].rows[0].migrations_aplicadas, numeroDeMigrations);
     assert.ok(selects[2].rows.every(row => row.verificacao === "INTEGRA"));
     assert.equal(selects[3].rows.length, 2);
