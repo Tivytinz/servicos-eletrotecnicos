@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Executa APENAS preflight ou UM pacote 012/013 via Railway SSH.
-# Somente workflow_dispatch na main, com segredos de ambiente protegidos.
+# Executa APENAS preflight ou UM pacote autorizado 012/013/014 via Railway SSH.
+# Somente workflow manual/comando de titular na main, com segredos de ambiente protegidos.
 set -Eeuo pipefail
 set +x
 
@@ -33,7 +33,13 @@ case "$RELEASE" in
     CONFIRMACAO_ESPERADA="APLICAR_013_PRODUCAO_SEM_BACKUP"
     PACOTE="db/operacoes/gestao-orcamentos-013-atomico.sql"
     ;;
-  *) echo "BLOQUEIO: somente releases 012 ou 013." >&2; exit 2 ;;
+  014)
+    ANTERIOR=13
+    POSTERIOR=14
+    CONFIRMACAO_ESPERADA="APLICAR_014_PRODUCAO_SEM_BACKUP"
+    PACOTE="db/operacoes/gestao-os-014-atomico.sql"
+    ;;
+  *) echo "BLOQUEIO: somente releases 012, 013 ou 014." >&2; exit 2 ;;
 esac
 if [[ "$MODE" == "aplicar" && "$CONFIRMACAO" != "$CONFIRMACAO_ESPERADA" ]]; then
   echo "BLOQUEIO: confirmação de produção inválida." >&2
@@ -47,7 +53,11 @@ if [[ -z "$RAILWAY_API_TOKEN" || ! -f "$RAILWAY_GESTAO_IDENTITY_FILE" ]]; then
   echo "BLOQUEIO: credencial do Railway ou chave SSH da automação indisponível." >&2
   exit 2
 fi
-if [[ ! -f "db/operacoes/gestao-preflight-012-013-somente-leitura.sql" || ! -f "$PACOTE" ]]; then
+PREFLIGHT="db/operacoes/gestao-preflight-012-013-somente-leitura.sql"
+if [[ "$RELEASE" == "014" ]]; then
+  PREFLIGHT="db/operacoes/gestao-preflight-014-somente-leitura.sql"
+fi
+if [[ ! -f "$PREFLIGHT" || ! -f "$PACOTE" ]]; then
   echo "BLOQUEIO: catálogo SQL incompleto no checkout." >&2
   exit 2
 fi
@@ -78,7 +88,7 @@ verificar_catalogo() {
     }
     total=$((total + 1))
   done <<< "$historico"
-  [[ "$total" -ge 11 && "$total" -le 13 ]] || {
+  [[ "$total" -ge 11 && "$total" -le 14 ]] || {
     echo "BLOQUEIO: contagem de migrations fora da faixa esperada: $total." >&2
     return 1
   }
@@ -87,7 +97,7 @@ verificar_catalogo() {
 }
 
 echo "ETAPA: preflight remoto somente leitura."
-cat "db/operacoes/gestao-preflight-012-013-somente-leitura.sql" | remote_psql -f -
+cat "$PREFLIGHT" | remote_psql -f -
 verificar_catalogo
 
 if [[ "$MODE" == "verificar" ]]; then
@@ -103,10 +113,10 @@ echo "ETAPA: aplicar pacote transacional $RELEASE (autorização manual específ
 cat "$PACOTE" | remote_psql -f -
 
 echo "ETAPA: verificar após a transação."
-cat "db/operacoes/gestao-preflight-012-013-somente-leitura.sql" | remote_psql -f -
+cat "$PREFLIGHT" | remote_psql -f -
 verificar_catalogo
 if [[ "$TOTAL_VERIFICADO" != "$POSTERIOR" ]]; then
   echo "ALERTA: estado pós-operação não corresponde à release $RELEASE. Verificação humana necessária." >&2
   exit 1
 fi
-echo "CONCLUÍDO: release $RELEASE aplicada; histórico confirmado $POSTERIOR/13. Nenhuma flag foi habilitada."
+echo "CONCLUÍDO: release $RELEASE aplicada; histórico confirmado $POSTERIOR/14. Nenhuma flag foi habilitada."
