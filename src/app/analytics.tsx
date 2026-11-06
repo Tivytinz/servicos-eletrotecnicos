@@ -209,7 +209,7 @@ function PreferencesPanel({ initial, onSave }: PreferencesPanelProps) {
 
 export default function Analytics() {
   const pathname = usePathname();
-  const isGestao = pathname.startsWith("/gestao");
+  const isGestao = pathname.startsWith("/gestao") || pathname.startsWith("/proposta/aceite");
   const snapshot = useSyncExternalStore(
     subscribeConsent,
     getConsentSnapshot,
@@ -226,7 +226,8 @@ export default function Analytics() {
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
-      if (window.location.pathname.startsWith("/gestao")) return;
+      if (window.location.pathname.startsWith("/gestao")
+        || window.location.pathname.startsWith("/proposta/aceite")) return;
       const element = event.target;
       if (!(element instanceof Element)) return;
 

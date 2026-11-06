@@ -17,7 +17,8 @@ test("preflight 014 é read-only, checa 004/013/014 e preserva grants", {
     const results = await db.query(sql);
     const selects = results.filter(x => x.command === "SELECT");
     assert.equal(selects.length,5);
-    assert.equal(selects[1].rows[0].migrations_aplicadas,14);
+    assert.ok(selects[1].rows[0].migrations_aplicadas >= 14,
+      "As migrations 014 e anteriores devem permanecer íntegras mesmo com novas versões");
     assert.deepEqual(selects[2].rows.map(x=>x.verificacao),["INTEGRA","INTEGRA","INTEGRA"]);
     assert.equal(selects[3].rows.length,2);
     assert.ok(selects[3].rows.every(x=>x.privilegios_globais_restritos));

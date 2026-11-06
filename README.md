@@ -30,7 +30,7 @@ O contato comercial é definido em `src/lib/contato.ts`. Todas as páginas comer
 
 O modelo de negócio, fluxo operacional, regras financeiras e intenção de titularidade do módulo de gestão estão documentados em [docs/modelo-gestao-servicos.md](docs/modelo-gestao-servicos.md).
 
-**Situação:** o painel interno inicial em `/gestao` já possui autenticação, RBAC e cadastro/listagem de solicitações, mas permanece **desativado por decisão operacional**. Módulos completos de orçamentos, OS e financeiro ainda não foram entregues. Consulte [docs/gestao-autenticacao-leads.md](docs/gestao-autenticacao-leads.md) para estado e riscos.
+**Situação conferida em 06/11/2026:** o painel interno `/gestao` possui autenticação, RBAC, solicitações e orçamentos versionados com registro de envio/decisão. A migration **014** está aplicada em produção (**14/14**) e a tela de **OS somente em preparação** foi ativada e visualizada, sem propostas aptas porque o Cliente Teste teve aprovação simulada. **OS executável e financeiro ainda não foram entregues.** A confirmação direta por link é um desenvolvimento **015 ainda não implantado** (ver [docs/gestao-aceite-cliente-015.md](docs/gestao-aceite-cliente-015.md)). Algumas outras seções históricas nos docs registram estados antigos e devem ser lidas com o checkpoint mais recente de [MEMORIA.md](MEMORIA.md).
 
 ## Continuidade para agentes de IA
 

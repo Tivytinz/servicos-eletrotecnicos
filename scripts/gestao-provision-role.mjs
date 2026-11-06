@@ -61,6 +61,11 @@ try {
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.criar_os_preparacao(text,uuid,integer) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_candidatas_os_preparacao_restritas(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_os_preparacao_restritas(text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.emitir_link_aceite_cliente(text,uuid,integer,text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.revogar_link_aceite_cliente(text,uuid,integer) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.consultar_link_aceite_cliente(text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.responder_link_aceite_cliente(text,text,boolean) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_links_aceite_cliente_restritos(text) TO gestao_app");
   await admin.query("GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO gestao_app");
   await admin.query("GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO gestao_app");
   // Role comum não pode emitir, listar ou revogar convites.

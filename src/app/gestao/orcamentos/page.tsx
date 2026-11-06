@@ -11,6 +11,8 @@ import {
 import { temPermissao } from "@/lib/gestao/permissoes";
 import { COOKIE_SESSAO } from "@/lib/gestao/sessao";
 import { criarOrcamentoRascunho, revisarOrcamentoRascunho, registrarEventoOrcamento } from "./actions";
+import FormularioLinkCliente from "./aceite-form";
+import { revogarLinkAceiteCliente } from "./aceite-actions";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -19,6 +21,10 @@ export const metadata: Metadata = {
 };
 
 type LeadApto = { id: string; nome: string; descricao: string; status: string };
+type LinkCliente = {
+  orcamento_id:string;versao:number;emitido_em:Date;expira_em:Date;
+  revogado_em:Date|null;utilizado_em:Date|null;resposta:string|null;
+};
 type EventoOrcamento = {
   orcamento_id: string; versao: number;
   tipo: "envio" | "aprovacao" | "recusa";
@@ -40,7 +46,8 @@ export default async function Orcamentos({
   if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) redirect("/gestao/login");
 
   const eventosHabilitados = process.env.GESTAO_ORCAMENTOS_EVENTOS_HABILITADOS === "true";
-  const [orcamentos, elegiveis, eventos] = await Promise.all([
+  const linksHabilitados = process.env.GESTAO_ACEITE_CLIENTE_HABILITADO === "true";
+  const [orcamentos, elegiveis, eventos, links] = await Promise.all([
     consultar<OrcamentoResumo>(
       "SELECT * FROM gestao.listar_orcamentos_restritos($1)", [token],
     ),
@@ -56,6 +63,9 @@ export default async function Orcamentos({
           "SELECT * FROM gestao.listar_eventos_orcamento_restritos($1)", [token],
         )
       : Promise.resolve([] as EventoOrcamento[]),
+    linksHabilitados
+      ? consultar<LinkCliente>("SELECT * FROM gestao.listar_links_aceite_cliente_restritos($1)",[token])
+      : Promise.resolve([] as LinkCliente[]),
   ]);
 
   const comOrcamento = new Set(orcamentos.map(o => o.lead_id));
@@ -86,6 +96,11 @@ export default async function Orcamentos({
       {sucesso === "revisao" && (
         <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
           Nova versão do rascunho salva. A anterior permanece no histórico e nenhum orçamento foi enviado.
+        </p>
+      )}
+      {sucesso === "link-revogado" && (
+        <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
+          Link de confirmação revogado. Ele não poderá ser usado para responder.
         </p>
       )}
       {sucesso === "evento" && (
@@ -234,6 +249,42 @@ export default async function Orcamentos({
                         </p>
                       </div>
                     </form>
+                  </details>
+                )}
+                {linksHabilitados && (
+                  <details className="mt-5 border-t border-white/10 pt-4">
+                    <summary className="cursor-pointer font-semibold text-amber-300">
+                      Confirmação direta por link privado
+                    </summary>
+                    <p className="mt-3 text-sm text-slate-300">
+                      O link permite que o detentor registre aprovação ou recusa da versão atual.
+                      Não envia mensagens automaticamente e não comprova sozinho a identidade do cliente.
+                    </p>
+                    {links.filter(l=>l.orcamento_id===o.id).slice(0,5).map((link,i)=>(
+                      <p key={i} className="mt-2 text-xs text-slate-400">
+                        Versão {link.versao}: {link.utilizado_em
+                          ? `Resposta via link: ${link.resposta==="aprovacao"?"aprovação":"recusa"}`
+                          : link.revogado_em ? "revogado"
+                            : new Date(link.expira_em).getTime()<=Date.now() ? "expirado" : "pendente"}
+                        {" · "}Emitido em {new Date(link.emitido_em).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"})}
+                      </p>
+                    ))}
+                    {o.status==="enviado" && (
+                      <>
+                        <FormularioLinkCliente orcamento={o.id} versao={o.versao}/>
+                        {links.some(l=>l.orcamento_id===o.id && l.versao===o.versao
+                          && !l.revogado_em && !l.utilizado_em
+                          && new Date(l.expira_em).getTime()>Date.now()) && (
+                          <form action={revogarLinkAceiteCliente} className="mt-4">
+                            <input type="hidden" name="orcamento" value={o.id}/>
+                            <input type="hidden" name="versao" value={o.versao}/>
+                            <button className="rounded-lg border border-rose-300/50 px-4 py-2 text-sm font-semibold text-rose-200">
+                              Revogar link ativo
+                            </button>
+                          </form>
+                        )}
+                      </>
+                    )}
                   </details>
                 )}
                 {eventosHabilitados && eventos.some(e => e.orcamento_id === o.id) && (

@@ -17,6 +17,7 @@ const retentionMs = 30 * 60 * 1000;
  */
 export default function WhatsAppSource() {
   useEffect(() => {
+    if (window.location.pathname.startsWith("/proposta/aceite")) return;
     let paidThisPageUntil = 0;
 
     function paidSourceActive(): boolean {

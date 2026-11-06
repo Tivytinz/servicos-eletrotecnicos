@@ -184,6 +184,74 @@ try {
     "criação de OS única por orçamento");
   console.log("PASS: OS preparatória aparece como pendente, sem execução/cobrança e sem duplicidade");
 
+  // Release 015: aprovação real por clique, mas SOMENTE em banco descartável.
+  // Não há envio de WhatsApp e não há dados de cliente real.
+  await admin.goto(BASE+"/gestao/leads");
+  await admin.getByLabel("Cliente").fill("Cliente QA Link 015");
+  await admin.getByLabel("Telefone").fill("62999990150");
+  await admin.getByLabel("Origem").selectOption("whatsapp");
+  await admin.getByLabel("Descrição").fill("Proposta sintética para aceite por link");
+  await admin.getByRole("button",{name:"Registrar solicitação"}).click();
+  await admin.waitForURL(BASE+"/gestao/leads");
+  const leadLink=admin.locator("article").filter({hasText:"Cliente QA Link 015"});
+  await leadLink.getByLabel("Próxima etapa").selectOption("qualificado");
+  await leadLink.getByRole("button",{name:"Atualizar etapa"}).click();
+  await admin.waitForURL(BASE+"/gestao/leads?sucesso=status");
+
+  await admin.goto(BASE+"/gestao/orcamentos");
+  await admin.getByLabel("Solicitação qualificada").selectOption({
+    label:"Cliente QA Link 015 — Proposta sintética para aceite por link",
+  });
+  await admin.getByLabel("Valor total em reais (R$)").fill("475,00");
+  await admin.getByLabel("Validade da proposta").fill(
+    new Date(Date.now()+10*86400000).toISOString().slice(0,10));
+  await admin.getByLabel("Descrição e condições técnicas da proposta")
+    .fill("Proposta fictícia de R$ 475 para aceite por link privado");
+  await admin.getByRole("button",{name:"Salvar rascunho"}).click();
+  await admin.waitForURL(BASE+"/gestao/orcamentos?sucesso=rascunho");
+  const rascunhoLink=admin.locator("li").filter({hasText:"Cliente QA Link 015"});
+  await rascunhoLink.getByText("Registrar envio já realizado").click();
+  await rascunhoLink.getByLabel("Canal de comunicação").selectOption("whatsapp");
+  await rascunhoLink.getByLabel(/Evidência ou referência interna/)
+    .fill("Registro de envio de QA 015, sem envio real de mensagem");
+  await rascunhoLink.getByRole("button",{name:"Registrar envio manual"}).click();
+  await admin.waitForURL(BASE+"/gestao/orcamentos?sucesso=evento");
+
+  const orcamentoLink=admin.locator("li").filter({hasText:"Cliente QA Link 015"});
+  await orcamentoLink.getByText("Confirmação direta por link privado").click();
+  await orcamentoLink.getByRole("button",{name:"Gerar link de confirmação (24h)"}).click();
+  const segredoCliente=orcamentoLink.locator("input[readonly]");
+  await segredoCliente.waitFor({timeout:15000});
+  const linkPrivado=await segredoCliente.inputValue();
+  assert.ok(linkPrivado.startsWith(BASE+"/proposta/aceite#"),"token apenas no fragmento");
+  assert.match(new URL(linkPrivado).hash.slice(1),/^[A-Za-z0-9_-]{43}$/);
+  const visitante=await (await novoContexto()).newPage();
+  await visitante.goto(linkPrivado);
+  await visitante.getByText("Orçamento · versão 1").waitFor();
+  await visitante.getByText(/R\$\s*475,00/).waitFor();
+  assert.equal(await visitante.locator('script[src*="googletagmanager"]').count(),0,
+    "página privada não deve carregar scripts de marketing");
+  assert.equal(await visitante.getByRole("button",{name:/Salvar escolhas|Aceitar análise/}).count(),0);
+  await visitante.getByRole("checkbox").check();
+  await visitante.getByRole("button",{name:"Aprovar proposta"}).click();
+  await visitante.getByRole("status").getByText("Resposta registrada").waitFor();
+  assert.equal(new URL(visitante.url()).hash,"","fragmento apagado após uso");
+  await visitante.reload();
+  await visitante.getByRole("alert").getByText(/Link inválido ou ausente/).waitFor();
+  await admin.goto(BASE+"/gestao/orcamentos");
+  const aprovadaLink=admin.locator("li").filter({hasText:"Cliente QA Link 015"});
+  await aprovadaLink.getByText("aprovado",{exact:true}).waitFor();
+  await aprovadaLink.getByText("Confirmação direta por link privado").click();
+  await aprovadaLink.getByText(/Resposta via link: aprovação/).waitFor();
+  await admin.goto(BASE+"/gestao/ordens-servico");
+  const candidataLink=admin.locator("li").filter({hasText:"Cliente QA Link 015"});
+  await candidataLink.getByRole("button",{name:"Criar OS pendente de comprovação"}).click();
+  await admin.waitForURL(BASE+"/gestao/ordens-servico?sucesso=preparacao");
+  await admin.locator("li").filter({hasText:"Cliente QA Link 015"})
+    .getByText(/OS pendente — não autorizada para execução/).waitFor();
+  console.log("PASS: link 015 confirma versão e valor sem analytics; OS continua pendente, sem pagamento");
+
+
 
 
 
