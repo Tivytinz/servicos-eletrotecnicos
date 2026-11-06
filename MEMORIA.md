@@ -1,6 +1,16 @@
 # MEMORIA — Eletrotécnico GO
 
 
+## Migrações SQL 012/013 concluídas, acionamento pelo chat validado — 06/11/2026
+
+- Controle de comandos via GitHub Actions `issue_comment` no PR fechado #64, integrado à `main` pela PR #65, foi validado em **execução real**. O comando `/gestao verificar` executou o run **42234483857** com `SUCCESS`, leitura de banco `railway`: **12/13** íntegras, 013 pendente, nenhuma escrita.
+- Após autorização específica do responsável na conversa para aplicar a **013 sem backup**, comando restrito `/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP` disparou o run **42234604088**, que concluiu `SUCCESS`, `COMMIT` e pós-verificação de **13/13 migrations com checksums íntegros**. Logs mostram `012 INTEGRA` e `013 INTEGRA`.
+- **Produção: banco 13/13 confirmado.** A execução não habilitou `GESTAO_ORCAMENTOS_REVISAO_HABILITADA` nem `GESTAO_ORCAMENTOS_EVENTOS_HABILITADOS`; continuam sem confirmação de ativação. Próxima operação é verificar grants/estado atual e **solicitar autorização específica antes de ativar flags** e realizar QA com dados fictícios.
+- Sem contratação de backup, por decisão de custo do responsável; risco de perda irreversível conhecido. Não afirmar que o suporte a novas migrations é genérico: o acionamento atual só aceita `verificar` e `aplicar` versões 012/013, com confirmações exatas; novas versões exigem atualizar/validar o workflow.
+- Consultas e aplicação foram iniciadas diretamente pela integração GitHub do ChatGPT, sem PowerShell do operador nem credenciais divulgadas.
+
+
+
 ## GitHub Actions acionável pelo chat — 06/11/2026, branch isolada
 
 - Responsável pediu para tornar possível iniciar migrations diretamente pela integração ChatGPT. Conector GitHub disponível não expõe `workflow_dispatch`, mas permite comentar como `Tivytinz` (ID 263981923); teste de identidade não executou SQL.
