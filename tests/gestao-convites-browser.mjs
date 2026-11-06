@@ -111,7 +111,7 @@ try {
   await admin.getByRole("status").getByText(/Orçamento salvo como rascunho/).waitFor();
   const proposta = admin.locator("li").filter({ hasText: "Cliente QA Status" });
   await proposta.getByText("Rascunho", { exact: true }).waitFor();
-  await proposta.getByText(/R\\$\\s*350,50/).waitFor();
+  await proposta.getByText(/R\$\s*350,50/).waitFor();
   console.log("PASS: novo administrador prepara orçamento em rascunho sem envio automático");
 
 
