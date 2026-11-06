@@ -1,0 +1,48 @@
+name: Gestão — migrations via comando autorizado
+
+# Comentários de outras pessoas/PRs, mensagens editadas e textos não exatos
+# jamais recebem os segredos do ambiente. Ações SQL só após autorização humana.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    # Somente comentário do titular, no PR de controle já integrado (#64),
+    # com corpo EXATAMENTE igual ao comando permitido.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao verificar'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: verificar
+      release: "012"
+      confirmacao: ""
+    secrets: inherit
+  aplicar_012:
+    # Somente comentário do titular, no PR de controle já integrado (#64),
+    # com corpo EXATAMENTE igual ao comando permitido.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao aplicar 012 APLICAR_012_PRODUCAO_SEM_BACKUP'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: aplicar
+      release: "012"
+      confirmacao: "APLICAR_012_PRODUCAO_SEM_BACKUP"
+    secrets: inherit
+  aplicar_013:
+    # Somente comentário do titular, no PR de controle já integrado (#64),
+    # com corpo EXATAMENTE igual ao comando permitido.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: aplicar
+      release: "013"
+      confirmacao: "APLICAR_013_PRODUCAO_SEM_BACKUP"
+    secrets: inherit
