@@ -1,12 +1,12 @@
 # MEMORIA — Eletrotécnico GO
 
 
-## OS 014 em desenvolvimento — 06/11/2026
+## OS 014 integrada em código (ainda sem SQL/flag na produção) — 06/11/2026
 
 - **QA real de orçamentos 011–013:** o responsável confirmou em captura Cliente Teste v2 R$ 475,00, envio e aprovação **declarados como TESTE INTERNO**; histórico com os dois eventos, status `aprovado`. Não houve cliente real, OS ou pagamento. Migration 013 aplicada, produção 13/13; ambas flags de revisão/eventos ativadas, deploy Railway `SUCCESS` e serviços online.
 - Próximo incremento: **preparação de OS sem execução**, release `014_gestao_os_preparacao.sql`, aproveitando `gestao.ordens_servico` da 001. Funções com SECURITY DEFINER e RBAC admin/técnico, status apenas `pendente`, eventos/auditoria, barreira explícita para `TESTE INTERNO` e duplicidade. Página `/gestao/ordens-servico` sob flag `GESTAO_OS_PREPARACAO_HABILITADA` **ausente/desativada por padrão**.
 - **Aceite relatado não equivale a aceite autenticado**: a OS desta release jamais chega a `aberta`/execução. Confirmação direta do cliente, agendamento, custos e recebimentos ficam em incrementos futuros.
-- Branch `feat/gestao-os-preparacao-014-20261106`, pacote manual atômico com checksum da 014, testes DB e documentação `docs/gestao-os-014.md`. **Ainda sem autorização para executar 014 em produção, configurar a flag ou criar OS de cliente real.** CI/PR/merge em andamento nesta etapa.
+- PR [#67](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/67) integrada à `main` no commit `527084604c61f4b0a2b0e7104bd37874d7539dbf`. `Check` [42245151003](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42245151003) e QA HTTPS [42245151189](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42245151189) concluídos com SUCCESS. Pacote manual atômico da 014, testes PostgreSQL e docs em `docs/gestao-os-014.md`. **Ainda sem autorização para aplicar 014 em produção, habilitar flag ou criar OS de cliente real.**
 - O workflow do chat atual permite aplicar somente 012/013; ampliar para 014 requer código, revisão e testes específicos. Decisão de não contratar backup por custo permanece; risco de perda irrecuperável conhecido.
 
 
