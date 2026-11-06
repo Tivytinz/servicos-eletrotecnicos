@@ -1,5 +1,13 @@
 # MEMORIA — Eletrotécnico GO
 
+## Decisão operacional reafirmada — 06/11/2026
+
+- **Não contratar nem configurar backup de produção por enquanto, por motivos de custos.** Decisão expressa do responsável, que reafirma o plano anterior. Não transformar recomendação de backup em exigência de compra ou serviço adicional.
+- O PostgreSQL possui volume persistente, **não** backup recuperável; risco residual de perda permanente de dados é conhecido e aceito para a decisão de adiar backups. Essa escolha **não equivale à autorização para migrar a produção**.
+- Permanecem obrigatórios: CI e QA isolados, checksums/histórico 001–011, revisão dos scripts atômicos 012/013, grants/RBAC, validação prévia de estado e **autorização específica antes de qualquer SQL, flag ou deploy operacional de banco**.
+- QA HTTPS da revisão e dos eventos de orçamento em preparação na branch `test/gestao-orcamentos-qa-preflight-2026-11-06`; até confirmar CI da branch, não afirmar teste E2E concluído.
+
+
 ## Eventos de orçamento — checkpoint 06/11/2026 (release 013, branch isolada)
 
 - Release 012: PR #60 merged em `main` `27d4034c`; `Check` concluído com sucesso e Railway web posteriormente confirmou `SUCCESS`. **Isso não comprova que migration 012 foi aplicada** e não habilita a revisão de orçamento.
