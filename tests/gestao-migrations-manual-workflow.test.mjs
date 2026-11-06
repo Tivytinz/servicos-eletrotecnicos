@@ -197,7 +197,7 @@ fi
       encoding:"utf8",env:baseEnv,
     });
     assert.equal(aplicar015.status,0,aplicar015.stderr);
-    assert.match(aplicar015.stdout,/15\\/15/);
+    assert.match(aplicar015.stdout,/15\/15/);
     assert.equal(readFileSync(state,"utf8"),"15");
     const repetir015=spawnSync("bash",[shellScript,"aplicar","015","APLICAR_015_PRODUCAO_SEM_BACKUP"],{
       encoding:"utf8",env:baseEnv,
