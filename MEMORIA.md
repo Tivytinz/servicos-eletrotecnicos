@@ -1,5 +1,13 @@
 # MEMORIA — Eletrotécnico GO
 
+## Orçamentos — revisão 012 (05/11/2026, somente branch)
+
+- Primeiro teste manual da release 011: captura do **Cliente Teste** com rascunho versão 1 de **R$ 350,00**, validade 01/01/2027. UI mostra confirmação e entrada na lista; não substituir por prova direta de persistência/autorizações em produção.
+- Branch `feat/gestao-orcamentos-revisao-012` iniciada sobre `main` `ce32a0fc`. Nova versão de rascunho com trava e comparação de versão, auditoria, RBAC e flag separada `GESTAO_ORCAMENTOS_REVISAO_HABILITADA`. Código e pacote SQL manual preparados; status de CI, merge, deploy e aplicação SQL precisam de evidência própria.
+- **Não habilitar revisão antes de 12/12 migrations + checksum + grants.** Não executar o pacote 012 em produção sem nova autorização; risco de backup/restore ainda aberto. Envio, aceite/rejeição, PDF e OS permanecem fora do escopo.
+- Detalhes e checklist: `docs/gestao-orcamentos-012.md`. Próxima etapa planejada: envio/aceite formal de versão específica, sem movimentar pagamentos.
+
+
 ## Primeiro acesso por convite — 05/11/2026
 
 - Responsável informou que **não definiu senhas** das duas contas admin existentes em produção; pretende que cada titular as configure individualmente via link. Não solicitar senha legada nem provisionar contas duplicadas.
