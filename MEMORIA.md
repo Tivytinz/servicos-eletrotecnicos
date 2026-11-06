@@ -1,5 +1,15 @@
 # MEMORIA — Eletrotécnico GO
 
+
+## 015 em desenvolvimento: link privado de aceite por versão — 06/11/2026
+
+- Evidência de produção conferida: migration 014 aplicada com **14/14** e `COMMIT` no [run 42253223512](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42253223512); flag `GESTAO_OS_PREPARACAO_HABILITADA=true` ativada com deploy Railway `SUCCESS`. Screenshot do responsável confirma página de OS, **zero candidatas/ordens**, e Cliente Teste não elegível, pois marcado `TESTE INTERNO`.
+- Branch `feat/gestao-aceite-link-cliente-015-20261106`: link secreto de 256 bits, SHA-256 apenas no banco, expiração 24h ou validade, reemissão/revogação, visualização e clique explícito do detentor, status/auditoria, OS ainda **somente pendente**; nenhuma mensagem/financeiro. Flag nova `GESTAO_ACEITE_CLIENTE_HABILITADO` ausente por padrão. Browser privado sem GA/analytics.
+- **O link demonstra posse do segredo, NÃO verifica identidade ou titularidade do contato e não é assinatura digital autenticada.** Nunca permitir OS executável só com esse registro. Plano em `docs/gestao-aceite-cliente-015.md`.
+- Testes em PostgreSQL descartável e QA HTTPS com dados sintéticos, pacote manual da 015 com SHA-256 e preflight 14/14. **Nenhuma autorização para aplicar 015, ativar flag ou enviar link real em produção nesta etapa de desenvolvimento.**
+- Sem backup contratado conforme decisão de custo; risco de perda irreversível conhecido. O executor de chat em produção só contempla 012/013/014, deve ser ampliado com aprovação separada quando houver implantação futura.
+
+
 ## Executor 014 pronto e diagnóstico real aprovado, SQL ainda pendente — 06/11/2026
 
 - Branch `ops/gestao-migrations-014-chat-20261106`: adicionar 014 ao canal de comando autorizado no PR administrativo #64 e ao workflow manual. Execução protegida com frase literal, preflight SQL somente leitura próprio, checagem de SHA-256 e exigência de 13 migrations antes de criar a 014. Testes de parâmetros, autoria e replay em mock; manter segredos exclusivamente no GitHub Environment.
