@@ -2,7 +2,7 @@
 -- NÃO EXECUTAR NO BUILD / CI COM CREDENCIAIS DE PRODUÇÃO.
 -- Sem backup recuperável: requer decisão operacional específica separada do merge.
 -- Executar o arquivo inteiro pelo psql com ON_ERROR_STOP, não pelo editor parcial.
--- SHA256 da migration 013: 82393777716103cb74da06dc316a6c9f4b501efae0007d5c83b0e17e73a5c655
+-- SHA256 da migration 013: ad80c236a30c7d86a192c6531ea9747e058a7e299f042905298d609d4c621ecb
 BEGIN;
 SET LOCAL lock_timeout = '5s';
 SET LOCAL statement_timeout = '60s';
@@ -235,20 +235,9 @@ CREATE FUNCTION gestao.listar_eventos_orcamento_restritos(p_token text)
 RETURNS TABLE(orcamento_id uuid,versao integer,tipo text,canal text,
               evidencia text,criado_em timestamptz)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
-AS $
+AS $$
 BEGIN
-  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}
-  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_app') THEN
-    GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO gestao_app;
-    GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO gestao_app;
-  END IF;
-  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_convites') THEN
-    REVOKE ALL ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) FROM gestao_convites;
-    REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM gestao_convites;
-  END IF;
-END
-$grants$;
- THEN RETURN; END IF;
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}$' THEN RETURN; END IF;
   IF NOT EXISTS (
     SELECT 1 FROM gestao.sessoes s
     JOIN gestao.usuarios u ON u.id=s.usuario_id
@@ -267,29 +256,31 @@ $grants$;
   )
   ORDER BY e.criado_em DESC,e.id DESC LIMIT 500;
 END;
-$;
+$$;
 REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM PUBLIC;
 
 DO $grants$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_app') THEN
     GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO gestao_app;
+    GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO gestao_app;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_convites') THEN
     REVOKE ALL ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) FROM gestao_convites;
+    REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM gestao_convites;
   END IF;
 END
 $grants$;
 
 INSERT INTO gestao.schema_migrations(versao,checksum)
-VALUES ('013_gestao_eventos_orcamento.sql','82393777716103cb74da06dc316a6c9f4b501efae0007d5c83b0e17e73a5c655');
+VALUES ('013_gestao_eventos_orcamento.sql','ad80c236a30c7d86a192c6531ea9747e058a7e299f042905298d609d4c621ecb');
 
 DO $postflight$
 BEGIN
   IF (SELECT count(*) FROM gestao.schema_migrations) <> 13
     OR NOT EXISTS (SELECT 1 FROM gestao.schema_migrations
       WHERE versao='013_gestao_eventos_orcamento.sql'
-        AND checksum='82393777716103cb74da06dc316a6c9f4b501efae0007d5c83b0e17e73a5c655')
+        AND checksum='ad80c236a30c7d86a192c6531ea9747e058a7e299f042905298d609d4c621ecb')
     OR NOT has_function_privilege('gestao_app',
       'gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text)','EXECUTE')
     OR NOT has_function_privilege('gestao_app',
