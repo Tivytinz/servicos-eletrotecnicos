@@ -6,6 +6,7 @@ const PASSWORD_ADMIN = "senha-ci-descartavel-gestao-2026";
 const PASSWORD_CARLOS = "senha-ci-carlos-exclusiva-2026";
 const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
 const contexts = [];
+const LINK_CONVITES = /(?:Convidar integrante|Gerenciar convites) da equipe/;
 
 async function novoContexto() {
   const context = await browser.newContext({
@@ -76,8 +77,27 @@ try {
   await carlos.getByLabel("Senha").fill(PASSWORD_CARLOS);
   await carlos.getByRole("button", { name: "Entrar" }).click();
   await carlos.waitForURL(BASE + "/gestao");
-  await carlos.getByRole("link", { name: /Convidar integrante da equipe/ }).waitFor();
+  await carlos.getByRole("link", { name: LINK_CONVITES }).waitFor();
   console.log("PASS: novo administrador consegue entrar e possui permissão de convite");
+
+  // Teste real do novo funil, SOMENTE no PostgreSQL descartável do CI.
+  await admin.goto(BASE + "/gestao/leads");
+  await admin.getByLabel("Cliente").fill("Cliente QA Status");
+  await admin.getByLabel("Telefone").fill("62999990000");
+  await admin.getByLabel("Origem").selectOption("whatsapp");
+  await admin.getByLabel("Descrição").fill("Teste descartável da mudança de etapa");
+  await admin.getByRole("button", { name: "Registrar solicitação" }).click();
+  await admin.waitForURL(BASE + "/gestao/leads");
+  const registro = admin.locator("article").filter({ hasText: "Cliente QA Status" });
+  await registro.getByText("Novo", { exact: true }).waitFor();
+  await registro.getByLabel("Próxima etapa").selectOption("qualificado");
+  await registro.getByRole("button", { name: "Atualizar etapa" }).click();
+  await admin.waitForURL(BASE + "/gestao/leads?sucesso=status");
+  await admin.getByRole("status").getByText(/Etapa atualizada/).waitFor();
+  await admin.locator("article").filter({ hasText: "Cliente QA Status" })
+    .getByText("Qualificado", { exact: true }).waitFor();
+  console.log("PASS: dashboard operacional registra pedido e evolução de status com auditoria");
+
 
 
   // Um técnico com conta válida não ganha acesso ao gerenciamento de convites.
@@ -90,7 +110,12 @@ try {
   await operador.getByLabel("Senha").fill("senha-ci-operador-exclusiva-2026");
   await operador.getByRole("button", { name: "Entrar" }).click();
   await operador.waitForURL(BASE + "/gestao");
-  assert.equal(await operador.getByRole("link", { name: /Convidar integrante da equipe/ }).count(), 0);
+  await operador.goto(BASE + "/gestao/leads");
+  assert.equal(await operador.getByRole("button", { name: "Atualizar etapa" }).count(), 0,
+    "técnico não pode atualizar status do funil");
+  await operador.goto(BASE + "/gestao");
+
+  assert.equal(await operador.getByRole("link", { name: LINK_CONVITES }).count(), 0);
   await operador.goto(BASE + "/gestao/convites");
   await operador.waitForURL(BASE + "/gestao?erro=sem-permissao");
   console.log("PASS: técnico autenticado não acessa a gestão de convites");
