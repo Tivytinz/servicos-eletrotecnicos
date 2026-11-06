@@ -200,6 +200,22 @@ test("016-B: política OFF, canal vinculado, OTP, limite e aceite transacional i
     assert.equal(await emitir(adm.token,revogada.orcamento,canalRev,sha(codigo())),null,
       "canal revogado bloqueia emissão");
 
+    const alterada=await criarProposta();
+    const canalAlterado=await alterada.vinculo(true);
+    const hAlterado=sha(codigo());
+    assert.ok(await emitir(adm.token,alterada.orcamento,canalAlterado,hAlterado));
+    await admin.query(
+      "UPDATE gestao.clientes SET telefone='62900001111' WHERE id=$1",
+      [alterada.cliente],
+    );
+    const {rows:[marcadores]}=await admin.query(
+      "SELECT c.revogado_em IS NOT NULL AS vinculo_revogado, d.revogado_em IS NOT NULL AS desafio_revogado FROM gestao.canais_vinculados_016 c JOIN gestao.desafios_canal_016 d ON d.canal_id=c.id WHERE c.id=$1",
+      [canalAlterado],
+    );
+    assert.deepEqual(marcadores,{vinculo_revogado:true,desafio_revogado:true},
+      "troca de telefone revoga o canal e todos os desafios pendentes");
+    assert.equal(await responder(app,alterada.linkHash,hAlterado),false);
+
     await assert.rejects(app.query("SELECT * FROM gestao.desafios_canal_016 LIMIT 1"),
       e=>e.code==="42501","app não lê segredo");
   } finally {
