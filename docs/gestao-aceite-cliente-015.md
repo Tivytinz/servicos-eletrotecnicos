@@ -2,7 +2,7 @@
 
 ## Escopo e status
 
-**Entrega de desenvolvimento**, não significa implantação. Construir um fluxo próprio para uma pessoa que recebeu um link privado visualizar e aprovar/recusar a versão exata de uma proposta. O sistema registra **posse do link e clique explícito**, mas **não verifica a identidade civil, titularidade do telefone/WhatsApp/e-mail, nem gera assinatura eletrônica com identidade comprovada**.
+**Código integrado à `main` pela PR #71 (commit `bce6cd42`) com `Check` e QA HTTPS aprovados. Migration 015 e flag NÃO implantadas em produção.** Esta é uma entrega de desenvolvimento, não a liberação do recurso para clientes reais. Construir um fluxo próprio para uma pessoa que recebeu um link privado visualizar e aprovar/recusar a versão exata de uma proposta. O sistema registra **posse do link e clique explícito**, mas **não verifica a identidade civil, titularidade do telefone/WhatsApp/e-mail, nem gera assinatura eletrônica com identidade comprovada**.
 
 A release 014 já foi aplicada em produção (14/14) e a tela de OS foi ativada/observada, sem candidatas. O Cliente Teste foi aprovado apenas com evidência `TESTE INTERNO`; a release 015 não emite link para esse registro e não autoriza OS executável.
 
