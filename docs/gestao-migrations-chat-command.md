@@ -61,3 +61,10 @@ Com autorização específica para 013 sem backup, publicou `/gestao aplicar 013
 - Após aplicar a 014, o workflow **não** ativa automaticamente `GESTAO_OS_PREPARACAO_HABILITADA`. Criar/acionar uma OS depende de operação separada; `TESTE INTERNO` fica bloqueado.
 - Não há backup contratado por decisão de custo. A ausência de backup é risco residual sério, não motivo para ignorar preflight e aprovação.
 - Este incremento de código, isoladamente, **não aplica** a migration 014 em produção. A disponibilidade efetiva do comando depende de CI aprovado e integração à `main`.
+
+## Validação real do diagnóstico 014 — 06/11/2026
+
+- [PR #69](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/69) integrada à `main` (commit `3748edf4`), CI `Check` da PR [42250803526](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42250803526): **SUCCESS**.
+- Comando `/gestao verificar 014` publicado pelo conector GitHub no PR administrativo #64 disparou o run [42251233757](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42251233757), **SUCCESS**. Log: 004 e 013 `INTEGRA`; 014 `PENDENTE`; catálogo de **13 migrations**, todas SHA-256 válidas; **nenhuma migration executada**.
+- Site e PostgreSQL do Railway online; deploy do commit de workflow `SKIPPED` por não alterar app, sem flags alteradas. `GESTAO_OS_PREPARACAO_HABILITADA` ausente.
+- **Próxima operação ainda não autorizada:** aplicar SQL 014 em produção e, separadamente, avaliar a ativação da flag. O responsável escolheu não contratar backup por custo, com risco residual de perda irrecuperável.
