@@ -19,7 +19,9 @@ async function novoContexto() {
 
 async function expandirHistorico(proposta) {
   const historico = proposta.locator("details").filter({ hasText: "Histórico de comunicações" });
-  await historico.locator("summary").click();
+  if (!(await historico.evaluate(elemento => elemento.open))) {
+    await historico.locator("summary").click();
+  }
   assert.equal(await historico.evaluate(elemento => elemento.open), true,
     "o clique deve realmente expandir o histórico");
   await historico.locator("ol").waitFor({ state: "visible" });
