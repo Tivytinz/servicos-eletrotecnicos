@@ -1,5 +1,13 @@
 # MEMORIA — Eletrotécnico GO
 
+## Eventos de orçamento — checkpoint 06/11/2026 (release 013, branch isolada)
+
+- Release 012: PR #60 merged em `main` `27d4034c`; `Check` concluído com sucesso e Railway web posteriormente confirmou `SUCCESS`. **Isso não comprova que migration 012 foi aplicada** e não habilita a revisão de orçamento.
+- Branch `feat/gestao-orcamentos-registro-decisao-013` criada a partir do commit `27d4034c`: desenvolvimento de registro **manual** de envio, aprovação relatada e recusa relatada por versão atual, com RBAC, eventos, auditoria, consulta restrita e bloqueio da mudança manual de status do lead com orçamento. Nenhum envio externo, PDF, OS ou recebimento automático.
+- Release 013 precisa de migration 012 antes de qualquer operação SQL. Novo pacote manual `db/operacoes/gestao-orcamentos-013-atomico.sql`, com flag própria `GESTAO_ORCAMENTOS_EVENTOS_HABILITADOS` ausente/desativada por padrão. **Não aplicar migrations nem flags na produção sem autorização operacional separada e plano de recuperação** (backup validado ainda não comprovado).
+- Testes SQL em banco descartável e CI/QA devem ser confirmados antes de merge; registrar resultados da PR separadamente. Veja `docs/gestao-orcamentos-013.md`.
+
+
 ## Orçamentos — revisão 012 (05/11/2026, somente branch)
 
 - Primeiro teste manual da release 011: captura do **Cliente Teste** com rascunho versão 1 de **R$ 350,00**, validade 01/01/2027. UI mostra confirmação e entrada na lista; não substituir por prova direta de persistência/autorizações em produção.
