@@ -8,6 +8,7 @@ const commands=[
   ["verificar","/gestao verificar", "verificar","012",""],
   ["aplicar_012","/gestao aplicar 012 APLICAR_012_PRODUCAO_SEM_BACKUP","aplicar","012","APLICAR_012_PRODUCAO_SEM_BACKUP"],
   ["aplicar_013","/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP","aplicar","013","APLICAR_013_PRODUCAO_SEM_BACKUP"],
+  ["aplicar_014","/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP","aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
 ];
 
 test("canal ChatGPT: só comentários novos, do titular e no PR administrativo encerrado",()=>{
@@ -15,8 +16,8 @@ test("canal ChatGPT: só comentários novos, do titular e no PR administrativo e
   assert.doesNotMatch(channel,/^\s+(?:push|pull_request_target|workflow_dispatch|schedule):/m);
   assert.match(channel,/^permissions:\s*\n\s+contents: read/m);
   const guards=channel.match(/github\.repository == 'Tivytinz\/servicos-eletrotecnicos' && github\.event\.issue\.number == 64 && github\.event\.issue\.pull_request != null && github\.event\.comment\.user\.id == 263981923 && github\.event\.issue\.state == 'closed'/g)||[];
-  assert.equal(guards.length,3,"cada comando precisa de autenticação e PR fixo");
-  const ids=Array.from(channel.matchAll(/^  (verificar|aplicar_012|aplicar_013):$/gm),x=>x[1]);
+  assert.equal(guards.length,4,"cada comando precisa de autenticação e PR fixo");
+  const ids=Array.from(channel.matchAll(/^  (verificar|aplicar_012|aplicar_013|aplicar_014):$/gm),x=>x[1]);
   assert.deepEqual(ids,commands.map(x=>x[0]));
   assert.doesNotMatch(channel,/\b(?:run|checkout|eval|exec):/);
 });
@@ -46,6 +47,8 @@ test("executor original continua manual, reutilizável e com segredos no environ
   assert.match(executor,/environment: gestao-db-production/);
   assert.match(executor,/if: github\.ref == 'refs\/heads\/main'/);
   assert.match(executor,/group: gestao-migrations-production/);
+  assert.match(executor,/verificar:014\|aplicar:012\|aplicar:013\|aplicar:014/);
+  assert.match(executor,/APLICAR_014_PRODUCAO_SEM_BACKUP/);
   assert.match(executor,/RAILWAY_GESTAO_SSH_PRIVATE_KEY/);
   assert.match(executor,/RAILWAY_GESTAO_WORKSPACE_TOKEN/);
   assert.match(executor,/RAILWAY_GESTAO_KNOWN_HOSTS/);
