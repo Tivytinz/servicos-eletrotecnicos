@@ -29,7 +29,7 @@ export default async function Leads() {
       <h1 className="mt-6 text-3xl font-bold">Solicitações e clientes</h1>
       <p className="mt-2 text-slate-300">Cadastre pedidos recebidos pelo WhatsApp, site ou indicação.</p>
       {temPermissao(usuario.papeis, "leads:criar") ? (
-      <form action={cadastrarLead} className="mt-8 grid gap-4 rounded-xl border border-white/15 bg-white/5 p-6">
+      <form id="nova-solicitacao" action={cadastrarLead} className="mt-8 scroll-mt-8 grid gap-4 rounded-xl border border-white/15 bg-white/5 p-6">
         <label>Cliente <input name="nome" required minLength={2} maxLength={200}
           className="mt-2 block w-full rounded-lg bg-slate-900 p-3" /></label>
         <label>Telefone <input name="telefone" maxLength={40}
