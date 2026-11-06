@@ -34,7 +34,7 @@ export function formatarValidadeOrcamento(data: Date | string): string {
 /** Entrada editável em reais, sem separador de milhar e sem arredondamento. */
 export function valorOrcamentoParaEntrada(centavos: string | number): string {
   const texto = String(centavos);
-  if (!/^\\d{1,10}$/.test(texto)) return "";
+  if (!/^\d{1,10}$/.test(texto)) return "";
   const valor = BigInt(texto);
   if (valor < 1n || valor > 9999999999n) return "";
   return `${valor / 100n},${(valor % 100n).toString().padStart(2, "0")}`;
