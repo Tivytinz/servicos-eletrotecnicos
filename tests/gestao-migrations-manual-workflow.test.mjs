@@ -24,10 +24,11 @@ test("workflow de migrations: somente acionamento manual com escopo principal e 
   assert.doesNotMatch(workflow, /\b(?:railway\s+tcp-proxy|ssh-keyscan)\b/);
 });
 
-test("pacotes 012/013 correspondem ao conteúdo e SHA-256 de cada migration", () => {
+test("pacotes 012/013/014 correspondem ao conteúdo e SHA-256 de cada migration", () => {
   for(const [number, filename, packageName] of [
     ["012", "012_gestao_revisao_orcamentos.sql","gestao-orcamentos-012-atomico.sql"],
     ["013", "013_gestao_eventos_orcamento.sql","gestao-orcamentos-013-atomico.sql"],
+    ["014", "014_gestao_os_preparacao.sql","gestao-os-014-atomico.sql"],
   ]) {
     const migration = readFileSync("db/migrations/" + filename,"utf8");
     const pacote = readFileSync("db/operacoes/" + packageName,"utf8");
@@ -65,7 +66,9 @@ test("modo aplicar exige frase exata mesmo na main, antes de qualquer acesso rem
     ["aplicar","012",""],
     ["aplicar","013","APLICAR_012_PRODUCAO_SEM_BACKUP"],
     ["verificar","013","APLICAR_013_PRODUCAO_SEM_BACKUP"],
-    ["aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
+    ["aplicar","014","APLICAR_012_PRODUCAO_SEM_BACKUP"],
+    ["aplicar","014",""],
+    ["verificar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
   ]) {
     const result = spawnSync("bash",[shellScript,modo,release,confirmacao],{
       encoding:"utf8",
@@ -105,6 +108,10 @@ elif [[ "$*" == *"-f -"* ]]; then
     [[ "$(cat "$MOCK_STATE")" == "11" ]] || exit 1
     printf '12' > "$MOCK_STATE"
     printf '%s\\n' "COMMIT"
+  elif [[ "$sql" == *"PACOTE MANUAL ATÔMICO 014"* ]]; then
+    [[ "$(cat "$MOCK_STATE")" == "13" ]] || exit 1
+    printf '14' > "$MOCK_STATE"
+    printf '%s\\n' "COMMIT"
   else
     echo "BLOQUEIO: pacote fora do escopo" >&2
     exit 1
@@ -135,12 +142,35 @@ fi
       encoding:"utf8",env:baseEnv,
     });
     assert.equal(aplicar.status,0,aplicar.stderr);
-    assert.match(aplicar.stdout,/12\/13/);
+    assert.match(aplicar.stdout,/12\/14/);
     assert.equal(readFileSync(state,"utf8"),"12");
     const repetir=spawnSync("bash",[shellScript,"aplicar","012","APLICAR_012_PRODUCAO_SEM_BACKUP"],{
       encoding:"utf8",env:baseEnv,
     });
     assert.equal(repetir.status,1,"reaplicação de 012 deve parar antes do pacote");
     assert.match(repetir.stderr,/exige exatamente 11 migrations/);
+
+    // Simula o banco 013 real antes da aplicação da 014.
+    writeFileSync(state,"13");
+    writeFileSync(log,"");
+    const verificar014=spawnSync("bash",[shellScript,"verificar","014",""],{
+      encoding:"utf8",env:baseEnv,
+    });
+    assert.equal(verificar014.status,0,verificar014.stderr);
+    assert.match(verificar014.stdout,/13 migrations aplicadas/);
+    assert.equal(readFileSync(state,"utf8"),"13");
+    assert.ok(!readFileSync(log,"utf8").includes("PACOTE MANUAL ATÔMICO"));
+
+    const aplicar014=spawnSync("bash",[shellScript,"aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],{
+      encoding:"utf8",env:baseEnv,
+    });
+    assert.equal(aplicar014.status,0,aplicar014.stderr);
+    assert.match(aplicar014.stdout,/14\/14/);
+    assert.equal(readFileSync(state,"utf8"),"14");
+    const repetir014=spawnSync("bash",[shellScript,"aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],{
+      encoding:"utf8",env:baseEnv,
+    });
+    assert.equal(repetir014.status,1,"reaplicar a 014 deve parar antes do pacote");
+    assert.match(repetir014.stderr,/exige exatamente 13 migrations/);
   } finally { rmSync(temp,{recursive:true,force:true}); }
 });
