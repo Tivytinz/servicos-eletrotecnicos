@@ -21,14 +21,21 @@ export default function FormularioAceiteCliente() {
     // O fragmento não integra requisição GET, logs do servidor ou Referer.
     const segredo=window.location.hash.slice(1);
     if(!/^[A-Za-z0-9_-]{43}$/.test(segredo)) {
-      setErro("Link inválido ou ausente.");setCarregando(false);return;
+      void Promise.resolve().then(()=>{
+        if(!ativo)return;
+        setErro("Link inválido ou ausente.");
+        setCarregando(false);
+      });
+      return;
     }
-    setToken(segredo);
     void visualizarPropostaPeloLink(segredo)
       .then(proposta=>{
         if(!ativo)return;
         if(!proposta)setErro("Link indisponível, expirado, revogado ou já utilizado.");
-        else setDados(proposta);
+        else {
+          setToken(segredo);
+          setDados(proposta);
+        }
       })
       .catch(()=>{if(ativo)setErro("Não foi possível verificar a proposta. Tente novamente.");})
       .finally(()=>{if(ativo)setCarregando(false);});
