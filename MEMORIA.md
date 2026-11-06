@@ -1,5 +1,14 @@
 # MEMORIA — Eletrotécnico GO
 
+## Release 016 — confirmação de canal independente (projeto), 06/11/2026
+
+- Branch `feat/gestao-canal-independente-016-20261106`: primeiro incremento 016-A, **somente projeto de segurança e primitivas locais testáveis**, sem migração 016, sem novo frontend, sem alterações Railway/produção.
+- Estado atual: `gestao.clientes.telefone` é fornecido pelo solicitante, não comprova posse de dispositivo ou identidade civil. Um desafio enviado ao mesmo canal do link não serve como prova independente. Não confundir confirmação de posse de canal com assinatura/identidade autenticada.
+- Proposta: segredo aleatório de 96 bits, 16 caracteres, SHA-256 no banco, uso único, 10min, no máximo 5 tentativas, limites atômicos no PostgreSQL, canal previamente vinculado e entrega independente. Ver `docs/gestao-validacao-canal-016.md`.
+- Próximos passos obrigatórios: vinculação independente de canal, SQL 016 com bloqueio de bypass de funções 015, UI e QA isolado, verificação de grants, preflight e autorização operacional separada.
+- Nenhuma mudança deve liberar OS executável, agendamento ou financeiro. Não contratar SMS, assinatura ou backup automaticamente.
+
+
 ## Preparação de homologação interativa LOCAL — 06/11/2026 (branch isolada)
 
 - Branch feat/gestao-homologacao-local-20261106: proposta de Docker Compose com PostgreSQL descartável, Next.js HTTPS somente em 127.0.0.1:3443, preparação segura de migrations 001–015, roles restritas e admin fictício. Ambiente não é Railway.
