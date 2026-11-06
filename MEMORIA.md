@@ -1,6 +1,17 @@
 # MEMORIA — Eletrotécnico GO
 
 
+## Migration 015 APLICADA em produção; aceite por link ainda desativado — 06/11/2026
+
+- **Autorização inequívoca** nesta conversa: o responsável aprovou aplicar a migration 015 em produção **sem backup**. Risco residual de perda sem restauração recuperável assumido; não contratar recursos adicionais automaticamente.
+- Executor da release 015 integrado na [PR #73](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/73) (commit `1796050c`); CI `Check` da PR [42263323263](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263323263) e da `main` [42263715834](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263715834) **SUCCESS**.
+- **Preflight real SOMENTE LEITURA:** [run 42263807883](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263807883), `SUCCESS`; `railway/postgres`, 14 migrations com SHA-256 íntegro, 004/013/014 `INTEGRA`, 015 `PENDENTE`; roles `gestao_app` e `gestao_convites` sem privilégios globais elevados; objetos/funções da 015 ausentes.
+- **Aplicação real:** [run 42263941244](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263941244), `SUCCESS`, `COMMIT`, e **15/15 migrations íntegras**, incluindo 015 `INTEGRA`, no PostgreSQL produção. Funções da 015 presentes; a role `gestao_app` possui `EXECUTE` para responder e `gestao_convites` não; sem acesso direto de escrita a orçamentos, OS ou financeiro.
+- **Pós-operação Railway:** serviços Web e Postgres `online` com zero alertas; `GESTAO_ACEITE_CLIENTE_HABILITADO` verificada **ausente**. Aplicar a SQL não habilita a interface; requer autorização separada para flag, revisão dos termos de privacidade e QA exclusivamente fictício. Não comunicar com clientes reais nem criar OS executável automaticamente.
+- Não houve qualquer comando de limpeza de dados, pagamento ou mudança de RBAC além da criação de funções SQL restritas da 015. A 014 continua sendo apenas OS pendente.
+
+
+
 ## Operação SQL 015 autorizada, executor restrito em preparação — 06/11/2026
 
 - O responsável autorizou explicitamente a aplicação da migration **015 em produção sem backup** nesta conversa, após indicação de que o SQL estava 14/14 e o código da 015 integrado. Sem cópia recuperável, permanece o risco de perda irreversível.
