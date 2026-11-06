@@ -24,11 +24,12 @@ test("workflow de migrations: somente acionamento manual com escopo principal e 
   assert.doesNotMatch(workflow, /\b(?:railway\s+tcp-proxy|ssh-keyscan)\b/);
 });
 
-test("pacotes 012/013/014 correspondem ao conteúdo e SHA-256 de cada migration", () => {
+test("pacotes 012/013/014/015 correspondem ao conteúdo e SHA-256 de cada migration", () => {
   for(const [number, filename, packageName] of [
     ["012", "012_gestao_revisao_orcamentos.sql","gestao-orcamentos-012-atomico.sql"],
     ["013", "013_gestao_eventos_orcamento.sql","gestao-orcamentos-013-atomico.sql"],
     ["014", "014_gestao_os_preparacao.sql","gestao-os-014-atomico.sql"],
+    ["015", "015_gestao_link_aceite_cliente.sql","gestao-aceite-cliente-015-atomico.sql"],
   ]) {
     const migration = readFileSync("db/migrations/" + filename,"utf8");
     const pacote = readFileSync("db/operacoes/" + packageName,"utf8");
@@ -48,6 +49,7 @@ test("executor shell tem sintaxe válida e bloqueia parâmetros não aprovados",
   assert.equal(syntax.status,0,syntax.stderr);
   for(const [mode,release,confirmation] of [
     ["aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
+    ["aplicar","015","APLICAR_015_PRODUCAO_SEM_BACKUP"],
     ["aplicar","012",""],
     ["aplicar","013","APLICAR_012_PRODUCAO_SEM_BACKUP"],
     ["verificar","012","APLICAR_012_PRODUCAO_SEM_BACKUP"],
@@ -69,6 +71,9 @@ test("modo aplicar exige frase exata mesmo na main, antes de qualquer acesso rem
     ["aplicar","014","APLICAR_012_PRODUCAO_SEM_BACKUP"],
     ["aplicar","014",""],
     ["verificar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
+    ["aplicar","015",""],
+    ["aplicar","015","APLICAR_014_PRODUCAO_SEM_BACKUP"],
+    ["verificar","015","APLICAR_015_PRODUCAO_SEM_BACKUP"],
   ]) {
     const result = spawnSync("bash",[shellScript,modo,release,confirmacao],{
       encoding:"utf8",
@@ -112,6 +117,10 @@ elif [[ "$*" == *"-f -"* ]]; then
     [[ "$(cat "$MOCK_STATE")" == "13" ]] || exit 1
     printf '14' > "$MOCK_STATE"
     printf '%s\\n' "COMMIT"
+  elif [[ "$sql" == *"PACOTE ATÔMICO 015"* ]]; then
+    [[ "$(cat "$MOCK_STATE")" == "14" ]] || exit 1
+    printf '15' > "$MOCK_STATE"
+    printf '%s\\n' "COMMIT"
   else
     echo "BLOQUEIO: pacote fora do escopo" >&2
     exit 1
@@ -142,7 +151,7 @@ fi
       encoding:"utf8",env:baseEnv,
     });
     assert.equal(aplicar.status,0,aplicar.stderr);
-    assert.match(aplicar.stdout,/12\/14/);
+    assert.match(aplicar.stdout,/12\/15/);
     assert.equal(readFileSync(state,"utf8"),"12");
     const repetir=spawnSync("bash",[shellScript,"aplicar","012","APLICAR_012_PRODUCAO_SEM_BACKUP"],{
       encoding:"utf8",env:baseEnv,
@@ -165,12 +174,35 @@ fi
       encoding:"utf8",env:baseEnv,
     });
     assert.equal(aplicar014.status,0,aplicar014.stderr);
-    assert.match(aplicar014.stdout,/14\/14/);
+    assert.match(aplicar014.stdout,/14\/15/);
     assert.equal(readFileSync(state,"utf8"),"14");
     const repetir014=spawnSync("bash",[shellScript,"aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],{
       encoding:"utf8",env:baseEnv,
     });
     assert.equal(repetir014.status,1,"reaplicar a 014 deve parar antes do pacote");
     assert.match(repetir014.stderr,/exige exatamente 13 migrations/);
+
+    // Conferir 015 em modo somente leitura antes de autorização de escrita.
+    writeFileSync(state,"14");
+    writeFileSync(log,"");
+    const verificar015=spawnSync("bash",[shellScript,"verificar","015",""],{
+      encoding:"utf8",env:baseEnv,
+    });
+    assert.equal(verificar015.status,0,verificar015.stderr);
+    assert.match(verificar015.stdout,/14 migrations aplicadas/);
+    assert.equal(readFileSync(state,"utf8"),"14");
+    assert.ok(!readFileSync(log,"utf8").includes("PACOTE ATÔMICO 015"));
+
+    const aplicar015=spawnSync("bash",[shellScript,"aplicar","015","APLICAR_015_PRODUCAO_SEM_BACKUP"],{
+      encoding:"utf8",env:baseEnv,
+    });
+    assert.equal(aplicar015.status,0,aplicar015.stderr);
+    assert.match(aplicar015.stdout,/15\/15/);
+    assert.equal(readFileSync(state,"utf8"),"15");
+    const repetir015=spawnSync("bash",[shellScript,"aplicar","015","APLICAR_015_PRODUCAO_SEM_BACKUP"],{
+      encoding:"utf8",env:baseEnv,
+    });
+    assert.equal(repetir015.status,1,"reaplicação 015 deve bloquear antes do SQL");
+    assert.match(repetir015.stderr,/exige exatamente 14 migrations/);
   } finally { rmSync(temp,{recursive:true,force:true}); }
 });

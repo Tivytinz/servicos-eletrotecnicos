@@ -69,3 +69,25 @@ jobs:
       release: "014"
       confirmacao: "APLICAR_014_PRODUCAO_SEM_BACKUP"
     secrets: inherit
+  verificar_015:
+    # Diagnóstico somente leitura da release 015; PR/autor e texto fixados.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao verificar 015'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: verificar
+      release: "015"
+      confirmacao: ""
+    secrets: inherit
+  aplicar_015:
+    # Apenas o titular pode executar; confirma explicitamente sem backup.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao aplicar 015 APLICAR_015_PRODUCAO_SEM_BACKUP'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: aplicar
+      release: "015"
+      confirmacao: "APLICAR_015_PRODUCAO_SEM_BACKUP"
+    secrets: inherit

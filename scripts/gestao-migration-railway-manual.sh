@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Executa APENAS preflight ou UM pacote autorizado 012/013/014 via Railway SSH.
+# Executa APENAS preflight ou UM pacote autorizado 012/013/014/015 via Railway SSH.
 # Somente workflow manual/comando de titular na main, com segredos de ambiente protegidos.
 set -Eeuo pipefail
 set +x
@@ -39,7 +39,13 @@ case "$RELEASE" in
     CONFIRMACAO_ESPERADA="APLICAR_014_PRODUCAO_SEM_BACKUP"
     PACOTE="db/operacoes/gestao-os-014-atomico.sql"
     ;;
-  *) echo "BLOQUEIO: somente releases 012, 013 ou 014." >&2; exit 2 ;;
+  015)
+    ANTERIOR=14
+    POSTERIOR=15
+    CONFIRMACAO_ESPERADA="APLICAR_015_PRODUCAO_SEM_BACKUP"
+    PACOTE="db/operacoes/gestao-aceite-cliente-015-atomico.sql"
+    ;;
+  *) echo "BLOQUEIO: somente releases 012, 013, 014 ou 015." >&2; exit 2 ;;
 esac
 if [[ "$MODE" == "aplicar" && "$CONFIRMACAO" != "$CONFIRMACAO_ESPERADA" ]]; then
   echo "BLOQUEIO: confirmação de produção inválida." >&2
@@ -56,6 +62,8 @@ fi
 PREFLIGHT="db/operacoes/gestao-preflight-012-013-somente-leitura.sql"
 if [[ "$RELEASE" == "014" ]]; then
   PREFLIGHT="db/operacoes/gestao-preflight-014-somente-leitura.sql"
+elif [[ "$RELEASE" == "015" ]]; then
+  PREFLIGHT="db/operacoes/gestao-preflight-015-somente-leitura.sql"
 fi
 if [[ ! -f "$PREFLIGHT" || ! -f "$PACOTE" ]]; then
   echo "BLOQUEIO: catálogo SQL incompleto no checkout." >&2
@@ -88,7 +96,7 @@ verificar_catalogo() {
     }
     total=$((total + 1))
   done <<< "$historico"
-  [[ "$total" -ge 11 && "$total" -le 14 ]] || {
+  [[ "$total" -ge 11 && "$total" -le 15 ]] || {
     echo "BLOQUEIO: contagem de migrations fora da faixa esperada: $total." >&2
     return 1
   }
@@ -119,4 +127,4 @@ if [[ "$TOTAL_VERIFICADO" != "$POSTERIOR" ]]; then
   echo "ALERTA: estado pós-operação não corresponde à release $RELEASE. Verificação humana necessária." >&2
   exit 1
 fi
-echo "CONCLUÍDO: release $RELEASE aplicada; histórico confirmado $POSTERIOR/14. Nenhuma flag foi habilitada."
+echo "CONCLUÍDO: release $RELEASE aplicada; histórico confirmado $POSTERIOR/15. Nenhuma flag foi habilitada."
