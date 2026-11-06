@@ -52,6 +52,7 @@ try {
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.buscar_sessao_segura(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.revogar_sessao_segura(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.confirmar_senha_admin(text,text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.alterar_status_lead(text,uuid,text,text) TO gestao_app");
   await admin.query("GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO gestao_app");
   await admin.query("GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO gestao_app");
   // Role comum não pode emitir, listar ou revogar convites.
