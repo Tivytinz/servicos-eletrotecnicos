@@ -1,5 +1,12 @@
 # MEMORIA — Eletrotécnico GO
 
+### Checkpoint 016-B — 06/11/2026 (SOMENTE branch; NÃO aplicado)
+
+- A branch da PR #77 agora contém `db/migrations/016_gestao_desafio_canal.sql` com política `OFF` por padrão, vínculos de canal restritos, desafio vinculado ao link 015 e à versão, hashes de código, 10 minutos e contador de 5 erros cumulativos. A resposta SQL 016 é atômica e mantém identidade civil não verificada e OS apenas pendente.
+- Quando o banco ativar futuramente o modo 016, a função legada `responder_link_aceite_cliente` é bloqueada pelo próprio PostgreSQL; com modo OFF, fluxo 015 permanece igual. A troca de telefone/e-mail revoga vínculos/desafios correspondentes.
+- Novo teste em banco isolado `tests/gestao-desafio-canal-016-db.test.mjs`: modo OFF, RBAC, vínculo pendente, limite, corrida, replay, expiração, revogação e financeiro.
+- **Pendências obrigatórias:** comprovação efetiva de vinculação (fixtures de QA não valem), entrega independente do segredo, UI/QA de navegador 016, verificação de grants/bundle 016 e aprovação operacional. Não efetuar merge nem deploy da PR #77 antes de resolver esses bloqueadores. Nenhum novo produto pago/flag aplicada.
+
 ## Release 016 — confirmação de canal independente (projeto), 06/11/2026
 
 - Branch `feat/gestao-canal-independente-016-20261106`: primeiro incremento 016-A, **somente projeto de segurança e primitivas locais testáveis**, sem migração 016, sem novo frontend, sem alterações Railway/produção.
