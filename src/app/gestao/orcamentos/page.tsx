@@ -5,11 +5,12 @@ import { notFound, redirect } from "next/navigation";
 import { usuarioAtual } from "@/lib/gestao/acesso";
 import { consultar } from "@/lib/gestao/db";
 import {
-  formatarValidadeOrcamento, formatarValorOrcamento, type OrcamentoResumo,
+  formatarValidadeOrcamento, formatarValorOrcamento,
+  validadeOrcamentoParaEntrada, valorOrcamentoParaEntrada, type OrcamentoResumo,
 } from "@/lib/gestao/orcamentos";
 import { temPermissao } from "@/lib/gestao/permissoes";
 import { COOKIE_SESSAO } from "@/lib/gestao/sessao";
-import { criarOrcamentoRascunho } from "./actions";
+import { criarOrcamentoRascunho, revisarOrcamentoRascunho } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ export default async function Orcamentos({
 
   const comOrcamento = new Set(orcamentos.map(o => o.lead_id));
   const semRascunho = elegiveis.filter(l => !comOrcamento.has(l.id));
+  const revisaoHabilitada = process.env.GESTAO_ORCAMENTOS_REVISAO_HABILITADA === "true";
   const { lead: selecionado, erro, sucesso } = await searchParams;
   const principal = semRascunho.find(l => l.id === selecionado)?.id ?? semRascunho[0]?.id;
 
@@ -68,6 +70,11 @@ export default async function Orcamentos({
       {sucesso === "rascunho" && (
         <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
           Orçamento salvo como rascunho (versão 1). A solicitação foi colocada em preparação.
+        </p>
+      )}
+      {sucesso === "revisao" && (
+        <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
+          Nova versão do rascunho salva. A anterior permanece no histórico e nenhum orçamento foi enviado.
         </p>
       )}
       {erro === "conflito" && (
@@ -163,6 +170,44 @@ export default async function Orcamentos({
                   <strong className="text-xl text-white">{formatarValorOrcamento(o.valor_centavos)}</strong>
                   <span className="text-xs text-slate-400">Válido até {formatarValidadeOrcamento(o.validade_em)}</span>
                 </div>
+                {revisaoHabilitada && o.status === "rascunho" && (
+                  <details className="mt-5 border-t border-white/10 pt-4">
+                    <summary className="cursor-pointer font-semibold text-amber-300">
+                      Revisar rascunho · criar versão {o.versao + 1}
+                    </summary>
+                    <form action={revisarOrcamentoRascunho} className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <input type="hidden" name="orcamento" value={o.id} />
+                      <input type="hidden" name="versao" value={o.versao} />
+                      <label className="block text-sm">
+                        Novo valor em reais (R$)
+                        <input name="valor" required inputMode="decimal" maxLength={11}
+                          pattern="[0-9]{1,8}([.,][0-9]{1,2})?"
+                          defaultValue={valorOrcamentoParaEntrada(o.valor_centavos)}
+                          className="mt-2 block w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
+                      </label>
+                      <label className="block text-sm">
+                        Nova validade
+                        <input name="validade" type="date" required
+                          defaultValue={validadeOrcamentoParaEntrada(o.validade_em)}
+                          className="mt-2 block w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
+                      </label>
+                      <label className="block text-sm sm:col-span-2">
+                        Descrição e condições revisadas
+                        <textarea name="descricao" required minLength={10} maxLength={4000}
+                          defaultValue={o.descricao}
+                          className="mt-2 block min-h-32 w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
+                      </label>
+                      <div className="sm:col-span-2">
+                        <button className="rounded-lg bg-amber-400 px-5 py-3 font-bold text-slate-950 hover:bg-amber-300">
+                          Salvar nova versão
+                        </button>
+                        <p className="mt-2 text-xs text-slate-400">
+                          A versão anterior é preservada. Esta ação não envia nem aprova a proposta.
+                        </p>
+                      </div>
+                    </form>
+                  </details>
+                )}
               </li>
             ))}
           </ul>

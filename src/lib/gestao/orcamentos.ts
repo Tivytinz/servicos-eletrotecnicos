@@ -31,6 +31,27 @@ export function formatarValidadeOrcamento(data: Date | string): string {
   return DATA.format(new Date(instante - 1));
 }
 
+/** Entrada editável em reais, sem separador de milhar e sem arredondamento. */
+export function valorOrcamentoParaEntrada(centavos: string | number): string {
+  const texto = String(centavos);
+  if (!/^\d{1,10}$/.test(texto)) return "";
+  const valor = BigInt(texto);
+  if (valor < 1n || valor > 9999999999n) return "";
+  return `${valor / 100n},${(valor % 100n).toString().padStart(2, "0")}`;
+}
+
+/** Campo date: a validade foi persistida no início do dia seguinte em São Paulo. */
+export function validadeOrcamentoParaEntrada(data: Date | string): string {
+  const timestamp = new Date(data).getTime();
+  if (!Number.isFinite(timestamp)) return "";
+  const partes = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit", month: "2-digit", year: "numeric",
+  }).formatToParts(new Date(timestamp - 1));
+  const valores = Object.fromEntries(partes.map((parte) => [parte.type, parte.value]));
+  return `${valores.year}-${valores.month}-${valores.day}`;
+}
+
 export type OrcamentoResumo = {
   id: string; lead_id: string; cliente_nome: string; versao: number;
   status: string; valor_centavos: string; descricao: string;

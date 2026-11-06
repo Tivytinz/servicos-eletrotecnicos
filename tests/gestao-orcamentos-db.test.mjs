@@ -5,6 +5,7 @@ import pg from "pg";
 import {
   parseValorOrcamento, dataISOValida,
   formatarValorOrcamento, formatarValidadeOrcamento,
+  valorOrcamentoParaEntrada, validadeOrcamentoParaEntrada,
 } from "../src/lib/gestao/orcamentos.ts";
 
 test("orçamento: centavos exatos, calendário válido e apresentação em reais", () => {
@@ -21,6 +22,11 @@ test("orçamento: centavos exatos, calendário válido e apresentação em reais
   assert.equal(dataISOValida("2026-13-01"), false);
   assert.match(formatarValorOrcamento("35050"), /350,50/);
   assert.match(formatarValidadeOrcamento("2026-11-07T03:00:00.000Z"), /06\/11\/2026/);
+  assert.equal(valorOrcamentoParaEntrada("35000"), "350,00");
+  assert.equal(valorOrcamentoParaEntrada("35050"), "350,50");
+  assert.equal(valorOrcamentoParaEntrada("1"), "0,01");
+  assert.equal(valorOrcamentoParaEntrada("NaN"), "");
+  assert.equal(validadeOrcamentoParaEntrada("2026-11-07T03:00:00.000Z"), "2026-11-06");
 });
 
 test("orçamentos: sessão, papéis, isolamento SQL, criação única, versão e auditoria", {
