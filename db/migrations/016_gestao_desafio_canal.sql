@@ -321,6 +321,40 @@ BEGIN
 END;
 $$;
 
+-- Uma alteração de contato invalida automaticamente a vinculação antiga.
+-- O desafio não se torna válido novamente só porque o telefone/email foi corrigido.
+CREATE FUNCTION gestao.revogar_vinculo_por_mudanca_016()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = pg_catalog, pg_temp AS $
+DECLARE v_agora timestamptz;
+BEGIN
+  IF NEW.telefone IS NOT DISTINCT FROM OLD.telefone
+    AND NEW.email IS NOT DISTINCT FROM OLD.email
+  THEN RETURN NEW; END IF;
+  v_agora:=clock_timestamp();
+  WITH revogados AS (
+    UPDATE gestao.canais_vinculados_016 c
+    SET revogado_em=v_agora
+    WHERE c.cliente_id=NEW.id AND c.revogado_em IS NULL
+      AND (
+        (NEW.telefone IS DISTINCT FROM OLD.telefone
+          AND c.tipo IN ('telefone','whatsapp'))
+        OR (NEW.email IS DISTINCT FROM OLD.email AND c.tipo='email')
+      )
+    RETURNING c.id
+  )
+  UPDATE gestao.desafios_canal_016 d
+  SET revogado_em=v_agora
+  WHERE d.canal_id IN (SELECT id FROM revogados)
+    AND d.utilizado_em IS NULL AND d.revogado_em IS NULL;
+  RETURN NEW;
+END;
+$;
+REVOKE ALL ON FUNCTION gestao.revogar_vinculo_por_mudanca_016() FROM PUBLIC;
+CREATE TRIGGER trg_revogar_vinculo_por_mudanca_016
+AFTER UPDATE OF telefone,email ON gestao.clientes
+FOR EACH ROW EXECUTE FUNCTION gestao.revogar_vinculo_por_mudanca_016();
+
 REVOKE ALL ON FUNCTION gestao.responder_link_aceite_cliente(text,text,boolean) FROM PUBLIC;
 
 DO $grants$
