@@ -17,6 +17,17 @@ async function novoContexto() {
   return context;
 }
 
+async function expandirHistorico(proposta) {
+  const historico = proposta.locator("details").filter({
+    has: proposta.locator("summary").getByText("Histórico de comunicações"),
+  });
+  await historico.locator("summary").click();
+  assert.equal(await historico.evaluate(elemento => elemento.open), true,
+    "o clique deve realmente expandir o histórico");
+  await historico.locator("ol").waitFor({ state: "visible" });
+  return historico;
+}
+
 async function criarConvite(page, usuario, papel) {
   await page.goto(BASE + "/gestao/convites");
   await page.getByLabel("Usuário").fill(usuario);
@@ -136,8 +147,9 @@ try {
   await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=evento");
   const enviada = admin.locator("li").filter({ hasText: "Cliente QA Status" });
   await enviada.getByText("enviado", { exact: true }).waitFor();
-  await enviada.getByText("Histórico de comunicações").click();
-  await enviada.getByText(/Envio informado.*versão 2/).waitFor();
+  await admin.waitForLoadState("networkidle");
+  const historicoEnviado = await expandirHistorico(enviada);
+  await historicoEnviado.getByText(/Envio informado.*versão 2/).waitFor();
 
   await enviada.getByText("Registrar resposta do cliente").click();
   await enviada.getByLabel("Resposta relatada pelo cliente").selectOption("aprovacao");
@@ -148,9 +160,10 @@ try {
   await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=evento");
   const aprovada = admin.locator("li").filter({ hasText: "Cliente QA Status" });
   await aprovada.getByText("aprovado", { exact: true }).waitFor();
-  await aprovada.getByText("Histórico de comunicações").click();
-  await aprovada.getByText(/Envio informado.*versão 2/).waitFor();
-  await aprovada.getByText(/Aprovação informada.*versão 2/).waitFor();
+  await admin.waitForLoadState("networkidle");
+  const historicoAprovado = await expandirHistorico(aprovada);
+  await historicoAprovado.getByText(/Envio informado.*versão 2/).waitFor();
+  await historicoAprovado.getByText(/Aprovação informada.*versão 2/).waitFor();
   assert.equal(await aprovada.getByText("Registrar resposta do cliente").count(), 0,
     "estado aprovado não aceita outra decisão");
   console.log("PASS: histórico HTTPS reúne envio e decisão relatada da versão 2, sem mensagem real");
