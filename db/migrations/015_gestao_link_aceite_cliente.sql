@@ -309,7 +309,7 @@ BEGIN
   INSERT INTO gestao.auditoria(ator_id,entidade,entidade_id,acao,detalhes)
   VALUES (v_ator,'os',v_id,'criar_preparacao',
     jsonb_build_object('orcamento_id',p_orcamento_id,'versao',p_versao,
-                       'status','pendente','identidade_verificada',false));
+                       'status','pendente','aceite_verificado',false,'identidade_verificada',false));
   RETURN v_id;
 END;
 $$;
