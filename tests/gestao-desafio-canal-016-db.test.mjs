@@ -30,7 +30,7 @@ test("016-B: política OFF, canal vinculado, OTP, limite e aceite transacional i
     await admin.query(
       "CREATE SCHEMA IF NOT EXISTS gestao; CREATE TABLE gestao.schema_migrations (versao text PRIMARY KEY, checksum text NOT NULL, aplicada_em timestamptz DEFAULT now())",
     );
-    const files = (await readdir("db/migrations")).filter(n => /^\\d{3}_[a-z0-9_]+\\.sql$/.test(n)).sort();
+    const files = (await readdir("db/migrations")).filter(n => /^\d{3}_[a-z0-9_]+\.sql$/.test(n)).sort();
     assert.equal(files.length, 16, "o teste requer precisamente migrations 001–016");
     for (const name of files) {
       const sql = await readFile("db/migrations/" + name, "utf8");
