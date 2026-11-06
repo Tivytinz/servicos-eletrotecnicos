@@ -30,8 +30,7 @@ case "$RELEASE" in
   013)
     ANTERIOR=12
     POSTERIOR=13
-    CONFIRMACO_ESPERADA="APLICAR_013_PRODUCAO_SEM_BACKUP"
-    CONFIRMACAO_ESPERADA="$CONFIRMACO_ESPERADA"
+    CONFIRMACAO_ESPERADA="APLICAR_013_PRODUCAO_SEM_BACKUP"
     PACOTE="db/operacoes/gestao-orcamentos-013-atomico.sql"
     ;;
   *) echo "BLOQUEIO: somente releases 012 ou 013." >&2; exit 2 ;;
