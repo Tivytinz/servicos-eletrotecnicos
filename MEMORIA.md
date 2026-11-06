@@ -1,6 +1,16 @@
 # MEMORIA — Eletrotécnico GO
 
 
+## OS 014 em desenvolvimento — 06/11/2026
+
+- **QA real de orçamentos 011–013:** o responsável confirmou em captura Cliente Teste v2 R$ 475,00, envio e aprovação **declarados como TESTE INTERNO**; histórico com os dois eventos, status `aprovado`. Não houve cliente real, OS ou pagamento. Migration 013 aplicada, produção 13/13; ambas flags de revisão/eventos ativadas, deploy Railway `SUCCESS` e serviços online.
+- Próximo incremento: **preparação de OS sem execução**, release `014_gestao_os_preparacao.sql`, aproveitando `gestao.ordens_servico` da 001. Funções com SECURITY DEFINER e RBAC admin/técnico, status apenas `pendente`, eventos/auditoria, barreira explícita para `TESTE INTERNO` e duplicidade. Página `/gestao/ordens-servico` sob flag `GESTAO_OS_PREPARACAO_HABILITADA` **ausente/desativada por padrão**.
+- **Aceite relatado não equivale a aceite autenticado**: a OS desta release jamais chega a `aberta`/execução. Confirmação direta do cliente, agendamento, custos e recebimentos ficam em incrementos futuros.
+- Branch `feat/gestao-os-preparacao-014-20261106`, pacote manual atômico com checksum da 014, testes DB e documentação `docs/gestao-os-014.md`. **Ainda sem autorização para executar 014 em produção, configurar a flag ou criar OS de cliente real.** CI/PR/merge em andamento nesta etapa.
+- O workflow do chat atual permite aplicar somente 012/013; ampliar para 014 requer código, revisão e testes específicos. Decisão de não contratar backup por custo permanece; risco de perda irrecuperável conhecido.
+
+
+
 ## Migrações SQL 012/013 concluídas, acionamento pelo chat validado — 06/11/2026
 
 - Controle de comandos via GitHub Actions `issue_comment` no PR fechado #64, integrado à `main` pela PR #65, foi validado em **execução real**. O comando `/gestao verificar` executou o run **42234483857** com `SUCCESS`, leitura de banco `railway`: **12/13** íntegras, 013 pendente, nenhuma escrita.
