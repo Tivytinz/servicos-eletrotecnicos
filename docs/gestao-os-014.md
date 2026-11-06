@@ -29,6 +29,7 @@ O modelo exige uma OS só após aprovação. Esta etapa 014 permite **planejamen
 
 - `tests/gestao-os-preparacao-db.test.mjs`: sessão, perfis, versão obsoleta, rascunho, simulação, duplicidade, auditoria, ausência de financeiro e grants no banco descartável.
 - `tests/gestao-os-preparacao-release-db.test.mjs`: pacote integral 014 em banco descartável, SHA-256, privilégios mínimos e reaplicação bloqueada.
+- `tests/gestao-convites-browser.mjs`: navegador HTTPS em PostgreSQL **descartável**, cobrindo a criação da OS pendente, a proibição de duplicidade e a ausência de controles de execução/financeiro. A flag 014 é ligada **somente no CI**, não em produção.
 - `npm run check` e GitHub Actions `Check` são obrigatórios, mais validação de deploy/flag em etapa operacional separada.
 
 ## Implantação — não fazer automaticamente
