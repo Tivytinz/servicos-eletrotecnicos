@@ -198,11 +198,11 @@ BEGIN
     OR v_lead_status<>'orcamento_enviado'
   THEN RETURN false; END IF;
 
+  -- Lê a referência sem bloquear e confirma de novo após adquirir os locks.
+  -- Mantém a mesma ordem de emissão: orçamento, link, canal, limite, desafio.
   SELECT * INTO v_desafio FROM gestao.desafios_canal_016
-  WHERE link_id=v_link.id AND revogado_em IS NULL AND utilizado_em IS NULL
-  FOR UPDATE;
-  IF v_desafio.id IS NULL OR v_agora>=v_desafio.expira_em
-  THEN RETURN false; END IF;
+  WHERE link_id=v_link.id AND revogado_em IS NULL AND utilizado_em IS NULL;
+  IF v_desafio.id IS NULL THEN RETURN false; END IF;
 
   SELECT * INTO v_canal FROM gestao.canais_vinculados_016
   WHERE id=v_desafio.canal_id FOR UPDATE;
@@ -218,6 +218,13 @@ BEGIN
   SELECT falhas INTO v_falhas FROM gestao.limites_desafio_016
   WHERE orcamento_id=v_orcamento AND versao=v_versao FOR UPDATE;
   IF v_falhas IS NULL OR v_falhas>=5 THEN RETURN false; END IF;
+
+  SELECT * INTO v_desafio FROM gestao.desafios_canal_016
+  WHERE id=v_desafio.id AND link_id=v_link.id
+    AND canal_id=v_canal.id AND revogado_em IS NULL AND utilizado_em IS NULL
+  FOR UPDATE;
+  IF v_desafio.id IS NULL OR v_agora>=v_desafio.expira_em
+  THEN RETURN false; END IF;
 
   IF v_desafio.codigo_hash<>p_hash_codigo THEN
     UPDATE gestao.limites_desafio_016
