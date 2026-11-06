@@ -188,20 +188,9 @@ CREATE FUNCTION gestao.listar_eventos_orcamento_restritos(p_token text)
 RETURNS TABLE(orcamento_id uuid,versao integer,tipo text,canal text,
               evidencia text,criado_em timestamptz)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
-AS $
+AS $$
 BEGIN
-  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}
-  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_app') THEN
-    GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO gestao_app;
-    GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO gestao_app;
-  END IF;
-  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_convites') THEN
-    REVOKE ALL ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) FROM gestao_convites;
-    REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM gestao_convites;
-  END IF;
-END
-$grants$;
- THEN RETURN; END IF;
+  IF p_token IS NULL OR p_token !~ '^[A-Za-z0-9_-]{43}$' THEN RETURN; END IF;
   IF NOT EXISTS (
     SELECT 1 FROM gestao.sessoes s
     JOIN gestao.usuarios u ON u.id=s.usuario_id
@@ -220,16 +209,18 @@ $grants$;
   )
   ORDER BY e.criado_em DESC,e.id DESC LIMIT 500;
 END;
-$;
+$$;
 REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM PUBLIC;
 
 DO $grants$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_app') THEN
     GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO gestao_app;
+    GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO gestao_app;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='gestao_convites') THEN
     REVOKE ALL ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) FROM gestao_convites;
+    REVOKE ALL ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) FROM gestao_convites;
   END IF;
 END
 $grants$;
