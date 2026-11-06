@@ -85,3 +85,45 @@ export async function revisarOrcamentoRascunho(formData: FormData): Promise<void
   revalidatePath("/gestao/orcamentos");
   redirect("/gestao/orcamentos?sucesso=revisao");
 }
+
+/** Registra exclusivamente evidência fornecida por operador; não envia mensagens. */
+export async function registrarEventoOrcamento(formData: FormData): Promise<void> {
+  if (process.env.GESTAO_HABILITADA !== "true"
+    || process.env.GESTAO_ORCAMENTOS_HABILITADOS !== "true"
+    || process.env.GESTAO_ORCAMENTOS_EVENTOS_HABILITADOS !== "true") {
+    throw new Error("Registro de eventos indisponível");
+  }
+  if (!(await exigirPermissao("orcamentos:gerir"))) throw new Error("Sem permissão");
+
+  const h = await headers();
+  if (!origemConvitePermitida(h.get("origin"), h.get("host"), process.env.GESTAO_ORIGEM_PUBLICA)) {
+    throw new Error("Origem não autorizada");
+  }
+  const token = (await cookies()).get(COOKIE_SESSAO)?.value;
+  if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) throw new Error("Sessão inválida");
+
+  const orcamento = String(formData.get("orcamento") ?? "");
+  const versaoTexto = String(formData.get("versao") ?? "");
+  const versao = Number(versaoTexto);
+  const tipo = String(formData.get("tipo") ?? "");
+  const canal = String(formData.get("canal") ?? "");
+  const evidencia = String(formData.get("evidencia") ?? "").trim();
+  if (!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(orcamento)
+    || !/^[1-9][0-9]{0,9}$/.test(versaoTexto) || !Number.isSafeInteger(versao)
+    || versao >= 2147483647
+    || !["envio", "aprovacao", "recusa"].includes(tipo)
+    || !["whatsapp", "email", "telefone", "presencial", "outro"].includes(canal)
+    || evidencia.length < 12 || evidencia.length > 500) {
+    redirect("/gestao/orcamentos?erro=dados");
+  }
+  const [resultado] = await consultar<{ registrado: boolean }>(
+    "SELECT gestao.registrar_evento_orcamento($1,$2::uuid,$3::integer,$4,$5,$6) AS registrado",
+    [token, orcamento, versao, tipo, canal, evidencia],
+  );
+  if (!resultado?.registrado) redirect("/gestao/orcamentos?erro=conflito");
+
+  revalidatePath("/gestao");
+  revalidatePath("/gestao/leads");
+  revalidatePath("/gestao/orcamentos");
+  redirect("/gestao/orcamentos?sucesso=evento");
+}
