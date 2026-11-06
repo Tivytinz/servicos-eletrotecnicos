@@ -1,5 +1,13 @@
 # MEMORIA — Eletrotécnico GO
 
+## Preparação de homologação interativa LOCAL — 06/11/2026 (branch isolada)
+
+- Branch feat/gestao-homologacao-local-20261106: proposta de Docker Compose com PostgreSQL descartável, Next.js HTTPS somente em 127.0.0.1:3443, preparação segura de migrations 001–015, roles restritas e admin fictício. Ambiente não é Railway.
+- Scripts e documentação: scripts/homologacao-local.ps1 e docs/gestao-homologacao-local.md. Credenciais geradas apenas no computador do operador, arquivo .env.homologacao-local ignorado pelo Git.
+- Produção permanece intocada; **não criar recursos pagos, não criar leads fictícios em produção, não publicar variáveis/admin e não fazer merge sem CI**.
+- PENDENTE: validar Docker Desktop Windows e percurso manual; nenhum teste interativo local foi executado a partir do ChatGPT. A versão desta branch não deve ser declarada pronta/implantada antes dessa validação.
+
+
 ## Deploy da configuração 015 em produção — 06/11/2026
 
 - O responsável configurou no Railway a variável `GESTAO_ACEITE_CLIENTE_HABILITADO` e autorizou expressamente a publicação com "pronto, só fazer deploy".
