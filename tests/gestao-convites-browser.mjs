@@ -301,7 +301,9 @@ try {
   await admin.getByRole("status").getByText(/Planejamento registrado/).waitFor();
   const salvo016=admin.locator("li").filter({ hasText: "Cliente QA Status" });
   await salvo016.getByText(/Técnico:/).waitFor();
-  await salvo016.getByText("Operador de Teste", { exact: false }).waitFor();
+  const nomeTecnicoSalvo=salvo016.locator("p").filter({ hasText: "Técnico:" }).locator("strong").first();
+  assert.equal((await nomeTecnicoSalvo.textContent())?.trim(),"Operador de Teste",
+    "resumo do planejamento deve exibir técnico atribuído");
   assert.equal(await salvo016.getByLabel(/Dia previsto/).inputValue(),dataQA);
   assert.equal(await salvo016.getByLabel("Observações internas").inputValue(),
     "Previsão fictícia de QA — sem agendamento real");
@@ -314,7 +316,9 @@ try {
     "planejamento deve persistir após F5");
   await operador.reload();
   const leitura016=operador.locator("li").filter({hasText:"Cliente QA Status"});
-  await leitura016.getByText("Operador de Teste", { exact:false }).waitFor();
+  const nomeTecnicoLeitura=leitura016.locator("p").filter({ hasText: "Técnico:" }).locator("strong").first();
+  assert.equal((await nomeTecnicoLeitura.textContent())?.trim(),"Operador de Teste",
+    "técnico deve visualizar o planejamento sem edição");
   assert.equal(await leitura016.getByRole("button",{name:"Salvar planejamento"}).count(),0);
   console.log("PASS: 016 atribui técnico e previsão, mantém OS pendente; técnico só consulta e F5 persiste");
 
