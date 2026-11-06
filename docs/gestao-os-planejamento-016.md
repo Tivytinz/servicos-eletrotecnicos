@@ -26,6 +26,33 @@ Este incremento **não agenda** com o cliente, não altera status para `agendada
 - [ ] Homologação manual no Docker Windows: criar OS fictícia, cadastrar técnico fictício, atribuir data, alterar com F5, confirmar trilha e ausência de status executável.
 - [ ] Preparar pacote 016 transacional com hash, preflight e recuperação antes de qualquer autorização de produção.
 
+## Homologação manual em Docker Windows — SEM tocar na homologação anterior
+
+Esta branch inclui **outro** Compose com projeto `eg-homologacao-os016`, volume próprio, credenciais fictícias independentes e porta **3444**. O ambiente antigo `eg-homologacao-local` permanece acessível em 3443 e seus dados **não são reutilizados ou apagados**. Não copie `.env` entre as duas pastas.
+
+1. No GitHub, abra a PR #78 e acesse a branch `feat/gestao-os-planejamento-016-20261106` no repositório. Use **Code → Download ZIP** dessa branch (não da `main`). Extraia em uma pasta NOVA, sem substituir os arquivos da homologação anterior.
+2. Com Docker Desktop funcionando, abra o PowerShell **nessa nova pasta** e execute:
+
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\homologacao-os016.ps1
+   ```
+
+   O script gera `.env.homologacao-os016` local com senhas fictícias; nunca envie seu conteúdo ao chat, CI ou GitHub. A inicialização aplica 001–016 **somente ao PostgreSQL desse projeto Docker** e ativa a flag 016 apenas na aplicação local.
+3. Abra `https://localhost:3444/gestao/login` no mesmo computador. O aviso do certificado autoassinado é esperado **somente em localhost**. Usuário: `qa-admin@example.test`. A senha de teste `ADMIN_PASSWORD` é lida pelo próprio usuário do arquivo privado `.env.homologacao-os016`.
+4. No painel, em **Gerenciar convites da equipe**, crie um convite `tecnico` para conta fictícia `qa-tecnico-os016`, aceite o convite em janela separada e defina senha fictícia (não compartilhe o link ou as senhas).
+5. Siga o funil fictício: registrar lead `Cliente QA OS 016`, qualificar, gerar orçamento, simular envio **sem enviar WhatsApp real**, aprovar por link privado e criar OS pendente. Como o link é de uso único, não o compartilhe na conversa.
+6. Em **Ordens de Serviço — planejamento**, selecione o técnico fictício, escolha uma data futura, registre uma observação sem dados reais e clique em **Salvar planejamento**.
+7. Atualize a página (F5) e confirme que técnico/data/nota persistem, que o status continua `pendente` e que NÃO aparecem botões para iniciar, concluir, cobrar ou confirmar agendamento. Entre como técnico fictício e confirme que ele só consegue consultar a ficha.
+8. Para **parar sem apagar** os dados fictícios da 016:
+
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\homologacao-os016.ps1 -Parar
+   ```
+
+   Opcionalmente, para descartar apenas os dados da OS 016, acrescentar `-ApagarDadosTeste` ao mesmo comando. **Não executar na pasta anterior nem apagar a stack 015**.
+
+**Não reutilizar senhas, contatos reais ou arquivo `.env` da produção.** A homologação da interface não representa aprovação para migração no Railway; o preflight e o plano de backup/recuperação continuam bloqueadores.
+
 ## Ativação operacional bloqueada
 
 **Não fazer merge automático. Não aplicar a migration 016 em Railway. Não ativar flags ou executar comandos SQL de produção.** Exigir revisão de segurança, CI, homologação, plano de backup restaurável e autorização explícita para cada mudança operacional. Como a PR altera `src/**`, um merge na `main` pode disparar deploy de código pelo watchPattern do Railway.
