@@ -17,6 +17,8 @@ GRANT EXECUTE ON FUNCTION gestao.alterar_status_lead(text,uuid,text,text) TO :"a
 GRANT EXECUTE ON FUNCTION gestao.criar_orcamento_rascunho(text,uuid,bigint,text,date) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.listar_orcamentos_restritos(text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.revisar_orcamento_rascunho(text,uuid,integer,bigint,text,date) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO :"app_role";
 GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO :"app_role";
 GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO :"app_role";
 -- A role comum só aceita links válidos, nunca administra convites.
