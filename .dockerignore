@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+.next
+.env
+.env.*
+*.pem
+*.key
+out
+dist
+build
+npm-debug.log*

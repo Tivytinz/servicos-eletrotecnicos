@@ -1,5 +1,15 @@
 # MEMORIA — Eletrotécnico GO
 
+## Preparação de homologação interativa LOCAL — 06/11/2026 (branch isolada)
+
+- Branch feat/gestao-homologacao-local-20261106: proposta de Docker Compose com PostgreSQL descartável, Next.js HTTPS somente em 127.0.0.1:3443, preparação segura de migrations 001–015, roles restritas e admin fictício. Ambiente não é Railway.
+- Scripts e documentação: scripts/homologacao-local.ps1 e docs/gestao-homologacao-local.md. Credenciais geradas apenas no computador do operador, arquivo .env.homologacao-local ignorado pelo Git.
+- Produção permanece intocada; **não criar recursos pagos, não criar leads fictícios em produção, não publicar variáveis/admin e não fazer merge sem CI**.
+- **QA manual observado** via capturas do responsável em Windows/Docker/WSL2 e https://localhost:3443: login, lead fictício, qualificação, orçamento v1 R$ 475,00, registro de envio apenas simulado, aceite por link, limpeza do fragmento, status aprovado no painel e OS pendente. Não equivale a prova de identidade nem a teste manual de replay com token antigo. Registro detalhado em docs/gestao-homologacao-local.md.
+- **CI** da PR #76 run 42271324464 SUCCESS (inclui docker compose config --quiet, testes, lint e build). Railway production usa watchPatterns restritas a src/public e arquivos de build; nenhum arquivo desta PR corresponde a esses padrões; não se espera novo deploy ao integrar. Confirmar pós-merge. Nenhum teste com banco de produção.
+- PENDENTE: integrar PR #76 apenas após revisão final e observar o comportamento pós-merge. O Docker local foi iniciado e observado, mas a integração na main ainda não ocorreu nesta nota.
+
+
 ## Deploy da configuração 015 em produção — 06/11/2026
 
 - O responsável configurou no Railway a variável `GESTAO_ACEITE_CLIENTE_HABILITADO` e autorizou expressamente a publicação com "pronto, só fazer deploy".

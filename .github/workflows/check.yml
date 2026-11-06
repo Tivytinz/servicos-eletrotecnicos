@@ -29,6 +29,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validar sintaxe do Docker Compose local sem iniciar serviços
+        env:
+          POSTGRES_PASSWORD: placeholder_local_teste_01234567890123456789012345
+          GESTAO_APP_PASSWORD: placeholder_local_app_01234567890123456789012345
+          GESTAO_CONVITES_PASSWORD: placeholder_local_convites_012345678901234567890
+          ADMIN_PASSWORD: placeholder_local_admin_012345678901234567890
+        run: docker compose -f docker-compose.homologacao-local.yml config --quiet
       - name: Node.js
         uses: actions/setup-node@v4
         with:

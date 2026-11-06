@@ -1,0 +1,5 @@
+FROM nginx:stable-alpine
+
+RUN apk add --no-cache openssl
+COPY scripts/homologacao-nginx.conf /etc/nginx/conf.d/default.conf
+CMD ["/bin/sh", "-ec", "openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 2 -subj '/CN=localhost' -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1' -keyout /tmp/homologacao.key -out /tmp/homologacao.crt >/dev/null 2>&1 && exec nginx -g 'daemon off;'"]
