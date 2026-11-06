@@ -8,7 +8,7 @@ O canal usa **somente comentários novos** no PR administrativo já integrado **
 
 - Workflow do canal: `.github/workflows/gestao-migrations-chat-command.yml`
 - Executor original reutilizado: `.github/workflows/gestao-migrations-production-manual.yml` (acrescentado `workflow_call`, preservado `workflow_dispatch`)
-- Script de segurança e migrações: `scripts/gestao-migration-railway-manual.sh`, sem mudanças neste incremento.
+- Script de segurança e migrações: `scripts/gestao-migration-railway-manual.sh`, ampliado nesta release para suportar 014 exclusivamente por confirmação literal.
 - Ações reais permanecem em `gestao-db-production`, com secrets do Railway, SHA-256 de todas as migrations existentes, pacotes SQL atômicos, confirmação por release e bloqueio de duplicidade.
 
 ## Comandos aceitos (texto exato)
@@ -18,15 +18,17 @@ São comentários **no PR #64**. A integração GitHub publica o comentário, qu
 | Comentário exato | Ação |
 | --- | --- |
 | `/gestao verificar` | Diagnóstico **somente leitura**, sem migration, sem flags |
+| `/gestao verificar 014` | Diagnóstico **somente leitura** da 014 (hashes, funções e grants), sem migrations ou flags |
 | `/gestao aplicar 012 APLICAR_012_PRODUCAO_SEM_BACKUP` | Aplica somente 012 se catálogo atual = 11, após autorização específica |
 | `/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP` | Aplica somente 013 se catálogo atual = 12, após autorização específica |
+| `/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP` | Aplica somente 014 se catálogo atual = 13, **após nova autorização específica** |
 
 **O comentário não equivale à autorização do usuário no chat.** O assistente deve receber autorização clara **antes** de publicar qualquer comando `aplicar`. O usuário pode continuar usando a interface manual do GitHub normalmente. O log da PR e do job fornece trilha de quem pediu cada execução.
 
 ## Segurança e riscos
 
 - O segredo de produção somente entra no executor reutilizável após filtro de repositório, PR, estado fechado, autor numérico e texto exato do comentário. O código não interpola texto livre em shell ou SQL.
-- Nenhum evento `push`, PR aberto, cron, comentário editado ou conta de terceiros executa SQL. O canal rejeita qualquer release diferente de 012/013.
+- Nenhum evento `push`, PR aberto, cron, comentário editado ou conta de terceiros executa SQL. O canal rejeita qualquer release diferente de 012/013/014.
 - Os workflow runs são serializados por `gestao-migrations-production`; confirmações SQL têm pré e pós-validação e migration fora de ordem é recusada.
 - Chaves SSH do workspace Railway e o token têm acesso amplo a recursos do workspace. Continuar protegendo o ambiente `gestao-db-production` com branch `main`, revisores quando disponíveis e secrets de ambiente, sem expor credenciais no repositório.
 - A confirmação `SEM_BACKUP` registra a decisão vigente de não contratar backup de produção por custos. O risco de perda irreversível permanece.
@@ -50,3 +52,12 @@ A execução manual #2 do workflow do GitHub registrou **12 migrations, 012 ínt
 Com autorização específica para 013 sem backup, publicou `/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP`; o run [42234604088](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42234604088) concluiu com `COMMIT`, `SUCCESS` e **13/13 checksums íntegros**. Não houve ativação de flags.
 
 **Limites atuais:** apenas os comandos exatos documentados acima; suportar a próxima migration exigirá incremento revisado de workflow, testes e aprovação da operação. Não inferir existência de backup. O controle atual de flag permanece separado das migrations.
+
+## Extensão para a preparação de OS — release 014 (06/11/2026)
+
+- O executor agora suporta o diagnóstico `/gestao verificar 014` (somente leitura) e a aplicação da **014 exclusivamente** via `/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP`, após autorização inequívoca em conversa; uma mensagem genérica como *próximo* não representa essa autorização.
+- Mantém as guardas de PR #64 fechado, usuário numérico autorizado, evento `issue_comment:created`, branch `main`, secrets no ambiente `gestao-db-production`, serialização e validações exatas.
+- Antes da escrita, executa `db/operacoes/gestao-preflight-014-somente-leitura.sql` e compara SHA-256 do histórico. Exige **13** migrations existentes, pacote `gestao-os-014-atomico.sql` com preflight transacional, 14 migrations no pós-estado e bloqueio de reaplicação.
+- Após aplicar a 014, o workflow **não** ativa automaticamente `GESTAO_OS_PREPARACAO_HABILITADA`. Criar/acionar uma OS depende de operação separada; `TESTE INTERNO` fica bloqueado.
+- Não há backup contratado por decisão de custo. A ausência de backup é risco residual sério, não motivo para ignorar preflight e aprovação.
+- Este incremento de código, isoladamente, **não aplica** a migration 014 em produção. A disponibilidade efetiva do comando depende de CI aprovado e integração à `main`.

@@ -67,3 +67,14 @@ Este fluxo reutiliza GitHub Actions e o serviço Postgres existente, **sem provi
 - `tests/gestao-migrations-manual-workflow.test.mjs`: modo manual exclusivo, integridade dos pacotes e checksums, sintaxe Bash, negação por parâmetros/branch e simulação offline de verificação/aplicação/duplicidade.
 - `tests/gestao-orcamentos-revisao-release-db.test.mjs` e `tests/gestao-orcamentos-eventos-release-db.test.mjs`: pacotes SQL atômicos reais aplicados ao PostgreSQL descartável do CI.
 - Execução real contra o Railway: **pendente da configuração de segredos e validação de SSH no GitHub**; sucesso no CI sintético não comprova esse acesso.
+
+## Incremento 014 — mecanismo restrito para preparação de OS
+
+A extensão para release **014** reutiliza o mesmo workspace, o ambiente `gestao-db-production`, a configuração SSH validada e o pacote transacional `db/operacoes/gestao-os-014-atomico.sql`. Não cria serviço, backup ou credencial.
+
+- Modo `verificar` da 014: lê `db/operacoes/gestao-preflight-014-somente-leitura.sql` e compara hashes de todo catálogo até 14, sem escrita.
+- Modo `aplicar 014`: exige exatamente **13** migrations, confirmação literal `APLICAR_014_PRODUCAO_SEM_BACKUP`, banco `railway`, role proprietária, checksum 004/013 e grants mínimos. Verifica **14/14** depois de `COMMIT`.
+- A opção manual (workflow_dispatch) e o acionamento pelo chat no PR #64 seguem protegidos e serializados. O novo comando de chat só deve ser publicado mediante autorização específica do responsável.
+- Esta mudança **não executa** a 014, não ativa flags nem cria OS em produção. A reversão segura da exposição consiste em manter `GESTAO_OS_PREPARACAO_HABILITADA` ausente/desativada; rollback SQL não deve ser improvisado sem cópia de recuperação.
+
+Os relatos anteriores deste documento descrevem o histórico de implantação das versões 012/013; **o estado de produção mais recente conhecido é 13/13**.

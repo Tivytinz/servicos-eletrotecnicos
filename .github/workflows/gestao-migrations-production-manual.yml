@@ -18,8 +18,9 @@ on:
         options:
           - "012"
           - "013"
+          - "014"
       confirmacao:
-        description: "Apenas aplicar: APLICAR_012_PRODUCAO_SEM_BACKUP ou APLICAR_013_PRODUCAO_SEM_BACKUP"
+        description: "Apenas aplicar: APLICAR_<release>_PRODUCAO_SEM_BACKUP (012, 013 ou 014)"
         type: string
         required: false
         default: ""
@@ -64,14 +65,16 @@ jobs:
         run: |
           set -Eeuo pipefail
           case "$MODO:$RELEASE" in
-            verificar:012|verificar:013|aplicar:012|aplicar:013) ;;
+            verificar:012|verificar:013|verificar:014|aplicar:012|aplicar:013|aplicar:014) ;;
             *) echo "BLOQUEIO: combinação inválida." >&2; exit 2 ;;
           esac
           if [[ "$MODO" == aplicar ]]; then
             if [[ "$RELEASE" == 012 ]]; then
               [[ "$CONFIRMACAO" == "APLICAR_012_PRODUCAO_SEM_BACKUP" ]] || exit 2
-            else
+            elif [[ "$RELEASE" == 013 ]]; then
               [[ "$CONFIRMACAO" == "APLICAR_013_PRODUCAO_SEM_BACKUP" ]] || exit 2
+            else
+              [[ "$CONFIRMACAO" == "APLICAR_014_PRODUCAO_SEM_BACKUP" ]] || exit 2
             fi
           else
             [[ -z "$CONFIRMACAO" ]] || exit 2

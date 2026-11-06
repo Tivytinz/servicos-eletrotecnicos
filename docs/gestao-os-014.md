@@ -38,7 +38,7 @@ O modelo exige uma OS só após aprovação. Esta etapa 014 permite **planejamen
 
 1. Integrar somente com CI verde. A flag `GESTAO_OS_PREPARACAO_HABILITADA` permanece **ausente**.
 2. Após autorização específica, aplicar `db/operacoes/gestao-os-014-atomico.sql` inteiro, sob `postgres` no banco `railway`, após revisar preflight, hash 004/013, permissões e plano de contenção. O pacote confirma 14/14 e bloqueia reaplicação.
-3. O mecanismo existente de execução pelo chat aceita apenas 012 e 013: **é necessário expandir e validar o workflow antes de permitir aplicar 014**. Não inserir a 014 silenciosamente em deploy ou usar um executor genérico que aplique todas pendências em produção.
+3. A expansão do mecanismo pelo chat para a 014 está em preparação separada, com testes e pré-verificação somente leitura. **Mesmo depois de integrada**, só permite aplicar 014 após autorização específica; nunca usar a mudança de código ou a palavra *próximo* como autorização. Não executar a 014 silenciosamente em deploy ou por executor genérico.
 4. Somente depois de SQL validado, CI e deploy saudáveis, habilitar **separadamente** a flag `GESTAO_OS_PREPARACAO_HABILITADA=true` no serviço web; realizar QA em banco descartável e consulta restrita no ambiente real, sem criar ficha no orçamento de teste e sem escrever em clientes reais.
 5. Reversão de exposição: retirar a flag da tela e action; não excluir OS/eventos nem tentar reverter migration histórica manualmente.
 
