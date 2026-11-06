@@ -2,7 +2,7 @@
 
 ## Escopo e status
 
-**Código integrado à `main` pela PR #71 (commit `bce6cd42`) com `Check` e QA HTTPS aprovados. Migration 015 e flag NÃO implantadas em produção.** Esta é uma entrega de desenvolvimento, não a liberação do recurso para clientes reais. Construir um fluxo próprio para uma pessoa que recebeu um link privado visualizar e aprovar/recusar a versão exata de uma proposta. O sistema registra **posse do link e clique explícito**, mas **não verifica a identidade civil, titularidade do telefone/WhatsApp/e-mail, nem gera assinatura eletrônica com identidade comprovada**.
+**Código integrado à `main` pela PR #71 (commit `bce6cd42`) e migration 015 aplicada em produção no run 42263941244, com 15/15 íntegras. Flag `GESTAO_ACEITE_CLIENTE_HABILITADO` ausente; funcionalidade ainda NÃO disponibilizada a clientes reais.** Esta é uma entrega de desenvolvimento, não a liberação do recurso para clientes reais. Construir um fluxo próprio para uma pessoa que recebeu um link privado visualizar e aprovar/recusar a versão exata de uma proposta. O sistema registra **posse do link e clique explícito**, mas **não verifica a identidade civil, titularidade do telefone/WhatsApp/e-mail, nem gera assinatura eletrônica com identidade comprovada**.
 
 A release 014 já foi aplicada em produção (14/14) e a tela de OS foi ativada/observada, sem candidatas. O Cliente Teste foi aprovado apenas com evidência `TESTE INTERNO`; a release 015 não emite link para esse registro e não autoriza OS executável.
 
@@ -35,7 +35,7 @@ A release 014 já foi aplicada em produção (14/14) e a tela de OS foi ativada/
 
 ## Implantação (separada do desenvolvimento)
 
-**Não executar a migration 015 nem ativar a flag em produção como efeito de merge.** Base atual conhecida: 014 íntegra, banco 14/14 e OS em preparação acessível, sem ordens. O responsável adiou backup por custos, ciente do risco de perda irrecuperável.
+**A migration 015 foi executada mediante autorização específica, sem backup, em 06/11/2026** (run 42263941244, `COMMIT`, 15/15 íntegro). **Não habilitar a flag em produção como efeito de merge, migration ou deploy.** Base atual: 015 íntegra; a flag 015 está ausente e a OS continua só em preparação. O responsável adiou backup por custos, ciente do risco de perda irrecuperável.
 
 1. Revisar a PR, testes, segurança e UX; integrar o código apenas após CI aprovado. A flag permanece ausente. Como a nova rota é protegida por flag, o deploy do código não exige migração automática.
 2. Validar 14/14, SHA-256 da 004 e 014, grants e objetos em consulta somente leitura antes da release.
