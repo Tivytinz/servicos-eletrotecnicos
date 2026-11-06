@@ -28,6 +28,8 @@ export default async function Leads({
   if (!usuario) redirect("/gestao/login");
   if (!temPermissao(usuario.papeis, "leads:ler")) redirect("/gestao?erro=sem-permissao");
 
+  const podeOrcamentar = process.env.GESTAO_ORCAMENTOS_HABILITADOS === "true"
+    && temPermissao(usuario.papeis, "orcamentos:gerir");
   const podeAtualizar = process.env.GESTAO_STATUS_HABILITADO === "true"
     && temPermissao(usuario.papeis, "leads:atualizar");
   const { erro, sucesso } = await searchParams;
@@ -116,6 +118,12 @@ export default async function Leads({
                 <p className="mt-3 text-sm text-slate-400">
                   {lead.telefone || "Sem telefone"} · {rotuloOrigemLead(lead.origem)}
                 </p>
+                {podeOrcamentar && ["qualificado", "orcamento_em_preparo"].includes(lead.status) && (
+                  <a href={`/gestao/orcamentos?lead=${encodeURIComponent(lead.id)}#criar-orcamento`}
+                    className="mt-4 inline-block text-sm font-semibold text-amber-300 hover:underline">
+                    Preparar orçamento para este atendimento →
+                  </a>
+                )}
                 {podeAtualizar && proximos.length > 0 && (
                   <form action={alterarStatusLead} className="mt-5 flex flex-wrap items-end gap-3 border-t border-white/10 pt-4">
                     <input type="hidden" name="id" value={lead.id} />

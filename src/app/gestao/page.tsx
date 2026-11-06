@@ -52,6 +52,8 @@ export default async function Gestao({
 
   const podeVerSolicitacoes = temPermissao(usuario.papeis, "leads:ler");
   const podeCadastrar = temPermissao(usuario.papeis, "leads:criar");
+  const podeOrcamentar = process.env.GESTAO_ORCAMENTOS_HABILITADOS === "true"
+    && temPermissao(usuario.papeis, "orcamentos:gerir");
   const podeConvidar = process.env.GESTAO_CONVITES_HABILITADOS === "true"
     && usuario.papeis.includes("admin");
   // Consulta somente depois da validação da sessão e do RBAC; não retorna
@@ -165,6 +167,11 @@ export default async function Gestao({
                   <Link href="/gestao/leads" className="rounded-xl border border-white/20 px-4 py-3 text-center font-semibold hover:bg-white/5">
                     Consultar clientes e pedidos
                   </Link>
+                  {podeOrcamentar && (
+                    <Link href="/gestao/orcamentos" className="rounded-xl border border-white/20 px-4 py-3 text-center font-semibold hover:bg-white/5">
+                      Preparar orçamentos
+                    </Link>
+                  )}
                   {podeConvidar && (
                     <Link href="/gestao/convites" className="rounded-xl border border-white/20 px-4 py-3 text-center font-semibold hover:bg-white/5">
                       Gerenciar convites da equipe
