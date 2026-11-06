@@ -48,6 +48,31 @@ Parar e **apagar permanentemente os dados de teste** do volume deste Compose:
 
 Isso não modifica dados do Railway. Remover o arquivo .env.homologacao-local após apagar o volume permite gerar novas senhas na próxima inicialização.
 
+## Evidência de homologação manual — 06/11/2026
+
+Ambiente observado pelo responsável em **Windows + Docker Desktop + Ubuntu WSL 2**, acessado pelo navegador em `https://localhost:3443` (sem uso da produção). O acesso exibiu aviso de certificado autoassinado, esperado somente para o endereço local.
+
+Resultados da jornada supervisionada em capturas da conversa, **sem arquivar tokens, credenciais ou screenshots com dados privados no Git**:
+
+| Verificação | Resultado |
+| --- | --- |
+| Docker Engine inicializado; site local e login administrativo fictício acessíveis | OK — interface observada |
+| Cadastro de `Cliente QA Local`, com descrição `TESTE LOCAL` | OK — lead apareceu no painel |
+| Mudança de etapa `novo` → `qualificado` | OK — auditoria confirmou mudança |
+| Orçamento fictício versão 1, R$ 475,00, validade em 20/11/2026 | OK — rascunho exibido |
+| Registro de envio **simulado local**, sem WhatsApp real | OK — status `enviado` |
+| Geração e abertura de link privado | OK — página exibiu versão, preço e descrição |
+| Confirmação por clique explícito | OK — tela `Resposta registrada` |
+| Reload sem token após confirmação | OK — `Link inválido ou ausente` |
+| Retorno ao painel e orçamentos | OK — `aprovado` e `Resposta via link: aprovação` |
+| Criação de OS | OK — `OS pendente — não autorizada para execução` |
+
+**Alcance da evidência:** as telas confirmam o fluxo fim a fim e a ausência de ações financeiras na interface. A atualização após refresh prova a limpeza do fragmento do navegador; **não equivale por si só a teste de replay com o segredo antigo**. Bloqueio de reutilização, concorrência e permissões foram cobertos no QA automatizado em banco isolado. Não houve medição externa de identidade/assinatura nem teste de backup/restauração de dados de produção.
+
+**GitHub Actions da PR:** run [42271324464](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42271324464) **SUCCESS**: `docker compose config --quiet`, testes, lint e build. O teste manual foi realizado com artefatos obtidos da branch e não configura deploy.
+
+**Railway:** serviço `servicos-eletrotecnicos` publica a branch `main`, com `watchPatterns` limitadas a `/src/**`, `/public/**`, `/package.json`, `/package-lock.json`, `/next.config.ts`, `/postcss.config.mjs`, `/tsconfig.json`, `/eslint.config.mjs`. Arquivos alterados nesta PR não coincidem com o conjunto observado. Isso reduz risco de rebuild por merge, mas deve ser conferido após integração; nenhum SQL, recurso do Railway ou flag foi alterado nesta etapa.
+
 ## Limites e segurança
 
 - Não usar conta, telefone, senha ou dados de clientes reais.
