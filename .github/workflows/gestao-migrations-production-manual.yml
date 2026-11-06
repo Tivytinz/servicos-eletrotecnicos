@@ -23,6 +23,20 @@ on:
         type: string
         required: false
         default: ""
+  workflow_call:
+    inputs:
+      modo:
+        description: "Operação já validada pelo canal de comando protegido"
+        type: string
+        required: true
+      release:
+        description: "Uma única release"
+        type: string
+        required: true
+      confirmacao:
+        description: "Confirmação exata da operação"
+        type: string
+        required: true
 
 permissions:
   contents: read

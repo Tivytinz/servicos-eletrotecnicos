@@ -1,6 +1,15 @@
 # MEMORIA — Eletrotécnico GO
 
 
+## GitHub Actions acionável pelo chat — 06/11/2026, branch isolada
+
+- Responsável pediu para tornar possível iniciar migrations diretamente pela integração ChatGPT. Conector GitHub disponível não expõe `workflow_dispatch`, mas permite comentar como `Tivytinz` (ID 263981923); teste de identidade não executou SQL.
+- Branch `ops/gestao-migrations-comando-chat-20261106`: novo workflow `issue_comment` com filtro de autor, repositório, PR #64 fechado e comando exato; reutiliza o executor de produção via `workflow_call`, `gestao-db-production`, verificações de hash e confirmações. Sem credenciais adicionais.
+- **Até haver CI aprovado, merge e teste real `/gestao verificar`, o canal não pode ser anunciado como funcional**. Ver `docs/gestao-migrations-chat-command.md`.
+- Produção confirmada no workflow manual #2: migration 012 aplicada, 12/13, SHA íntegro; 013 ainda pendente. Responsável autorizou 013 sem backup, mas esta branch **não executa** migrations, ativa flags ou contrata serviços. Testar primeiro a via read-only.
+
+
+
 ## Execução manual de migrations via GitHub Actions — 06/11/2026
 
 - Responsável solicitou reutilizar o mecanismo de execução de migrations em nuvem análogo ao Agenda Fashion, evitando PowerShell recorrente.
