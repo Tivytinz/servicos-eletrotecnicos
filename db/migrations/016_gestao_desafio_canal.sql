@@ -133,6 +133,8 @@ BEGIN
   WHERE orcamento_id=p_orcamento AND versao=p_versao FOR UPDATE;
   IF v_falhas>=5 THEN RETURN NULL; END IF;
 
+  -- Atualiza o relógio após aguardar todos os bloqueios necessários.
+  v_agora:=clock_timestamp();
   -- Reemissão com o mesmo link revoga o desafio anterior.
   UPDATE gestao.desafios_canal_016
   SET revogado_em=v_agora WHERE link_id=v_link
@@ -223,7 +225,10 @@ BEGIN
   WHERE id=v_desafio.id AND link_id=v_link.id
     AND canal_id=v_canal.id AND revogado_em IS NULL AND utilizado_em IS NULL
   FOR UPDATE;
+  -- O relógio precisa ser lido depois da espera pelos locks da transação.
+  v_agora:=clock_timestamp();
   IF v_desafio.id IS NULL OR v_agora>=v_desafio.expira_em
+    OR v_agora>=v_link.expira_em OR v_agora>=v_validade
   THEN RETURN false; END IF;
 
   IF v_desafio.codigo_hash<>p_hash_codigo THEN
