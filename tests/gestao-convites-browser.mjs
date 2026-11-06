@@ -17,6 +17,17 @@ async function novoContexto() {
   return context;
 }
 
+async function expandirHistorico(proposta) {
+  const historico = proposta.locator("details").filter({ hasText: "Histórico de comunicações" });
+  if (!(await historico.evaluate(elemento => elemento.open))) {
+    await historico.locator("summary").click();
+  }
+  assert.equal(await historico.evaluate(elemento => elemento.open), true,
+    "o clique deve realmente expandir o histórico");
+  await historico.locator("ol").waitFor({ state: "visible" });
+  return historico;
+}
+
 async function criarConvite(page, usuario, papel) {
   await page.goto(BASE + "/gestao/convites");
   await page.getByLabel("Usuário").fill(usuario);
@@ -113,6 +124,50 @@ try {
   await proposta.getByText("Rascunho", { exact: true }).waitFor();
   await proposta.getByText(/R\$\s*350,50/).waitFor();
   console.log("PASS: novo administrador prepara orçamento em rascunho sem envio automático");
+
+  // Cobertura E2E do orçamento versionado: somente banco e login fictícios do CI.
+  await proposta.getByText("Revisar rascunho · criar versão 2").click();
+  await proposta.getByLabel("Novo valor em reais (R$)").fill("420,75");
+  await proposta.getByLabel("Nova validade").fill(
+    new Date(Date.now() + 10 * 86400000).toISOString().slice(0, 10));
+  await proposta.getByLabel("Descrição e condições revisadas")
+    .fill("Adequação revisada do quadro elétrico no ambiente de QA");
+  await proposta.getByRole("button", { name: "Salvar nova versão" }).click();
+  await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=revisao");
+  const revisada = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await revisada.getByText("Orçamento · versão 2").waitFor();
+  await revisada.getByText(/R\$\s*420,75/).waitFor();
+  console.log("PASS: revisão salva versão 2 mantendo versão 1 preservada");
+
+  await revisada.getByText("Registrar envio já realizado").click();
+  await revisada.getByLabel("Canal de comunicação").selectOption("whatsapp");
+  await revisada.getByLabel(/Evidência ou referência interna/)
+    .fill("Registro de envio de teste, protocolo qa-v2-013");
+  await revisada.getByRole("button", { name: "Registrar envio manual" }).click();
+  await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=evento");
+  const enviada = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await enviada.getByText("enviado", { exact: true }).waitFor();
+  await admin.waitForLoadState("networkidle");
+  const historicoEnviado = await expandirHistorico(enviada);
+  await historicoEnviado.getByText(/Envio informado.*versão 2/).waitFor();
+
+  await enviada.getByText("Registrar resposta do cliente").click();
+  await enviada.getByLabel("Resposta relatada pelo cliente").selectOption("aprovacao");
+  await enviada.getByLabel("Canal de comunicação").selectOption("telefone");
+  await enviada.getByLabel(/Evidência ou referência interna/)
+    .fill("Aprovação relatada em ligação fictícia, protocolo qa-013");
+  await enviada.getByRole("button", { name: "Registrar decisão relatada" }).click();
+  await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=evento");
+  const aprovada = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await aprovada.getByText("aprovado", { exact: true }).waitFor();
+  await admin.waitForLoadState("networkidle");
+  const historicoAprovado = await expandirHistorico(aprovada);
+  await historicoAprovado.getByText(/Envio informado.*versão 2/).waitFor();
+  await historicoAprovado.getByText(/Aprovação informada.*versão 2/).waitFor();
+  assert.equal(await aprovada.getByText("Registrar resposta do cliente").count(), 0,
+    "estado aprovado não aceita outra decisão");
+  console.log("PASS: histórico HTTPS reúne envio e decisão relatada da versão 2, sem mensagem real");
+
 
 
 

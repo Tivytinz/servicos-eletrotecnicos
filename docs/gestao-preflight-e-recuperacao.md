@@ -1,5 +1,10 @@
 # Pré-implantação e recuperação — Eletrotécnico GO
 
+> **Decisão vigente — 06/11/2026:** o responsável reafirmou que **não haverá backup de produção por enquanto, em razão dos custos**. Não contratar backup, não criar cópia dos dados de produção e não propor despesa operacional como pré-requisito. O risco residual de perda irreversível permanece conhecido. Os exemplos abaixo são **referência futura, não tarefa pendente aprovada**. CI continua livre para testar dump/restauração de banco sintético descartável sem backup de clientes.
+
+> **Limite desta decisão:** não autoriza migrations 012/013, flags, alteração de dados, grants ou criação de serviços em produção. Essas ações ainda exigem confirmação operacional explícita e validações de integridade/segurança correspondentes.
+
+
 **Situação:** roteiro de desenvolvimento, não autorização para alterar produção. PR #46 permanece em rascunho.
 
 ## Inventário somente leitura
