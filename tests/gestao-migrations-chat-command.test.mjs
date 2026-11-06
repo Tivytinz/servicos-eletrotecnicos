@@ -26,7 +26,7 @@ test("canal ChatGPT: entradas estritamente literais, nunca interpolar conteúdo 
   for(const [id,command,mode,release,confirmacao] of commands){
     const begin=channel.indexOf("  "+id+":\n");
     assert.ok(begin>=0);
-    const following=channel.slice(begin).split(/\n  (?:verificar|aplicar_012|aplicar_013):\n/,1)[0];
+    const following=channel.slice(begin).split(/\n  (?:verificar|aplicar_012|aplicar_013|aplicar_014):\n/,1)[0];
     assert.ok(following.includes("github.event.comment.body == '"+command+"'"));
     assert.ok(following.includes("uses: ./.github/workflows/gestao-migrations-production-manual.yml"));
     assert.ok(following.includes("modo: "+mode));
