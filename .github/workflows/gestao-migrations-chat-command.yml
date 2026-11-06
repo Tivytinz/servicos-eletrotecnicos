@@ -46,3 +46,15 @@ jobs:
       release: "013"
       confirmacao: "APLICAR_013_PRODUCAO_SEM_BACKUP"
     secrets: inherit
+  aplicar_014:
+    # Somente comentário literal do titular no PR administrativo integrado (#64).
+    # Não executa por merge, deploy nem comentário de outras pessoas.
+    if: >-
+      github.repository == 'Tivytinz/servicos-eletrotecnicos' && github.event.issue.number == 64 && github.event.issue.pull_request != null && github.event.comment.user.id == 263981923 && github.event.issue.state == 'closed' &&
+      github.event.comment.body == '/gestao aplicar 014 APLICAR_014_PRODUCAO_SEM_BACKUP'
+    uses: ./.github/workflows/gestao-migrations-production-manual.yml
+    with:
+      modo: aplicar
+      release: "014"
+      confirmacao: "APLICAR_014_PRODUCAO_SEM_BACKUP"
+    secrets: inherit
