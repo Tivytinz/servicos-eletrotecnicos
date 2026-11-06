@@ -1,8 +1,9 @@
 # MEMORIA — Eletrotécnico GO
 
-## Executor da migration 014 preparado, aplicação de produção pendente — 06/11/2026
+## Executor 014 pronto e diagnóstico real aprovado, SQL ainda pendente — 06/11/2026
 
 - Branch `ops/gestao-migrations-014-chat-20261106`: adicionar 014 ao canal de comando autorizado no PR administrativo #64 e ao workflow manual. Execução protegida com frase literal, preflight SQL somente leitura próprio, checagem de SHA-256 e exigência de 13 migrations antes de criar a 014. Testes de parâmetros, autoria e replay em mock; manter segredos exclusivamente no GitHub Environment.
+- A [PR #69](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/69) foi integrada à `main` no commit `3748edf458f7f6aee1cbca1ebf9ec30c54d1d560`; `Check` do HEAD da PR **SUCCESS** [42250803526](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42250803526). Novo comando `/gestao verificar 014` acionado diretamente pelo chat: [run 42251233757](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42251233757) **SUCCESS**, SQL 004/013 `INTEGRA`, 014 `PENDENTE`, catálogo **13 migrations com SHA-256 válido**, sem escrita.
 - **Nenhuma migration 014 de produção foi aplicada ou autorizada por `próximo`.** Estado conhecido: SQL 13/13, implantação do código da OS via PR #67 com flag `GESTAO_OS_PREPARACAO_HABILITADA` ausente, banco/site online.
 - Sem backup por custo (decisão do responsável) e risco residual de perda irreversível. Solicitar confirmação inequívoca para aplicar 014 após CI/merge; ativação da flag da OS exige operação separada.
 
