@@ -60,6 +60,22 @@ test("executor shell tem sintaxe válida e bloqueia parâmetros não aprovados",
   }
 });
 
+test("modo aplicar exige frase exata mesmo na main, antes de qualquer acesso remoto", () => {
+  for (const [modo, release, confirmacao] of [
+    ["aplicar","012",""],
+    ["aplicar","013","APLICAR_012_PRODUCAO_SEM_BACKUP"],
+    ["verificar","013","APLICAR_013_PRODUCAO_SEM_BACKUP"],
+    ["aplicar","014","APLICAR_014_PRODUCAO_SEM_BACKUP"],
+  ]) {
+    const result = spawnSync("bash",[shellScript,modo,release,confirmacao],{
+      encoding:"utf8",
+      env:{...process.env,GITHUB_REF:"refs/heads/main",RAILWAY_API_TOKEN:""},
+    });
+    assert.equal(result.status,2);
+    assert.match(result.stderr,/BLOQUEIO/);
+  }
+});
+
 test("modo verificar usa apenas SQL read-only; aplicar usa somente pacote autorizado", () => {
   const temp=mkdtempSync(path.join(tmpdir(),"gestao-railway-mock-"));
   try {
