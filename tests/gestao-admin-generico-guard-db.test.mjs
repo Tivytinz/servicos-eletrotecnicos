@@ -63,13 +63,13 @@ test("desativação de admin genérico: bloqueia Carlos pendente, exige verifier
     const sql = source.replace(/^\\set ON_ERROR_STOP on\s*$/m, "")
       .replace("current_database() <> 'railway'", "current_database() <> '" + database + "'");
     assert.notEqual(sql, source, "não deve remover o guard de banco");
-    async function denied() {
+    async function denied(expectedActive = true) {
       await assert.rejects(db.query(sql));
       await db.query("ROLLBACK");
       const { rows: [status] } = await db.query(
         "SELECT ativo FROM gestao.usuarios WHERE usuario = 'admin'",
       );
-      assert.equal(status.ativo, true, "falha não desativa conta genérica");
+      assert.equal(status.ativo, expectedActive, "falha não altera a conta genérica");
     }
 
     // Carlos ainda não existe / convite pendente: não desativar a conta anterior.
@@ -108,7 +108,7 @@ test("desativação de admin genérico: bloqueia Carlos pendente, exige verifier
       [generic.id])).rows[0].n, 1);
     assert.equal((await db.query("SELECT usado_em IS NOT NULL AS usado FROM gestao.convites WHERE id=$1",
       [inv.id])).rows[0].usado, true, "preserva convite utilizado pelo Carlos");
-    await denied(); // já desativada: impossível aplicar de novo
+    await denied(false); // já desativada: impossível aplicar de novo
   } finally {
     if (db) await db.end().catch(() => {});
     await root.query("DROP DATABASE IF EXISTS " + database + " WITH (FORCE)").catch(() => {});
