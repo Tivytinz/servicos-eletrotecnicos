@@ -1,5 +1,12 @@
 # MEMORIA — Eletrotécnico GO
 
+## Executor da migration 014 preparado, aplicação de produção pendente — 06/11/2026
+
+- Branch `ops/gestao-migrations-014-chat-20261106`: adicionar 014 ao canal de comando autorizado no PR administrativo #64 e ao workflow manual. Execução protegida com frase literal, preflight SQL somente leitura próprio, checagem de SHA-256 e exigência de 13 migrations antes de criar a 014. Testes de parâmetros, autoria e replay em mock; manter segredos exclusivamente no GitHub Environment.
+- **Nenhuma migration 014 de produção foi aplicada ou autorizada por `próximo`.** Estado conhecido: SQL 13/13, implantação do código da OS via PR #67 com flag `GESTAO_OS_PREPARACAO_HABILITADA` ausente, banco/site online.
+- Sem backup por custo (decisão do responsável) e risco residual de perda irreversível. Solicitar confirmação inequívoca para aplicar 014 após CI/merge; ativação da flag da OS exige operação separada.
+
+
 
 ## OS 014 integrada em código (ainda sem SQL/flag na produção) — 06/11/2026
 
