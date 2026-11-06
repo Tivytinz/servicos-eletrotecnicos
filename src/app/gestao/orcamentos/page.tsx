@@ -10,7 +10,7 @@ import {
 } from "@/lib/gestao/orcamentos";
 import { temPermissao } from "@/lib/gestao/permissoes";
 import { COOKIE_SESSAO } from "@/lib/gestao/sessao";
-import { criarOrcamentoRascunho, revisarOrcamentoRascunho } from "./actions";
+import { criarOrcamentoRascunho, revisarOrcamentoRascunho, registrarEventoOrcamento } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -19,6 +19,11 @@ export const metadata: Metadata = {
 };
 
 type LeadApto = { id: string; nome: string; descricao: string; status: string };
+type EventoOrcamento = {
+  orcamento_id: string; versao: number;
+  tipo: "envio" | "aprovacao" | "recusa";
+  canal: string; evidencia: string; criado_em: Date;
+};
 
 export default async function Orcamentos({
   searchParams,
@@ -34,7 +39,8 @@ export default async function Orcamentos({
   const token = (await cookies()).get(COOKIE_SESSAO)?.value;
   if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) redirect("/gestao/login");
 
-  const [orcamentos, elegiveis] = await Promise.all([
+  const eventosHabilitados = process.env.GESTAO_ORCAMENTOS_EVENTOS_HABILITADOS === "true";
+  const [orcamentos, elegiveis, eventos] = await Promise.all([
     consultar<OrcamentoResumo>(
       "SELECT * FROM gestao.listar_orcamentos_restritos($1)", [token],
     ),
@@ -45,6 +51,11 @@ export default async function Orcamentos({
       WHERE l.status IN ('qualificado','orcamento_em_preparo')
       ORDER BY l.criado_em DESC, l.id DESC LIMIT 100
     `),
+    eventosHabilitados
+      ? consultar<EventoOrcamento>(
+          "SELECT * FROM gestao.listar_eventos_orcamento_restritos($1)", [token],
+        )
+      : Promise.resolve([] as EventoOrcamento[]),
   ]);
 
   const comOrcamento = new Set(orcamentos.map(o => o.lead_id));
@@ -63,7 +74,7 @@ export default async function Orcamentos({
         <h1 className="mt-2 text-3xl font-bold">Orçamentos</h1>
         <p className="mt-2 text-slate-300">
           Prepare propostas com preço, descrição e validade. O rascunho fica salvo na gestão:
-          ele <strong>não é enviado automaticamente</strong> ao cliente.
+          ele <strong>não é enviado automaticamente</strong> ao cliente. Quando habilitado, o registro de envio ou resposta é apenas uma declaração interna do operador.
         </p>
       </header>
 
@@ -77,9 +88,14 @@ export default async function Orcamentos({
           Nova versão do rascunho salva. A anterior permanece no histórico e nenhum orçamento foi enviado.
         </p>
       )}
+      {sucesso === "evento" && (
+        <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
+          Registro interno salvo, com referência à versão exata da proposta. Nenhuma mensagem ou cobrança foi realizada pelo sistema.
+        </p>
+      )}
       {erro === "conflito" && (
         <p role="alert" className="mt-6 rounded-xl border border-amber-400/40 bg-amber-400/10 p-4 text-amber-200">
-          Não foi possível criar o rascunho. A solicitação pode ter mudado, já ter orçamento ou a sessão ter expirado.
+          Não foi possível concluir a operação. O estado, a validade ou a versão pode ter mudado, ou sua sessão expirou.
         </p>
       )}
       {erro === "dados" && (
@@ -170,6 +186,74 @@ export default async function Orcamentos({
                   <strong className="text-xl text-white">{formatarValorOrcamento(o.valor_centavos)}</strong>
                   <span className="text-xs text-slate-400">Válido até {formatarValidadeOrcamento(o.validade_em)}</span>
                 </div>
+                {eventosHabilitados && (o.status === "rascunho" || o.status === "enviado") && (
+                  <details className="mt-5 border-t border-white/10 pt-4">
+                    <summary className="cursor-pointer font-semibold text-amber-300">
+                      {o.status === "rascunho" ? "Registrar envio já realizado" : "Registrar resposta do cliente"}
+                    </summary>
+                    <form action={registrarEventoOrcamento} className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <input type="hidden" name="orcamento" value={o.id} />
+                      <input type="hidden" name="versao" value={o.versao} />
+                      {o.status === "rascunho" ? (
+                        <input type="hidden" name="tipo" value="envio" />
+                      ) : (
+                        <label className="block text-sm">
+                          Resposta relatada pelo cliente
+                          <select name="tipo" required defaultValue="recusa"
+                            className="mt-2 block w-full rounded-lg border border-white/20 bg-slate-900 p-3">
+                            {new Date(o.validade_em).getTime() > Date.now() && (
+                              <option value="aprovacao">Aprovação declarada</option>
+                            )}
+                            <option value="recusa">Recusa declarada</option>
+                          </select>
+                        </label>
+                      )}
+                      <label className="block text-sm">
+                        Canal de comunicação
+                        <select name="canal" required defaultValue="whatsapp"
+                          className="mt-2 block w-full rounded-lg border border-white/20 bg-slate-900 p-3">
+                          <option value="whatsapp">WhatsApp</option>
+                          <option value="email">E-mail</option>
+                          <option value="telefone">Telefone</option>
+                          <option value="presencial">Presencial</option>
+                          <option value="outro">Outro</option>
+                        </select>
+                      </label>
+                      <label className="block text-sm sm:col-span-2">
+                        Evidência ou referência interna (12 a 500 caracteres)
+                        <textarea name="evidencia" required minLength={12} maxLength={500}
+                          placeholder="Descreva a confirmação de envio/decisão e a referência verificável, sem incluir senhas ou links privados."
+                          className="mt-2 block min-h-24 w-full rounded-lg border border-white/20 bg-slate-900 p-3" />
+                      </label>
+                      <div className="sm:col-span-2">
+                        <button className="rounded-lg bg-amber-400 px-5 py-3 font-bold text-slate-950 hover:bg-amber-300">
+                          {o.status === "rascunho" ? "Registrar envio manual" : "Registrar decisão relatada"}
+                        </button>
+                        <p className="mt-2 text-xs text-slate-400">
+                          Confirme apenas fatos já ocorridos. O sistema não envia a proposta nem verifica a identidade do cliente.
+                          A aprovação declarada não significa pagamento recebido ou ordem de serviço criada.
+                        </p>
+                      </div>
+                    </form>
+                  </details>
+                )}
+                {eventosHabilitados && eventos.some(e => e.orcamento_id === o.id) && (
+                  <details className="mt-5 border-t border-white/10 pt-4">
+                    <summary className="cursor-pointer font-semibold text-slate-200">Histórico de comunicações</summary>
+                    <ol className="mt-3 space-y-3">
+                      {eventos.filter(e => e.orcamento_id === o.id).map((e, i) => (
+                        <li key={`${e.versao}-${e.tipo}-${i}`} className="rounded-lg border border-white/10 p-3 text-sm">
+                          <strong>
+                            {e.tipo === "envio" ? "Envio informado" : e.tipo === "aprovacao" ? "Aprovação informada" : "Recusa informada"}
+                            {" · versão "}{e.versao}
+                          </strong>
+                          <p className="mt-1 text-slate-400">{e.canal} · {new Date(e.criado_em).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
+                          <p className="mt-2 whitespace-pre-wrap text-slate-300">{e.evidencia}</p>
+                        </li>
+                      ))}
+                    </ol>
+                  </details>
+                )}
                 {revisaoHabilitada && o.status === "rascunho" && (
                   <details className="mt-5 border-t border-white/10 pt-4">
                     <summary className="cursor-pointer font-semibold text-amber-300">
