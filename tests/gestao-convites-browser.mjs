@@ -98,6 +98,23 @@ try {
     .getByText("Qualificado", { exact: true }).waitFor();
   console.log("PASS: dashboard operacional registra pedido e evolução de status com auditoria");
 
+  // Novo fluxo financeiro apenas como rascunho: CI isolado, sem dados reais.
+  await admin.goto(BASE + "/gestao/orcamentos");
+  await admin.getByLabel("Solicitação qualificada").selectOption({ label: /Cliente QA Status/ });
+  await admin.getByLabel("Valor total em reais (R$)").fill("350,50");
+  await admin.getByLabel("Validade da proposta").fill(
+    new Date(Date.now() + 7 * 86400000).toISOString().slice(0,10));
+  await admin.getByLabel("Descrição e condições técnicas da proposta")
+    .fill("Adequação elétrica de teste com materiais e mão de obra");
+  await admin.getByRole("button", { name: "Salvar rascunho" }).click();
+  await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=rascunho");
+  await admin.getByRole("status").getByText(/Orçamento salvo como rascunho/).waitFor();
+  const proposta = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await proposta.getByText("Rascunho", { exact: true }).waitFor();
+  await proposta.getByText(/R\\$\\s*350,50/).waitFor();
+  console.log("PASS: novo administrador prepara orçamento em rascunho sem envio automático");
+
+
 
 
   // Um técnico com conta válida não ganha acesso ao gerenciamento de convites.
@@ -116,6 +133,8 @@ try {
   await operador.goto(BASE + "/gestao");
 
   assert.equal(await operador.getByRole("link", { name: LINK_CONVITES }).count(), 0);
+  await operador.goto(BASE + "/gestao/orcamentos");
+  await operador.waitForURL(BASE + "/gestao?erro=sem-permissao");
   await operador.goto(BASE + "/gestao/convites");
   await operador.waitForURL(BASE + "/gestao?erro=sem-permissao");
   console.log("PASS: técnico autenticado não acessa a gestão de convites");
