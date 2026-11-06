@@ -16,7 +16,9 @@ Ambiente de desenvolvimento **exclusivamente local** com Docker Compose: Postgre
 
 No PowerShell, na raiz do repositório:
 
-    powershell -File scripts/homologacao-local.ps1
+    powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\homologacao-local.ps1
+
+O parâmetro `-ExecutionPolicy Bypass` vale apenas para este processo do PowerShell; use somente com o script que você conferiu neste repositório. Em computadores com política corporativa, respeite as restrições do administrador.
 
 O script gera uma única vez o arquivo privado .env.homologacao-local com quatro segredos aleatórios de 256 bits. Reutilize esse arquivo enquanto existir o volume de dados. Não copie variáveis de produção.
 
