@@ -33,16 +33,18 @@ A release 014 já foi aplicada em produção (14/14) e a tela de OS foi ativada/
 - `tests/gestao-convites-browser.mjs` com flag 015 apenas em CI: HTTPS real com cliente fictício, visualização, confirmação, ausência de analytics, replay, estado aprovado e OS pendente.
 - `npm run check` via GitHub Actions `Check` e QA HTTPS, além de revisão manual dos limites e ameaça de vazamento de token.
 
-## Implantação (separada do desenvolvimento)
+## Implantação e controle operacional — registro de 06/11/2026
 
-**A migration 015 foi executada mediante autorização específica, sem backup, em 06/11/2026** (run 42263941244, `COMMIT`, 15/15 íntegro). **Não habilitar a flag em produção como efeito de merge, migration ou deploy.** Base atual: 015 íntegra; a flag 015 está ausente e a OS continua só em preparação. O responsável adiou backup por custos, ciente do risco de perda irrecuperável.
+**Migration 015 aplicada em produção, com autorização específica e sem backup**:
+- PR de código [#71](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/71): build, banco descartável e QA HTTPS aprovados, feature flag desativada por padrão.
+- Executor protegido integrado na [PR #73](https://github.com/Tivytinz/servicos-eletrotecnicos/pull/73), habilitando exclusivamente `verificar 015` e `aplicar 015` com confirmação explícita do titular. Nenhum SQL executa por push, PR ou deploy.
+- Preflight somente leitura [42263807883](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263807883): PostgreSQL produção 14/14 íntegras, 015 pendente, roles e privilégios restritos.
+- Aplicação [42263941244](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263941244): pacote transacional `db/operacoes/gestao-aceite-cliente-015-atomico.sql`, `COMMIT`, pós-verificação **15/15 migrations com SHA-256 válido**, funções e grants mínimos corretos.
+- Pós-operação: aplicação e PostgreSQL online no Railway, zero alertas; flag `GESTAO_ACEITE_CLIENTE_HABILITADO` **ausente**. Sem envio de mensagens, links reais, agendamentos ou escrita em financeiro.
 
-1. Revisar a PR, testes, segurança e UX; integrar o código apenas após CI aprovado. A flag permanece ausente. Como a nova rota é protegida por flag, o deploy do código não exige migração automática.
-2. Validar 14/14, SHA-256 da 004 e 014, grants e objetos em consulta somente leitura antes da release.
-3. Solicitar **autorização específica para 015**, então usar `db/operacoes/gestao-aceite-cliente-015-atomico.sql` (preflight transacional, pacote integral, `COMMIT`, pós-validação 15/15). O executor existente só oferece comando controlado para **012–014**; ampliar de forma isolada e testada antes de aplicar 015. Não executar ferramenta genérica que aplica múltiplas migrations em produção.
-4. Após confirmação do banco, **autorização separada** para configurar `GESTAO_ACEITE_CLIENTE_HABILITADO=true` no Railway web e deploy, com verificação de saúde. Fazer QA de URL e proteção usando base descartável; não abrir links para clientes reais sem revisão de termos e privacidade.
-5. Reversão de exposição: desligar flag, sem apagar tokens/decisões, não realizar rollback SQL improvisado sem cópia de recuperação.
-6. Definir prazo de retenção e política de privacidade das evidências de aceite (LGPD) antes da operação real.
+**Próxima autorização é separada:** somente quando o responsável solicitar a ativação de `GESTAO_ACEITE_CLIENTE_HABILITADO=true`, verificar novamente produção, deploy e acesso, revisar texto de aceite, privacidade/LGPD, critérios de identidade e testes exclusivamente fictícios. Não usar este registro como assinatura/identificação validada; não liberar OS executável. Se houver falha após ativação, desligar a flag; nunca apagar decisões nem improvisar rollback SQL sem recuperação segura.
+
+**Backup:** não contratado por decisão de custo do responsável. Persistência de volume não é restauração verificada; permanece risco de perda irrecuperável.
 
 ## Próximos incrementos
 
