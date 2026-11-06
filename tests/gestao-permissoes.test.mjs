@@ -4,7 +4,7 @@ import { temPermissao } from "../src/lib/gestao/permissoes.ts";
 
 test("admin tem acesso às operações administrativas", () => {
   for (const acao of [
-    "clientes:ler", "clientes:criar", "leads:ler", "leads:criar",
+    "clientes:ler", "clientes:criar", "leads:ler", "leads:criar", "leads:atualizar",
     "orcamentos:gerir", "os:gerir", "financeiro:ler", "financeiro:gerir",
   ]) {
     assert.equal(temPermissao(["admin"], acao), true, acao);
@@ -12,7 +12,7 @@ test("admin tem acesso às operações administrativas", () => {
 });
 
 test("comercial não acessa operações técnicas e financeiras", () => {
-  for (const acao of ["clientes:ler", "clientes:criar", "leads:ler", "leads:criar", "orcamentos:gerir"]) {
+  for (const acao of ["clientes:ler", "clientes:criar", "leads:ler", "leads:criar", "leads:atualizar", "orcamentos:gerir"]) {
     assert.equal(temPermissao(["comercial"], acao), true, acao);
   }
   for (const acao of ["os:gerir", "financeiro:ler", "financeiro:gerir"]) {
@@ -24,7 +24,7 @@ test("técnico tem somente leitura comercial e gestão de OS", () => {
   for (const acao of ["clientes:ler", "leads:ler", "os:gerir"]) {
     assert.equal(temPermissao(["tecnico"], acao), true, acao);
   }
-  for (const acao of ["clientes:criar", "leads:criar", "orcamentos:gerir", "financeiro:ler", "financeiro:gerir"]) {
+  for (const acao of ["clientes:criar", "leads:criar", "leads:atualizar", "orcamentos:gerir", "financeiro:ler", "financeiro:gerir"]) {
     assert.equal(temPermissao(["tecnico"], acao), false, acao);
   }
 });
