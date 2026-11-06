@@ -186,7 +186,7 @@ export default async function Orcamentos({
                   <strong className="text-xl text-white">{formatarValorOrcamento(o.valor_centavos)}</strong>
                   <span className="text-xs text-slate-400">Válido até {formatarValidadeOrcamento(o.validade_em)}</span>
                 </div>
-                {eventosHabilitados && (o.status === "enviado" || (o.status === "rascunho" && new Date(o.validade_em).getTime() > Date.now())) && (
+                {eventosHabilitados && (o.status === "enviado" || o.status === "rascunho") && (
                   <details className="mt-5 border-t border-white/10 pt-4">
                     <summary className="cursor-pointer font-semibold text-amber-300">
                       {o.status === "rascunho" ? "Registrar envio já realizado" : "Registrar resposta do cliente"}
@@ -201,9 +201,7 @@ export default async function Orcamentos({
                           Resposta relatada pelo cliente
                           <select name="tipo" required defaultValue="recusa"
                             className="mt-2 block w-full rounded-lg border border-white/20 bg-slate-900 p-3">
-                            {new Date(o.validade_em).getTime() > Date.now() && (
-                              <option value="aprovacao">Aprovação declarada</option>
-                            )}
+                            <option value="aprovacao">Aprovação declarada</option>
                             <option value="recusa">Recusa declarada</option>
                           </select>
                         </label>
@@ -232,15 +230,11 @@ export default async function Orcamentos({
                         <p className="mt-2 text-xs text-slate-400">
                           Confirme apenas fatos já ocorridos. O sistema não envia a proposta nem verifica a identidade do cliente.
                           A aprovação declarada não significa pagamento recebido ou ordem de serviço criada.
+                          Envio e aprovação fora da validade são recusados pelo banco de dados.
                         </p>
                       </div>
                     </form>
                   </details>
-                )}
-                {eventosHabilitados && o.status === "rascunho" && new Date(o.validade_em).getTime() <= Date.now() && (
-                  <p className="mt-4 text-sm text-amber-200">
-                    A validade terminou. Revise o rascunho e a data antes de registrar um envio.
-                  </p>
                 )}
                 {eventosHabilitados && eventos.some(e => e.orcamento_id === o.id) && (
                   <details className="mt-5 border-t border-white/10 pt-4">
