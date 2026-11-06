@@ -176,7 +176,7 @@ export default async function Gestao({
                   )}
                   {podePrepararOS && (
                     <Link href="/gestao/ordens-servico" className="rounded-xl border border-white/20 px-4 py-3 text-center font-semibold hover:bg-white/5">
-                      Ordens de Serviço — preparação
+                      {process.env.GESTAO_OS_PLANEJAMENTO_HABILITADO === "true" ? "Ordens de Serviço — planejamento" : "Ordens de Serviço — preparação"}
                     </Link>
                   )}
                   {podeConvidar && (

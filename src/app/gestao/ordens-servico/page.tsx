@@ -7,7 +7,7 @@ import { consultar } from "@/lib/gestao/db";
 import { formatarValorOrcamento } from "@/lib/gestao/orcamentos";
 import { temPermissao } from "@/lib/gestao/permissoes";
 import { COOKIE_SESSAO } from "@/lib/gestao/sessao";
-import { prepararOrdemServico } from "./actions";
+import { planejarOrdemPendente016, prepararOrdemServico } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -22,7 +22,23 @@ type Candidata = {
 type Ordem = {
   id: string; orcamento_id: string; versao: number; cliente_nome: string;
   status: string; valor_centavos: string; criada_em: Date;
+  tecnico_id?: string | null; tecnico_nome?: string | null;
+  data_prevista?: string | Date | null; observacao?: string | null;
+  revisao?: number;
 };
+type Tecnico={id:string;nome:string};
+
+function diaISO(data:string|Date|null|undefined):string {
+  if(!data)return "";
+  return typeof data==="string"?data.slice(0,10):data.toISOString().slice(0,10);
+}
+function diaBR(data:string|Date|null|undefined):string {
+  const iso=diaISO(data);
+  return iso?new Intl.DateTimeFormat("pt-BR",{timeZone:"UTC",day:"2-digit",month:"2-digit",year:"numeric"}).format(new Date(iso+"T12:00:00Z")):"Não definida";
+}
+const hojeSP=new Intl.DateTimeFormat("en-CA",{
+  timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit",
+}).format(new Date());
 
 export default async function OrdensServico({
   searchParams,
@@ -37,9 +53,16 @@ export default async function OrdensServico({
 
   const token = (await cookies()).get(COOKIE_SESSAO)?.value;
   if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) redirect("/gestao/login");
-  const [candidatas, ordens] = await Promise.all([
-    consultar<Candidata>("SELECT * FROM gestao.listar_candidatas_os_preparacao_restritas($1)", [token]),
-    consultar<Ordem>("SELECT * FROM gestao.listar_os_preparacao_restritas($1)", [token]),
+  const planejamentoAtivo=process.env.GESTAO_OS_PLANEJAMENTO_HABILITADO==="true";
+  const admin=usuario.papeis.includes("admin");
+  const [candidatas,ordens,tecnicos]=await Promise.all([
+    consultar<Candidata>("SELECT * FROM gestao.listar_candidatas_os_preparacao_restritas($1)",[token]),
+    planejamentoAtivo
+      ? consultar<Ordem>("SELECT * FROM gestao.listar_os_planejamento_016($1)",[token])
+      : consultar<Ordem>("SELECT * FROM gestao.listar_os_preparacao_restritas($1)",[token]),
+    planejamentoAtivo && admin
+      ? consultar<Tecnico>("SELECT * FROM gestao.listar_tecnicos_os_016($1)",[token])
+      : Promise.resolve([] as Tecnico[]),
   ]);
   const { erro, sucesso } = await searchParams;
 
@@ -52,16 +75,30 @@ export default async function OrdensServico({
         <p className="text-xs font-bold uppercase tracking-[0.15em] text-amber-400">
           Eletrotécnico GO · Área restrita
         </p>
-        <h1 className="mt-2 text-3xl font-bold">Ordens de Serviço — preparação</h1>
+        <h1 className="mt-2 text-3xl font-bold">
+          Ordens de Serviço — {planejamentoAtivo?"planejamento":"preparação"}
+        </h1>
         <p className="mt-3 text-slate-300">
           Organize propostas aprovadas internamente para análise operacional.
           A aprovação relatada por um operador <strong>não comprova o aceite do cliente</strong>.
-          Nesta etapa, as OS ficam pendentes, sem agendamento, execução, despesas ou cobrança.
+          {planejamentoAtivo
+            ? " O administrador pode indicar um técnico e uma data prevista, mas a OS continua pendente, sem agendamento confirmado, execução ou cobrança."
+            : " Nesta etapa, as OS ficam pendentes, sem agendamento, execução, despesas ou cobrança."}
         </p>
       </header>
       {sucesso === "preparacao" && (
         <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
           Preparação registrada. A ordem permanece pendente de comprovação do aceite do cliente.
+        </p>
+      )}
+      {sucesso === "planejamento" && (
+        <p role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-emerald-200">
+          Planejamento registrado. A data é apenas uma previsão e a OS continua pendente.
+        </p>
+      )}
+      {erro === "planejamento" && (
+        <p role="alert" className="mt-6 rounded-xl border border-amber-400/40 bg-amber-400/10 p-4 text-amber-200">
+          Planejamento não salvo. Confira a data, o técnico ativo e se houve outra alteração.
         </p>
       )}
       {erro === "conflito" && (
@@ -130,8 +167,50 @@ export default async function OrdensServico({
                   OS pendente — não autorizada para execução
                 </p>
                 <p className="mt-2 text-xs text-slate-400">
-                  Esta etapa não permite agendar, iniciar o trabalho, concluir ou registrar recebimentos.
+                  Esta etapa não permite confirmar agendamento, iniciar o trabalho, concluir ou registrar recebimentos.
                 </p>
+                {planejamentoAtivo && (
+                  <div className="mt-4 rounded-xl border border-white/15 bg-white/[0.02] p-4">
+                    <h4 className="font-semibold">Planejamento interno</h4>
+                    <p className="mt-2 text-sm text-slate-300">
+                      Técnico: <strong>{os.tecnico_nome??"Não atribuído"}</strong> ·
+                      Data prevista: <strong>{diaBR(os.data_prevista)}</strong>
+                    </p>
+                    {os.observacao&&<p className="mt-2 whitespace-pre-wrap break-words text-sm text-slate-400">{os.observacao}</p>}
+                    {admin && (tecnicos.length>0 ? (
+                      <form action={planejarOrdemPendente016} className="mt-4 grid gap-4 sm:grid-cols-2">
+                        <input type="hidden" name="os" value={os.id}/>
+                        <input type="hidden" name="revisao" value={os.revisao??0}/>
+                        <label className="text-sm text-slate-200">Técnico responsável
+                          <select name="tecnico" required defaultValue={os.tecnico_id??""}
+                            className="mt-2 w-full rounded-lg border border-white/20 bg-slate-900 p-3">
+                            <option value="" disabled>Escolha um técnico</option>
+                            {tecnicos.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                          </select>
+                        </label>
+                        <label className="text-sm text-slate-200">Dia previsto (não confirmado)
+                          <input type="date" name="data_prevista" required min={hojeSP}
+                            defaultValue={diaISO(os.data_prevista)}
+                            className="mt-2 w-full rounded-lg border border-white/20 bg-slate-900 p-3"/>
+                        </label>
+                        <label className="text-sm text-slate-200 sm:col-span-2">Observações internas
+                          <textarea name="observacao" rows={2} maxLength={500}
+                            defaultValue={os.observacao??""}
+                            className="mt-2 w-full rounded-lg border border-white/20 bg-slate-900 p-3"/>
+                        </label>
+                        <div className="sm:col-span-2">
+                          <button className="rounded-lg bg-amber-400 px-4 py-3 font-bold text-slate-950 hover:bg-amber-300">
+                            Salvar planejamento
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <p className="mt-3 text-sm text-amber-200">
+                        Nenhum técnico ativo cadastrado. Cadastre um usuário com papel técnico para atribuir.
+                      </p>
+                    ))}
+                  </div>
+                )}
               </li>
             ))}
           </ul>

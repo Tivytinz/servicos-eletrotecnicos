@@ -1,0 +1,84 @@
+name: eg-homologacao-os016
+
+x-node: &node
+  build:
+    context: .
+    dockerfile: Dockerfile.homologacao-local
+  image: eg-homologacao-os016-node:2026-11
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gestao_homologacao
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Gere o arquivo local pelo script PowerShell}
+    volumes:
+      - dados_testes:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gestao_homologacao"]
+      interval: 3s
+      retries: 30
+      timeout: 3s
+    networks: [isolada]
+
+  preparar:
+    <<: *node
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GESTAO_HOMOLOGACAO_LOCAL: "CONFIRMADO"
+      DATABASE_URL_ADMIN: postgres://postgres:${POSTGRES_PASSWORD:?}@db:5432/gestao_homologacao
+      GESTAO_APP_PASSWORD: ${GESTAO_APP_PASSWORD:?}
+      GESTAO_CONVITES_PASSWORD: ${GESTAO_CONVITES_PASSWORD:?}
+      ADMIN_EMAIL: qa-admin@example.test
+      ADMIN_USUARIO: qa-admin@example.test
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?}
+    command: ["node", "scripts/gestao-preparar-homologacao.mjs"]
+    networks: [isolada]
+
+  web:
+    <<: *node
+    restart: unless-stopped
+    depends_on:
+      preparar:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: postgres://gestao_app:${GESTAO_APP_PASSWORD:?}@db:5432/gestao_homologacao
+      DATABASE_URL_CONVITES: postgres://gestao_convites:${GESTAO_CONVITES_PASSWORD:?}@db:5432/gestao_homologacao
+      GESTAO_HABILITADA: "true"
+      GESTAO_CONVITES_HABILITADOS: "true"
+      GESTAO_STATUS_HABILITADO: "true"
+      GESTAO_ORCAMENTOS_HABILITADOS: "true"
+      GESTAO_ORCAMENTOS_REVISAO_HABILITADA: "true"
+      GESTAO_ORCAMENTOS_EVENTOS_HABILITADOS: "true"
+      GESTAO_OS_PREPARACAO_HABILITADA: "true"
+      GESTAO_OS_PLANEJAMENTO_HABILITADO: "true"
+      GESTAO_ACEITE_CLIENTE_HABILITADO: "true"
+      GESTAO_ORIGEM_PUBLICA: https://localhost:3444
+    command: ["npm", "run", "start", "--", "-p", "3210", "-H", "0.0.0.0"]
+    expose: ["3210"]
+    networks: [isolada]
+
+  https:
+    build:
+      context: .
+      dockerfile: Dockerfile.homologacao-proxy
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "127.0.0.1:3444:443"
+    networks: [isolada]
+
+volumes:
+  dados_testes:
+
+networks:
+  isolada:
+    driver: bridge
