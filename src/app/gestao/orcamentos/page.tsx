@@ -111,7 +111,7 @@ export default async function Orcamentos({
             <p className="font-semibold">Nenhuma solicitação apta para novo rascunho.</p>
             <p className="mt-2 text-sm text-slate-400">
               Qualifique uma solicitação primeiro. Cada solicitação pode ter um rascunho inicial;
-              versões posteriores serão tratadas em uma etapa separada.
+              Use a opção de revisão abaixo para criar novas versões de um rascunho existente.
             </p>
             <Link href="/gestao/leads" className="mt-3 inline-block font-semibold text-amber-300 hover:underline">
               Consultar solicitações →
