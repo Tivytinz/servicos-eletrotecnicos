@@ -22,6 +22,10 @@ GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO :"a
 GRANT EXECUTE ON FUNCTION gestao.criar_os_preparacao(text,uuid,integer) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.listar_candidatas_os_preparacao_restritas(text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.listar_os_preparacao_restritas(text) TO :"app_role";
+-- Release 016: planejamento somente interno da OS pendente (sem executar/financeiro).
+GRANT EXECUTE ON FUNCTION gestao.planejar_os_pendente_016(text,uuid,uuid,date,text,integer) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.listar_os_planejamento_016(text) TO :"app_role";
+GRANT EXECUTE ON FUNCTION gestao.listar_tecnicos_os_016(text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.emitir_link_aceite_cliente(text,uuid,integer,text) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.revogar_link_aceite_cliente(text,uuid,integer) TO :"app_role";
 GRANT EXECUTE ON FUNCTION gestao.consultar_link_aceite_cliente(text) TO :"app_role";
