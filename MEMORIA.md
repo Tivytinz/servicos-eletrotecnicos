@@ -1,5 +1,15 @@
 # MEMORIA — Eletrotécnico GO
 
+## Deploy da configuração 015 em produção — 06/11/2026
+
+- O responsável configurou no Railway a variável `GESTAO_ACEITE_CLIENTE_HABILITADO` e autorizou expressamente a publicação com "pronto, só fazer deploy".
+- Consultado o Railway antes do commit: um único patch de variável nesse serviço (não destrutivo), nenhum volume/PostgreSQL/outro recurso alterado. `accept-deploy` confirmou `committed=true`, `deploymentStatus=triggered`; deployment `6688eefe-a6f1-42ef-8065-8932b954aba0` terminou **SUCCESS** em 06/11/2026.
+- Verificação depois: web `online`, Postgres `online`, **zero** notificações de warning/critical, sem patch pendente. CI `Check` do commit `e6da9362` [42264823654](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42264823654) **SUCCESS**.
+- Banco continua **015 aplicada, 15/15 SHA-256 íntegros**, conforme [42263941244](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42263941244). Nenhuma migration/financeiro/OS executável foi alterada neste deploy.
+- Conector Railway expõe apenas **nome da variável**, não seu valor: confirma a configuração publicada, mas não permite atestar o literal `true`. Teste público da rota `/proposta/aceite` a partir desta sessão não pôde ser feito; **não confundir deploy SUCCESS com QA de navegador pós-deploy**. Orientar verificação visual da página sem token real e, depois, testes fictícios supervisionados.
+- O link por si só não verifica identidade e não substitui assinatura eletrônica autenticada; dados reais devem observar privacidade/LGPD. Continua sem backup contratado.
+
+
 
 ## Migration 015 APLICADA em produção; aceite por link ainda desativado — 06/11/2026
 
