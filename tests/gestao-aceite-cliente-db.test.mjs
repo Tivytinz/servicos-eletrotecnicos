@@ -35,7 +35,7 @@ test("015: link de uso único, recusa, reemissão, RBAC, concorrência e OS apen
       orcamento_update:false,recebimentos_insert:false,
     });
     const usuario=async papel=>{
-      const email="qa_aceite_"+randomUUID().replaceAll("-","").slice(0,20)+"@example.invalid";
+      const email="qa_aceite_"+randomUUID().replaceAll("-","").slice(0,20);
       const {rows:[{id}]}=await admin.query(
         "INSERT INTO gestao.usuarios(nome,usuario,senha_hash) VALUES($1,$2,$3) RETURNING id",
         ["QA aceite",email,"hash-qa"]);
