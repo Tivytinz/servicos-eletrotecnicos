@@ -1,14 +1,14 @@
 export type PapelGestao = "admin" | "comercial" | "tecnico";
 export type AcaoGestao =
-  | "clientes:ler" | "clientes:criar" | "leads:ler" | "leads:criar"
+  | "clientes:ler" | "clientes:criar" | "leads:ler" | "leads:criar" | "leads:atualizar"
   | "orcamentos:gerir" | "os:gerir" | "financeiro:ler" | "financeiro:gerir";
 
 const MATRIZ: Record<PapelGestao, readonly AcaoGestao[]> = {
   admin: [
-    "clientes:ler", "clientes:criar", "leads:ler", "leads:criar",
+    "clientes:ler", "clientes:criar", "leads:ler", "leads:criar", "leads:atualizar",
     "orcamentos:gerir", "os:gerir", "financeiro:ler", "financeiro:gerir",
   ],
-  comercial: ["clientes:ler", "clientes:criar", "leads:ler", "leads:criar", "orcamentos:gerir"],
+  comercial: ["clientes:ler", "clientes:criar", "leads:ler", "leads:criar", "leads:atualizar", "orcamentos:gerir"],
   tecnico: ["clientes:ler", "leads:ler", "os:gerir"],
 };
 
