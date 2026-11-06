@@ -56,6 +56,8 @@ try {
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.criar_orcamento_rascunho(text,uuid,bigint,text,date) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_orcamentos_restritos(text) TO gestao_app");
   await admin.query("GRANT EXECUTE ON FUNCTION gestao.revisar_orcamento_rascunho(text,uuid,integer,bigint,text,date) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.registrar_evento_orcamento(text,uuid,integer,text,text,text) TO gestao_app");
+  await admin.query("GRANT EXECUTE ON FUNCTION gestao.listar_eventos_orcamento_restritos(text) TO gestao_app");
   await admin.query("GRANT SELECT, INSERT ON gestao.clientes, gestao.leads TO gestao_app");
   await admin.query("GRANT SELECT, INSERT, UPDATE ON gestao.tentativas_login TO gestao_app");
   // Role comum não pode emitir, listar ou revogar convites.
