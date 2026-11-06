@@ -97,7 +97,7 @@ test("013: envio e decisão informados, versão, RBAC, auditoria e concorrência
     assert.equal(estado.status,"aprovado");
     assert.equal(estado.lead_status,"aprovado");
     assert.ok(estado.aprovado_em);
-    assert.match(estado.aprovado_por,/registro interno/i);
+    assert.match(estado.aprovado_por,/registrada internamente/i);
     const {rows:[quantidades]}=await admin.query(
       "SELECT (SELECT count(*)::int FROM gestao.ordens_servico WHERE orcamento_id=$1) AS os, (SELECT count(*)::int FROM gestao.recebimentos) AS recebimentos_todos",
       [a.id]);
