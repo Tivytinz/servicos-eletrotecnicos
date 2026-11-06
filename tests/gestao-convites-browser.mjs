@@ -125,7 +125,7 @@ try {
   await admin.waitForURL(BASE + "/gestao/orcamentos?sucesso=revisao");
   const revisada = admin.locator("li").filter({ hasText: "Cliente QA Status" });
   await revisada.getByText("Orçamento · versão 2").waitFor();
-  await revisada.getByText(/R\\$\\s*420,75/).waitFor();
+  await revisada.getByText(/R\$\s*420,75/).waitFor();
   console.log("PASS: revisão salva versão 2 mantendo versão 1 preservada");
 
   await revisada.getByText("Registrar envio já realizado").click();
