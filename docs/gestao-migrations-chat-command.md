@@ -42,3 +42,11 @@ São comentários **no PR #64**. A integração GitHub publica o comentário, qu
 ## Estado anterior conhecido
 
 A execução manual #2 do workflow do GitHub registrou **12 migrations, 012 íntegra, 013 pendente**, sem ativar flags. Esta documentação e seu CI não comprovam que o estado ainda está igual: verificar antes de aplicar a 013.
+
+## Confirmação operacional — 06/11/2026
+
+**Canal efetivamente funcional, sem necessidade de intervenção manual em GitHub Actions:** o conector GitHub publicou `/gestao verificar` no PR #64 e iniciou o run [42234483857](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42234483857), concluído com `SUCCESS` e **12/13** migrations íntegras, sem escrita.
+
+Com autorização específica para 013 sem backup, publicou `/gestao aplicar 013 APLICAR_013_PRODUCAO_SEM_BACKUP`; o run [42234604088](https://github.com/Tivytinz/servicos-eletrotecnicos/actions/runs/42234604088) concluiu com `COMMIT`, `SUCCESS` e **13/13 checksums íntegros**. Não houve ativação de flags.
+
+**Limites atuais:** apenas os comandos exatos documentados acima; suportar a próxima migration exigirá incremento revisado de workflow, testes e aprovação da operação. Não inferir existência de backup. O controle atual de flag permanece separado das migrations.
