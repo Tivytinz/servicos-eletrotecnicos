@@ -170,7 +170,7 @@ try {
 
   // Release 014: somente dados sintéticos do PostgreSQL descartável.
   await admin.goto(BASE + "/gestao/ordens-servico");
-  await admin.getByRole("heading", { name: /Ordens de Serviço — preparação/ }).waitFor();
+  await admin.getByRole("heading", { name: /Ordens de Serviço — planejamento/ }).waitFor();
   const candidataOS = admin.locator("li").filter({ hasText: "Cliente QA Status" });
   await candidataOS.getByText(/aceite relatado/).waitFor();
   await candidataOS.getByRole("button", { name: "Criar OS pendente de comprovação" }).click();
@@ -278,6 +278,45 @@ try {
   await operador.goto(BASE + "/gestao/convites");
   await operador.waitForURL(BASE + "/gestao?erro=sem-permissao");
   console.log("PASS: técnico autenticado não acessa a gestão de convites");
+
+  // Release 016: planejamento de OS somente no navegador HTTPS e banco descartável.
+  // Técnico validamente convidado pode consultar, mas apenas admin pode atribuir.
+  await operador.goto(BASE + "/gestao/ordens-servico");
+  const osOperador = operador.locator("li").filter({ hasText: "Cliente QA Status" });
+  await osOperador.getByText(/OS pendente — não autorizada para execução/).waitFor();
+  assert.equal(await osOperador.getByRole("button", { name: "Salvar planejamento" }).count(), 0,
+    "técnico pode consultar mas não atribuir planejamento");
+  await admin.goto(BASE + "/gestao/ordens-servico");
+  const os016 = admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await os016.getByRole("heading", { name: "Planejamento interno" }).waitFor();
+  await os016.getByRole("combobox", { name: "Técnico responsável" })
+    .selectOption({ label: "Operador de Teste" });
+  const dataQA = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(new Date(Date.now()+7*86400000));
+  await os016.getByLabel(/Dia previsto/).fill(dataQA);
+  await os016.getByLabel("Observações internas").fill("Previsão fictícia de QA — sem agendamento real");
+  await os016.getByRole("button", { name: "Salvar planejamento" }).click();
+  await admin.waitForURL(BASE + "/gestao/ordens-servico?sucesso=planejamento");
+  await admin.getByRole("status").getByText(/Planejamento registrado/).waitFor();
+  const salvo016=admin.locator("li").filter({ hasText: "Cliente QA Status" });
+  await salvo016.getByText(/Técnico:/).waitFor();
+  await salvo016.getByText("Operador de Teste", { exact: false }).waitFor();
+  assert.equal(await salvo016.getByLabel(/Dia previsto/).inputValue(),dataQA);
+  assert.equal(await salvo016.getByLabel("Observações internas").inputValue(),
+    "Previsão fictícia de QA — sem agendamento real");
+  assert.equal(await salvo016.getByText(/OS pendente — não autorizada para execução/).count(),1);
+  assert.equal(await admin.getByRole("button", { name: /Iniciar execução|Registrar pagamento|Confirmar agendamento/ }).count(),0,
+    "016 não habilita execução, agenda confirmada ou cobrança");
+  await admin.reload();
+  const revisita016=admin.locator("li").filter({hasText:"Cliente QA Status"});
+  assert.equal(await revisita016.getByLabel(/Dia previsto/).inputValue(),dataQA,
+    "planejamento deve persistir após F5");
+  await operador.reload();
+  const leitura016=operador.locator("li").filter({hasText:"Cliente QA Status"});
+  await leitura016.getByText("Operador de Teste", { exact:false }).waitFor();
+  assert.equal(await leitura016.getByRole("button",{name:"Salvar planejamento"}).count(),0);
+  console.log("PASS: 016 atribui técnico e previsão, mantém OS pendente; técnico só consulta e F5 persiste");
 
   const semLink = await (await novoContexto()).newPage();
   await semLink.goto(BASE + "/gestao/convite");
